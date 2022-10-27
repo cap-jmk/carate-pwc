@@ -17,6 +17,20 @@ Evidence of a mixed-perspective was given in [chembee](https://codeberg.org/sail
 
 The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](https://codeberg.org/sail.black/chembee.git) pattern. 
 
+# Installation on CPU 
+
+Prepare system 
+```bash
+sudo apt-get install python3-dev
+```
+
+```bash 
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu 
+pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[default] matplotlib
+pip install torch-cluster #addtional does not work on CPU
+pip install torch-spline-conv #additional does not work on CPU
+
+
 # Cite 
 
 There is a preprint available on bioRxiv. Read the [preprint](https://www.biorxiv.org/content/10.1101/2022.02.12.470636v1)
