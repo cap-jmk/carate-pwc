@@ -152,3 +152,4 @@ test_*.png
 docs/source/
 docs/build
 plot_roc_crossval.ipynb
+notebooks/
