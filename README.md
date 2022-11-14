@@ -29,7 +29,7 @@ pip3 install torch torchvision torchaudio --extra-index-url https://download.pyt
 pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[default] matplotlib
 pip install torch-cluster #addtional does not work on CPU
 pip install torch-spline-conv #additional does not work on CPU
-
+``` 
 
 # Cite 
 
