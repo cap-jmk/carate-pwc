@@ -3,26 +3,47 @@ This is the hear of the application and trains / tests a algorithm on a given da
 The idea is to parametrize as much as possible. 
 
 """
+from utils.file_utils import check_make_dir
 
 class Evaluation(): 
 
-    def __init__(self): 
+    """
+    The evaluation class is about evaluating a given model written in PyTorch or PyTorchGeometric. 
+
+
+    ------Attributes------
+    The evaluation has the attributes 
+        epoch 
+        model 
+        optimizer
+        num_classes
+    
+    """
+
+    def __init__(self, epoch, model, optimizer, num_classes, out_dir="out"):
+
+        self.epoch = epoch 
+        self.model = model
+        self.optimizer = optimizer
+        self.num_classes = num_classes 
+        self.out_dir = out_dir
 
 
 
-    def train(epoch, model, device, train_loader, optimizer, num_classes = 2):
+    def train(epoch, model, device, train_loader, optimizer, num_classes = 2, shrikage=51):
         """
         The train function is used to train the model.
         It takes in an epoch number, a model, a device (cpu or gpu), and a dataset loader as input.
         The output is the accuracy of the current training iteration.
 
-        :param epoch: Used to Determine when to stop training.
+        :param epoch: Used to Determine the number of times we want to train the model.
         :param model: Used to Pass the model to the train function.
-        :param device: Used to Tell torch which device to use.
+        :param device: Used to Tell the model which device to use.
         :param train_loader: Used to Pass the training data.
-        :param optimizer: Used to Specify the algorithm that we use to train our model.
+        :param optimizer: Used to Specify the algorithm to use for training.
         :param num_classes=2: Used to Specify the number of classes in the dataset.
-        :return: The accuracy of the model on the train set.
+        :param shrikage=51: Used to Reduce the learning rate to half after 50 epochs.
+        :return: The accuracy of the model on the training set.
 
         :doc-author: Trelent
         """
@@ -30,15 +51,14 @@ class Evaluation():
 
         model.train()
 
-        if epoch == 51:
+        if epoch == shrinkage:
             for param_group in optimizer.param_groups:
-                param_group['lr'] = 0.5 * param_group['lr']
+                param_group['lr'] = 0.5 * param_group['lr'] # setting the learning rate 
 
         correct = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
             data.y = F.one_hot(data.y, num_classes = num_classes).type(torch.FloatTensor)
-            #assert len(data.y) == len(train_loader.dataset), (str(len(train_loader.dataset))+" "+str(len(data.y)))
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model(data.x, data.edge_index, data.batch)
@@ -48,7 +68,8 @@ class Evaluation():
             loss.backward()
             optimizer.step()
             correct += (output == data.y).float().sum()/num_classes
-        return correct / len(train_loader.dataset)
+        accuracy = correct / len(train_loader.dataset)  
+        return accuracy
 
 
     def test(loader, epoch, model, device, test=False):
@@ -72,20 +93,18 @@ class Evaluation():
 
         correct = 0
         if test: 
-        outs = []
+            outs = []
         for data in loader:
             data.x = data.x.type(torch.FloatTensor)
-            #data.y = F.one_hot(data.y, num_classes = 6).type(torch.FloatTensor)
             data = data.to(device)
             output_probs = model(data.x, data.edge_index, data.batch)
             output = (output_probs > 0.5).float()
             correct += (torch.argmax(output, dim=1) == data.y).float().sum()
-            #print(output, data.y)
             if test: 
-            outs.append(output.cpu().detach().numpy())
+                outs.append(output.cpu().detach().numpy())
         if test: 
-        outputs =np.concatenate(outs, axis=0 ).astype(float)
-        np.savetxt("MCF-7_epoch"+str(epoch)+".csv", outputs)
+            outputs =np.concatenate(outs, axis=0 ).astype(float)
+            np.savetxt("MCF-7_epoch"+str(epoch)+".csv", outputs)#TODO Do not save but only store temporarily in class
         return correct / len(loader.dataset)
 
     def cv(data_set, n=5, num_epoch=150, num_classes = 2):
@@ -125,25 +144,25 @@ class Evaluation():
                     'Train Acc: {:.7f}, Test Acc: {:.7f}'.format(epoch, train_loss,
                                                                 train_acc, test_acc))
                 y = np.zeros((len(test_dataset)))
-                x = np.loadtxt("MCF-7_epoch"+str(epoch)+".csv")
+                x = np.loadtxt("MCF-7_epoch"+str(epoch)+".csv") #TODO parametrize a
                 for i in range(len(test_dataset)):
-                y[i] = test_dataset[i].y
+                    y[i] = test_dataset[i].y
                 y = torch.as_tensor(y)
                 y = F.one_hot(y.long(), num_classes = num_classes).long()
                 store_auc = []
                 for i in range(len(x[0,:])): 
-                auc = metrics.roc_auc_score(y[:,i], x[:,i])
-                print("AUC of "+str(i) +"is:", auc)
-                store_auc.append(auc)
+                    auc = metrics.roc_auc_score(y[:,i], x[:,i])
+                    print("AUC of "+str(i) +"is:", auc)
+                    store_auc.append(auc)
                 auc_store.append(store_auc)
                 
                 if auc >=0.9:
-                break
+                    break
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-            with open("/content/drive/MyDrive/CARATE_RESULTS/"+data_set+"_"+str(i)+".csv", 'w') as f:
+            with open(+data_set+"_"+str(i)+".csv", 'w') as f:
                 json.dump(tmp, f)
-                print("Saved iteration one to "+"/content/drive/MyDrive/CARATE_RESULTS/"+data_set+"_"+str(i)+".csv")
+                print("Saved iteration one to "+"/content/drive/MyDrive/CARATE_RESULTS/"+data_set+"_"+str(i)+".csv")#TODO Parametrize 
             result.append(tmp)          
         return result 
