@@ -21,7 +21,7 @@ The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](
 
 Prepare system 
 ```bash
-sudo apt-get install python3-dev
+sudo apt-get install python3-dev libffi-dev
 ```
 
 ```bash 
