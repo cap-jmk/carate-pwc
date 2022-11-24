@@ -17,10 +17,10 @@ class Net(torch.nn.Module):
     in the evaluation module with the Evaluation class.
     
     """
-    def __init__(self, dim):
+    def __init__(self, dim, num_features=2, num_classes=2):#TODO num_features and num_classes should come from dataset
         super(Net, self).__init__()
 
-        num_features = dataset.num_features
+        self.num_features = num_features
         self.dim = dim
 
         self.conv1 = GraphConv(num_features, dim)
@@ -29,7 +29,7 @@ class Net(torch.nn.Module):
         self.conv5 = GraphConv(dim*16, dim)
 
         self.fc1 = Linear(dim, dim)
-        self.fc2 = Linear(dim, dataset.num_classes)
+        self.fc2 = Linear(dim, num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
