@@ -1,27 +1,72 @@
 import torch
-from model import Net 
+from models.cgc import Net
+from load_data import load_standard_datset
+import click
+
+
+from typing import Type
+
+
 class Run:
     """
-    Write a run module
+    Run module to parametrize different tests and benchmarks from the command line
     """
 
-
     def __init__(
-        self, 
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu"), 
-        model = Net, 
-        optimizer = None, 
-        net_dimension = 364,
-        learning_rate = 0.0005, 
-    ):  
-        self.net_dimension = 364
-        self.learning_rate = 0.0005,
+        self,
+        device: Type(torch.device) = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu"
+        ),
+        model: Type(torch.nn.Module) = Net,
+        optimizer: Type(torch.optim) = None,
+        net_dimension: int = 364,
+        learning_rate: float = 0.0005,
+        data_set_save_path: str = ".",
+        data_set_name: str = "Enzymes",
+        test_ratio: int = 20,
+        batch_size: int = 64,
+    ):
+        # model parameters
         self.device = device
         self.model = model(dim=net_dimension).to(device)
-        if optimizer is None: 
+        if optimizer is None:
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+        self.net_dimension = 364
+        self.learning_rate = 0.0005
 
-if __name__ == "__main__": 
+        # evaulation parameters
+        self.data_set_name = data_set_name
+        self.data_set_save_path = data_set_save_path
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
+
+        
+
+    def run(self):
+        
+
+
+    def load_data(self):
+        """
+        The load_data function loads the data set, and returns a train loader and test loader.
+        The train_loader is used to load training data in batches for model training. The test_loader is 
+        used to load testing data in batches for model evaluation.
+        
+        :param self: Used to Access variables that belongs to the class.
+        :return: A train_loader and a test_loader.
+        
+        :doc-author: Trelent
+        """
+        
+        self.train_loader, self.test_loader = load_standard_datset(
+            path=self.data_set_save_path,
+            dataset_name=self.data_set_name,
+            test_ratio=self.test_ratio,
+            batch_size=self.batch_size,
+        )
+        return self.train_loader, self.test_loader
+
+if __name__ == "__main__":
     run = Run()
     print(run.model.dim)
     run.net_dimension = 50

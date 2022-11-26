@@ -1,3 +1,9 @@
+"""
+CGC model is named after the structure of the graph neural network. 
+The graph neural network is structured with a convolutional , graph attention, 
+and another convulutional layer. The CGC model was the model tested int the publication 
+Introducing CARATE: Finally speaking chemistry.
+"""
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
@@ -12,33 +18,36 @@ import sklearn.metrics as metrics
 
 class Net(torch.nn.Module):
     """
-    The Net is the core algorithm and needs a constructor and a 
+    The Net is the core algorithm and needs a constructor and a
     forward pass. The train, test and evaluation methods are implemented
     in the evaluation module with the Evaluation class.
-    
+
     """
-    def __init__(self, dim, num_features=2, num_classes=2):#TODO num_features and num_classes should come from dataset
+
+    def __init__(
+        self, dim, num_features=2, num_classes=2
+    ):  # TODO num_features and num_classes should come from dataset
         super(Net, self).__init__()
 
         self.num_features = num_features
         self.dim = dim
 
         self.conv1 = GraphConv(num_features, dim)
-        #self.conv2 = GraphConv(dim, dim)
-        self.conv3 = GATConv(dim, dim, dropout = 0.6, heads=16)
-        self.conv5 = GraphConv(dim*16, dim)
+        self.conv3 = GATConv(dim, dim, dropout=0.6, heads=16)
+        self.conv5 = GraphConv(dim * 16, dim)
 
         self.fc1 = Linear(dim, dim)
         self.fc2 = Linear(dim, num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
-        #x = F.relu(self.conv2(x, edge_index, edge_weight))
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu(self.conv3(x, edge_index, edge_weight))
         x = F.relu(self.conv5(x, edge_index, edge_weight))
         x = global_add_pool(x, batch)
         x = F.relu(self.fc1(x))
-        x = F.dropout(x, p=0.5, training=self.training)
+        x = F.dropout(
+            x, p=0.5, training=self.training
+        )  # thats not a good dropout and should be reduced
         x = self.fc2(x)
         return torch.sigmoid(x)
