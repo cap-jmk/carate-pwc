@@ -1,6 +1,7 @@
 """
 File for data loading from the standard datasets implemented in the pytorch_geometric #
-library
+library. The DataSet loader is implemented as a base clase and other subclasses include loaders for standardized benchmarks
+as well as custom datasets. 
 """
 
 from torch_geometric.data import DataLoader
@@ -16,14 +17,36 @@ class DataLoader():
         pass 
 
 
-def StandardDataLoader(DataLoader): 
+class StandardDataLoader(DataLoader): 
+    
 
-    #TODO integrate standard data loading 
+    
 
-    def __init__(self): 
+    def __init__(self, path:str, data_set_name:str, test_ratio:int, batch_size:int):
+        """
+        The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
+        The __init__ function allows us to set attributes that are specific to each object created from the class.
+        In our case, we want each data_set object to have a path, data_set_name, test_ratio and batch size attribute.
+        
+        :param self: Used to Reference the object to which the function is applied.
+        :param path:str: Used to Specify the path to the dataset.
+        :param data_set_name:str: Used to Store the name of the data set.
+        :param test_ratio:int: Used to Split the data set into a training and testing set.
+        :param batch_size:int: Used to Set the batch size.
+        :return: The object of the class.
+        
+        :doc-author: Julian M. Kleber
+        """
+        
+        
+        self.path = path 
+        self.data_set_name = data_set_name
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
+
 
     def load_standard_datset(
-        path: str, dataset_name: str, test_ratio: int, batch_size: int = 64
+        path: str, dataset_name: str, test_ratio: int, batch_size: int = 64, shuffle:bool = True
     ):
         """
         The load_dataset function loads the SIDER dataset, splits it into a training and testing set,
@@ -39,9 +62,13 @@ def StandardDataLoader(DataLoader):
 
         :doc-author: Julian M. Kleber
         """
+        #TODO implement shuffle on request 
 
         path = "."
-        dataset = MoleculeNet(path, name="sider").shuffle()
+        if shuffle:
+            dataset = MoleculeNet(path, name=dataset_name).shuffle()
+        else: 
+            dataset = MoleculeNet(path, name=dataset_name).shuffle()
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)

@@ -14,15 +14,17 @@ class Run:
 
     def __init__(
         self,
+        data_set_name: str,
+        model: Type(torch.nn.Module),
         device: Type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
         ),
-        model: Type(torch.nn.Module) = Net,
+
         optimizer: Type(torch.optim) = None,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         data_set_save_path: str = ".",
-        data_set_name: str = "Enzymes",
+        
         test_ratio: int = 20,
         batch_size: int = 64,
     ):
