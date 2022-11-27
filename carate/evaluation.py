@@ -4,35 +4,56 @@ The idea is to parametrize as much as possible.
 
 """
 from utils.file_utils import check_make_dir
-
+from load_data import DataLoader, StandardDataLoader
 
 from typing import Type
+
 
 class Evaluation:
 
     """
     The evaluation class is about evaluating a given model written in PyTorch or PyTorchGeometric.
-
-
-    ------Attributes------
-    The evaluation has the attributes
-        epoch
-        model
-        optimizer
-        num_classes
-
     """
 
-    def __init__(self, epoch, model, optimizer, num_classes, out_dir="out"):
+    def __init__(
+        self,
+        model,
+        optimizer,
+        data_loader: Type(DataLoader.load_data),
+        epoch: int = 150,
+        num_cv: int = 5,
+        num_classes: int = 2,
+        out_dir: str = "out",
+        gamma: int = 0.5,
+    ):
+        """
+
+        :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
+        :param model: Used to Specify the model that will be trained.
+        :param optimizer: Used to Define the optimizer that will be used to train the model.
+        :param data_loader:Type(DataLoader): Used to Specify the type of data loader that is used. Is implemented according to
+                                             the interface given in load_data.py by the class DataLoader.load_data().
+
+        :param epoch:int=150: Used to Set the number of epochs to train for.
+        :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
+        :param num_classes:int=2: Used to Define the number of classes in the dataset.
+        :param out_dir:str="out": Used to Specify the directory where the output of your training will be stored.
+        :param gamma=0.5: Used to Set the decay rate of the loss function.
+        :return: The following:.
+
+        :doc-author: Julian M. Kleber
+        """
 
         self.epoch = epoch
         self.model = model
         self.optimizer = optimizer
         self.num_classes = num_classes
         self.out_dir = out_dir
+        self.gamma = gamma
+        self.load_data = load_data
 
     def train(
-        epoch:int,
+        epoch: int,
         model,
         device,
         train_loader,
@@ -62,7 +83,9 @@ class Evaluation:
 
         if epoch == shrinkage:
             for param_group in optimizer.param_groups:
-                param_group["lr"] = 0.5 * param_group["lr"]  # setting the learning rate
+                param_group["lr"] = (
+                    gamma * param_group["lr"]
+                )  # setting the learning rate behaviour over time
 
         correct = 0
         for data in train_loader:
@@ -82,7 +105,8 @@ class Evaluation:
 
     def test(test_loader, epoch, model, device, test=False):
         """
-        The test function is used to test the model on a dataset. It returns the accuracy of the model on that dataset
+        The test function is used to test the model on a dataset.
+        It returns the accuracy of the model on that dataset
 
         :param test_loader: Used to Pass the test data loader.
         :param epoch: Used to Keep track of the current epoch.
@@ -110,11 +134,17 @@ class Evaluation:
         if test:
             outputs = np.concatenate(outs, axis=0).astype(float)
             self.train_store = (
-                output  # TODO Do not save but only store temporarily in class
+                outputs  # TODO Do not save but only store temporarily in class
             )
         return correct / len(loader.dataset)
 
-    def cv(data_set:str, n:int=5, num_epoch:int=150, num_classes:int=2):
+    def cv(
+        data_set: str,
+        n: int,
+        num_epoch: int,
+        num_classes: int,
+        load_data: Type(DataLoader.load_data),
+    ):
         """
         The cv function takes in a dataset name, and returns the results of cross validation.
         The function takes in a dataset name, and then splits the data into 5 folds.
@@ -123,8 +153,8 @@ class Evaluation:
 
         :param data_set: Used to Determine which dataset to load.
         :param n=5: Used to Indicate the number of iterations.
-        :param num_epoch=150: Used to Specify the number of epochs.
-        :param num_classes=2: Used to Specify the number of classes in the dataset.
+        :param num_epoch=150: Used to specify the number of epochs.
+        :param num_classes=2: Used to specify the number of classes in the dataset.
         :return: A list of dictionaries.
 
         :doc-author: Trelent
@@ -136,9 +166,13 @@ class Evaluation:
         loss_store = []
         tmp = {}
         for i in range(n):
-            test_loader, train_loader, dataset, train_dataset, test_dataset = load_data(
-                dataset=data_set
-            ) #TODO It loads the data here thats okay, you can pass the function
+            (
+                test_loader,
+                train_loader,
+                dataset,
+                train_dataset,
+                test_dataset,
+            ) = self.DataLoader.load_data(dataset=data_set)
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model = Net(dim=364, dataset=dataset).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
@@ -191,6 +225,6 @@ class Evaluation:
                     + "_"
                     + str(i)
                     + ".csv"
-                )  # TODO Parametrize
+                )
             result.append(tmp)
         return result

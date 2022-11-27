@@ -2,52 +2,52 @@
 File for data loading from the standard datasets implemented in the pytorch_geometric #
 library. The DataSet loader is implemented as a base clase and other subclasses include loaders for standardized benchmarks
 as well as custom datasets. 
+
+@author: Julian M. Kleber
 """
 
 from torch_geometric.data import DataLoader
 from torch_geometric.datasets import MoleculeNet
 import rdkit as rdkit
 
-class DataLoader(): 
 
-    def __init__(self): 
+class DataLoader:
+    def __init__(self):
         pass
 
     def load(self):
-        pass 
+        pass
 
 
-class StandardDataLoader(DataLoader): 
-    
-
-    
-
-    def __init__(self, path:str, data_set_name:str, test_ratio:int, batch_size:int):
+class StandardDataLoader(DataLoader):
+    def __init__(self, path: str, data_set_name: str, test_ratio: int, batch_size: int):
         """
         The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
         The __init__ function allows us to set attributes that are specific to each object created from the class.
         In our case, we want each data_set object to have a path, data_set_name, test_ratio and batch size attribute.
-        
+
         :param self: Used to Reference the object to which the function is applied.
         :param path:str: Used to Specify the path to the dataset.
         :param data_set_name:str: Used to Store the name of the data set.
         :param test_ratio:int: Used to Split the data set into a training and testing set.
         :param batch_size:int: Used to Set the batch size.
         :return: The object of the class.
-        
+
         :doc-author: Julian M. Kleber
         """
-        
-        
-        self.path = path 
+
+        self.path = path
         self.data_set_name = data_set_name
         self.test_ratio = test_ratio
         self.batch_size = batch_size
 
-
-    def load_standard_datset(
-        path: str, dataset_name: str, test_ratio: int, batch_size: int = 64, shuffle:bool = True
-    ):
+    def load_datset(
+        path: str,
+        dataset_name: str,
+        test_ratio: int,
+        batch_size: int = 64,
+        shuffle: bool = True,
+    )->list:
         """
         The load_dataset function loads the SIDER dataset, splits it into a training and testing set,
         and returns the appropriate dataloaders for each. The test_ratio parameter specifies what percentage of
@@ -62,15 +62,45 @@ class StandardDataLoader(DataLoader):
 
         :doc-author: Julian M. Kleber
         """
-        #TODO implement shuffle on request 
-
+        method_variables = _get_defaults(locals())
+        path, dataset_name, test_ratio, batch_size, shuffle = method_variables
         path = "."
         if shuffle:
             dataset = MoleculeNet(path, name=dataset_name).shuffle()
-        else: 
+        else:
             dataset = MoleculeNet(path, name=dataset_name).shuffle()
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
         return train_loader, test_loader
+
+    def _get_defaults(method_arguments:dict)->list:
+        """
+        The _get_defaults function takes a dictionary of arguments and returns a list of values. 
+        The function checks if the value is None, if it is none then it checks to see if that key exists in the instance variables. 
+        If so, then it will return the instance variable associated with that key. If not, then nothing happens and None gets returned.
+        
+        :param method_arguments:dict: Used to Pass in the arguments that are passed into the method.
+        :return: A list of values that are either none or the value provided in the method_arguments dictionary.
+        
+        :doc-author: Trelent
+        """
+        
+        result = []
+        instance_variables = vars(self) #dictionary with instance variables
+        instance_attributes = variables.keys()
+
+        for key, value in method_arguemnts.items(): 
+            if key == "self": 
+                continue
+
+            if value == None and key in instance_attributes: 
+                result.append(instance_variables[key])
+            elif value != None: 
+                result.append(value)
+            elif value is None and key not in instance_attributes: 
+                result.append(None)
+            else: 
+                result.append(None)
+        return result

@@ -1,6 +1,6 @@
 import torch
 from models.cgc import Net
-from load_data import load_standard_datset
+from cate.load_data import StandardDataLoader
 import click
 
 
@@ -59,7 +59,10 @@ class Run:
         
         :doc-author: Trelent
         """
-        
+        self.StandardDataLoader(path=self.data_set_save_path,
+            dataset_name=self.data_set_name,
+            test_ratio=self.test_ratio,
+            batch_size=self.batch_size)
         self.train_loader, self.test_loader = load_standard_datset(
             path=self.data_set_save_path,
             dataset_name=self.data_set_name,
