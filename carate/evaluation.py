@@ -23,7 +23,7 @@ class Evaluation:
         epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
-        out_dir: str = "out",
+        out_dir: str = r"./out",
         gamma: int = 0.5,
     ):
         """
@@ -134,7 +134,7 @@ class Evaluation:
         if test:
             outputs = np.concatenate(outs, axis=0).astype(float)
             self.train_store = (
-                outputs  # TODO Do not save but only store temporarily in class
+                outputs 
             )
         return correct / len(loader.dataset)
 
@@ -152,9 +152,9 @@ class Evaluation:
         the metrics (losses, accuracies) for each epoch to a csv file for later analysis.
 
         :param data_set: Used to Determine which dataset to load.
-        :param n=5: Used to Indicate the number of iterations.
-        :param num_epoch=150: Used to specify the number of epochs.
-        :param num_classes=2: Used to specify the number of classes in the dataset.
+        :param n: Used to Indicate the number of iterations.
+        :param num_epoch: Used to specify the number of epochs.
+        :param num_classes: Used to specify the number of classes in the dataset.
         :return: A list of dictionaries.
 
         :doc-author: Trelent
@@ -166,16 +166,13 @@ class Evaluation:
         loss_store = []
         tmp = {}
         for i in range(n):
-            (
-                test_loader,
+            (   
                 train_loader,
+                test_loader,
                 dataset,
                 train_dataset,
                 test_dataset,
             ) = self.DataLoader.load_data(dataset=data_set)
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model = Net(dim=364, dataset=dataset).to(device)
-            optimizer = torch.optim.Adam(model.parameters(), lr=0.0005)
 
             for epoch in range(1, num_epoch):
                 train_loss = train(
@@ -228,3 +225,4 @@ class Evaluation:
                 )
             result.append(tmp)
         return result
+    

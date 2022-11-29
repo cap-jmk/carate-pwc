@@ -10,8 +10,12 @@ from torch_geometric.data import DataLoader
 from torch_geometric.datasets import MoleculeNet
 import rdkit as rdkit
 
+from carate.default_interface import DefaultObject
 
-class DataLoader:
+class DataLoader(DefaultObject):
+    """
+    Interface for DataLoading objects
+    """
     def __init__(self):
         pass
 
@@ -20,6 +24,12 @@ class DataLoader:
 
 
 class StandardDataLoader(DataLoader):
+    """
+    Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
+    and provided bei TU Dortmund in TUDatasets
+    """
+
+
     def __init__(self, path: str, data_set_name: str, test_ratio: int, batch_size: int):
         """
         The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
@@ -47,7 +57,7 @@ class StandardDataLoader(DataLoader):
         test_ratio: int,
         batch_size: int = 64,
         shuffle: bool = True,
-    )->list:
+    ) -> list:
         """
         The load_dataset function loads the SIDER dataset, splits it into a training and testing set,
         and returns the appropriate dataloaders for each. The test_ratio parameter specifies what percentage of
@@ -73,34 +83,5 @@ class StandardDataLoader(DataLoader):
         train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
-        return train_loader, test_loader
+        return train_loader, test_loader, dataset, train_dataset, test_dataset
 
-    def _get_defaults(method_arguments:dict)->list:
-        """
-        The _get_defaults function takes a dictionary of arguments and returns a list of values. 
-        The function checks if the value is None, if it is none then it checks to see if that key exists in the instance variables. 
-        If so, then it will return the instance variable associated with that key. If not, then nothing happens and None gets returned.
-        
-        :param method_arguments:dict: Used to Pass in the arguments that are passed into the method.
-        :return: A list of values that are either none or the value provided in the method_arguments dictionary.
-        
-        :doc-author: Trelent
-        """
-        
-        result = []
-        instance_variables = vars(self) #dictionary with instance variables
-        instance_attributes = variables.keys()
-
-        for key, value in method_arguemnts.items(): 
-            if key == "self": 
-                continue
-
-            if value == None and key in instance_attributes: 
-                result.append(instance_variables[key])
-            elif value != None: 
-                result.append(value)
-            elif value is None and key not in instance_attributes: 
-                result.append(None)
-            else: 
-                result.append(None)
-        return result
