@@ -4,6 +4,7 @@ The test aims to evaluate the power of the Data loader
 
 @author = Julian M. Kleber
 """
+import sys, os
 import pytest 
 from carate.load_data import StandardDataLoader
 #TODO Test the setting to class defaults 
