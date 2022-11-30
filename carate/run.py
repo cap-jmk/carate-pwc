@@ -2,12 +2,14 @@ import torch
 import click
 
 from carate.models.cgc import Net
-from carate.load_data import StandardDataLoader
+from carate.load_data import DataLoader, StandardDataLoader
+from carate.evaluation import Evaluation
+from carate.default_interface import DefaultObject
 
 from typing import Type
 
 
-class Run:
+class Run(DefaultObject):
     """
     Run module to parametrize different tests and benchmarks from the command line
     """
@@ -15,20 +17,26 @@ class Run:
     def __init__(
         self,
         data_set_name: str,
-        model: Type(torch.nn.Module),
-        device: Type(torch.device) = torch.device(
+        num_features:int,
+        num_classes:int, 
+        model: type(torch.nn.Module),
+        device: type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
         ),
-        optimizer: Type(torch.optim) = None,
+        optimizer: type(torch.optim) = None,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         data_set_save_path: str = ".",
         test_ratio: int = 20,
         batch_size: int = 64,
+        n_cv:int = 5,
+        num_epoch=150 
     ):
         # model parameters
         self.device = device
-        self.model = model(dim=net_dimension).to(device)
+        self.num_classes = num_classes
+        self.num_features = num_features
+        self.model = model(dim=net_dimension, num_classes = num_classes, num_features = num_features).to(device)
         if optimizer is None:
             self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
         self.net_dimension = net_dimension
@@ -39,43 +47,12 @@ class Run:
         self.data_set_save_path = data_set_save_path
         self.test_ratio = test_ratio
         self.batch_size = batch_size
+    
+    def run(self, model:type(torch.nn.Module), optimizer:typer(torch.optim), data_laoder:type(DataLoader)): 
 
-    def load_data(self):
-        """
-        The load_data function loads the data set, and returns a train loader and test loader.
-        The train_loader is used to load training data in batches for model training. The test_loader is
-        used to load testing data in batches for model evaluation.
-
-        :param self: Used to Access variables that belongs to the class.
-        :return: A train_loader and a test_loader.
-
-        :doc-author: Trelent
-        """
-        self.StandardDataLoader(
-            path=self.data_set_save_path,
-            dataset_name=self.data_set_name,
-            test_ratio=self.test_ratio,
-            batch_size=self.batch_size,
-        )
-        self.train_loader, self.test_loader = self.StandardDataLoader.load_dataset(
-            path=self.data_set_save_path,
-            dataset_name=self.data_set_name,
-            test_ratio=self.test_ratio,
-            batch_size=self.batch_size,
-        )
-        return self.train_loader, self.test_loader
-
+        model, optimizer, data_loader = self._get_defaults(locals())
+        self.Evaluation = Evaluation(model=model, optimizer=optimizer, data_loader=data_loader)
+        self.Evaluation.cv(n_cv, num_epoch, num_classes, data_loader=data_loader)
 
 if __name__ == "__main__":
-    run = Run(  data_set_name: str,
-                model: Type(torch.nn.Module),
-                device: Type(torch.device) = torch.device(
-                    "cuda" if torch.cuda.is_available() else "cpu"
-                ),
-                optimizer: Type(torch.optim) = None,
-                net_dimension: int = 364,
-                learning_rate: float = 0.0005,
-                data_set_save_path: str = ".",
-                test_ratio: int = 20,
-                batch_size: int = 64
-            )
+    pass

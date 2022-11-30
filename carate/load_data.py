@@ -17,10 +17,10 @@ class DataLoader(DefaultObject):
     Interface for DataLoading objects
     """
     def __init__(self):
-        pass
+        raise NotImplementedError
 
     def load(self):
-        pass
+        raise NotImplementedError
 
 
 class StandardDataLoader(DataLoader):
@@ -59,7 +59,7 @@ class StandardDataLoader(DataLoader):
         shuffle: bool = True,
     ) -> list:
         """
-        The load_dataset function loads the SIDER dataset, splits it into a training and testing set,
+        The load_dataset function loads a standard dataset, splits it into a training and testing set,
         and returns the appropriate dataloaders for each. The test_ratio parameter specifies what percentage of
         the original dataset should be used as the testing set. The batch_size parameter specifies how many samples
         should be in each batch.
@@ -72,7 +72,7 @@ class StandardDataLoader(DataLoader):
 
         :doc-author: Julian M. Kleber
         """
-        method_variables = _get_defaults(locals())
+        method_variables = self._get_defaults(locals())
         path, dataset_name, test_ratio, batch_size, shuffle = method_variables
         path = "."
         if shuffle:

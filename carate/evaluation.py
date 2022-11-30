@@ -139,11 +139,10 @@ class Evaluation:
         return correct / len(loader.dataset)
 
     def cv(
-        data_set: str,
-        n: int,
+        n_cv: int,
         num_epoch: int,
         num_classes: int,
-        load_data: Type(DataLoader.load_data),
+        DataLoader: type(DataLoader),
     ):
         """
         The cv function takes in a dataset name, and returns the results of cross validation.
@@ -152,30 +151,32 @@ class Evaluation:
         the metrics (losses, accuracies) for each epoch to a csv file for later analysis.
 
         :param data_set: Used to Determine which dataset to load.
-        :param n: Used to Indicate the number of iterations.
+        :param n_cv: Used to Indicate the number of iterations.
         :param num_epoch: Used to specify the number of epochs.
         :param num_classes: Used to specify the number of classes in the dataset.
         :return: A list of dictionaries.
 
         :doc-author: Trelent
         """
+       
+        n_cv, num_epoch, num_classes, DataLoader = self._get_defaults(locals())
 
         result = []
         acc_store = []
         auc_store = []
         loss_store = []
         tmp = {}
-        for i in range(n):
+        for i in range(n_cv):
             (   
                 train_loader,
                 test_loader,
                 dataset,
                 train_dataset,
                 test_dataset,
-            ) = self.DataLoader.load_data(dataset=data_set)
+            ) = DataLoader.load_data()
 
             for epoch in range(1, num_epoch):
-                train_loss = train(
+                train_loss = self.train(
                     epoch=epoch,
                     model=model,
                     device=device,
@@ -184,8 +185,8 @@ class Evaluation:
                     num_classes=num_classes,
                 )
                 loss_store.append(train_loss.cpu().tolist())
-                train_acc = test(train_loader, device=device, model=model, epoch=epoch)
-                test_acc = test(
+                train_acc = self.test(train_loader, device=device, model=model, epoch=epoch)
+                test_acc = self.test(
                     test_loader, device=device, model=model, epoch=epoch, test=True
                 )
                 acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
@@ -222,7 +223,9 @@ class Evaluation:
                     + "_"
                     + str(i)
                     + ".csv"
-                )
+                ) #TODO get rid of print statements
             result.append(tmp)
         return result
-    
+
+        def __str__(self): 
+            raise NotImplementedError #TODO implement string methods in all classes 
