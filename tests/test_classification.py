@@ -4,11 +4,13 @@ Tests about the classficiation abilities of the models
 @author: Julian M. Kleber
 """
 
-from run import Run
-from test_loading import data_set_classification
+import torch
+
+from carate.run import Run
+from carate.models.cgc import Net
 
 
-def test_classification(data_set_classification):
+def test_classification():
     data_set_name = "ENZYMES"
     num_classes = 6
     num_features = 3

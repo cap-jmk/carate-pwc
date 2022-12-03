@@ -3,10 +3,14 @@ This is the heart of the application and trains / tests a algorithm on a given d
 The idea is to parametrize as much as possible. 
 
 """
-from utils.file_utils import check_make_dir
-from load_data import DataLoader, StandardDataLoader
+from carate.utils.file_utils import check_make_dir
+from carate.load_data import DataLoader, StandardDataLoader
 
 from typing import Type
+
+import logging 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
 class Evaluation:
@@ -19,7 +23,7 @@ class Evaluation:
         self,
         model,
         optimizer,
-        data_loader: Type(DataLoader.load_data),
+        data_loader: type(DataLoader.load_data),
         epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
@@ -50,7 +54,7 @@ class Evaluation:
         self.num_classes = num_classes
         self.out_dir = out_dir
         self.gamma = gamma
-        self.load_data = load_data
+        self.dataLoader = DataLoader
 
     def train(
         epoch: int,
@@ -216,14 +220,14 @@ class Evaluation:
                 tmp["AUC"] = auc_store
             with open(save_dir + data_set + "_" + str(i) + ".csv", "w") as f:
                 json.dump(tmp, f)
-                print(
+                logging.INFO(
                     "Saved iteration one to "
                     + save_dir
                     + data_set
                     + "_"
                     + str(i)
                     + ".csv"
-                ) #TODO get rid of print statements
+                )
             result.append(tmp)
         return result
 

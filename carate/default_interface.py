@@ -1,3 +1,9 @@
+import logging 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+
+
+
 
 class DefaultObject: 
     """
@@ -5,7 +11,7 @@ class DefaultObject:
     Python functionality. 
     """
     
-    def _get_defaults(method_arguments: dict) -> list:
+    def _get_defaults(self, method_arguments: dict) -> list:
         """
         The _get_defaults function takes a dictionary of arguments and returns a list of values.
         The function checks if the value is None, if it is none then it checks to see if that key exists in the instance variables.
@@ -19,9 +25,9 @@ class DefaultObject:
 
         result = []
         instance_variables = vars(self)  # dictionary with instance variables
-        instance_attributes = variables.keys()
+        instance_attributes = instance_variables.keys()
 
-        for key, value in method_arguemnts.items():
+        for key, value in method_arguments.items():
             if key == "self":
                 continue
 

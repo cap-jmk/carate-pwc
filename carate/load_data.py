@@ -12,6 +12,13 @@ import rdkit as rdkit
 
 from carate.default_interface import DefaultObject
 
+import logging 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+
+
+
+
 class DataLoader(DefaultObject):
     """
     Interface for DataLoading objects
@@ -19,7 +26,7 @@ class DataLoader(DefaultObject):
     def __init__(self):
         raise NotImplementedError
 
-    def load(self):
+    def load_data(self):
         raise NotImplementedError
 
 

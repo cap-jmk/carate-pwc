@@ -3,10 +3,12 @@ import json
 import time
 import logging
 
-LOGGER = logging.getLogger(__name__)
+import logging 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 
-timestr = time.strftime("%Y%m%d-%H%M%S")
+
 
 
 def prepare_file_name_saving(prefix: str, file_name: str, ending: str) -> str:

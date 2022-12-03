@@ -8,6 +8,11 @@ from carate.default_interface import DefaultObject
 
 from typing import Type
 
+import logging 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+
+
 
 class Run(DefaultObject):
     """
@@ -48,7 +53,7 @@ class Run(DefaultObject):
         self.test_ratio = test_ratio
         self.batch_size = batch_size
     
-    def run(self, model:type(torch.nn.Module), optimizer:typer(torch.optim), data_laoder:type(DataLoader)): 
+    def run(self, model:type(torch.nn.Module)=None, optimizer:type(torch.optim)=None, data_laoder:type(DataLoader)=None): 
 
         model, optimizer, data_loader = self._get_defaults(locals())
         self.Evaluation = Evaluation(model=model, optimizer=optimizer, data_loader=data_loader)
