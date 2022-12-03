@@ -12,17 +12,22 @@ import rdkit as rdkit
 
 from carate.default_interface import DefaultObject
 
-import logging 
+import logging
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
-
-
+logging.basicConfig(
+    filename="example.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
 
 
 class DataLoader(DefaultObject):
     """
     Interface for DataLoading objects
     """
+
     def __init__(self):
         raise NotImplementedError
 
@@ -35,7 +40,6 @@ class StandardDataLoader(DataLoader):
     Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
     and provided bei TU Dortmund in TUDatasets
     """
-
 
     def __init__(self, path: str, data_set_name: str, test_ratio: int, batch_size: int):
         """
@@ -91,4 +95,3 @@ class StandardDataLoader(DataLoader):
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
         return train_loader, test_loader, dataset, train_dataset, test_dataset
-

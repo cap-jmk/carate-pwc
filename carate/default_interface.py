@@ -1,16 +1,20 @@
-import logging 
+import logging
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+logging.basicConfig(
+    filename="example.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
 
 
-
-
-class DefaultObject: 
+class DefaultObject:
     """
-    The default object provides methods every class needs on top of the standard 
-    Python functionality. 
+    The default object provides methods every class needs on top of the standard
+    Python functionality.
     """
-    
+
     def _get_defaults(self, method_arguments: dict) -> list:
         """
         The _get_defaults function takes a dictionary of arguments and returns a list of values.
@@ -30,8 +34,8 @@ class DefaultObject:
         for key, value in method_arguments.items():
             if key == "self":
                 continue
-
-            if value == None and key in instance_attributes:
+            print(value, instance_variables[key])
+            if value is None and key in instance_attributes:
                 result.append(instance_variables[key])
             elif value != None:
                 result.append(value)

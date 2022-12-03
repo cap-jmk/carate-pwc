@@ -8,9 +8,15 @@ from carate.load_data import DataLoader, StandardDataLoader
 
 from typing import Type
 
-import logging 
+import logging
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(message)s')
+logging.basicConfig(
+    filename="example.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
 
 
 class Evaluation:
@@ -21,9 +27,9 @@ class Evaluation:
 
     def __init__(
         self,
-        model,
-        optimizer,
-        data_loader: type(DataLoader.load_data),
+        model,  # TODO types
+        optimizer,  # TODO types
+        DataLoader: type(DataLoader),
         epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
@@ -54,7 +60,7 @@ class Evaluation:
         self.num_classes = num_classes
         self.out_dir = out_dir
         self.gamma = gamma
-        self.dataLoader = DataLoader
+        self.DataLoader = DataLoader
 
     def train(
         epoch: int,
@@ -137,9 +143,7 @@ class Evaluation:
                 outs.append(output.cpu().detach().numpy())
         if test:
             outputs = np.concatenate(outs, axis=0).astype(float)
-            self.train_store = (
-                outputs 
-            )
+            self.train_store = outputs
         return correct / len(loader.dataset)
 
     def cv(
@@ -162,7 +166,7 @@ class Evaluation:
 
         :doc-author: Trelent
         """
-       
+
         n_cv, num_epoch, num_classes, DataLoader = self._get_defaults(locals())
 
         result = []
@@ -171,7 +175,7 @@ class Evaluation:
         loss_store = []
         tmp = {}
         for i in range(n_cv):
-            (   
+            (
                 train_loader,
                 test_loader,
                 dataset,
@@ -189,7 +193,9 @@ class Evaluation:
                     num_classes=num_classes,
                 )
                 loss_store.append(train_loss.cpu().tolist())
-                train_acc = self.test(train_loader, device=device, model=model, epoch=epoch)
+                train_acc = self.test(
+                    train_loader, device=device, model=model, epoch=epoch
+                )
                 test_acc = self.test(
                     test_loader, device=device, model=model, epoch=epoch, test=True
                 )
@@ -231,5 +237,5 @@ class Evaluation:
             result.append(tmp)
         return result
 
-        def __str__(self): 
-            raise NotImplementedError #TODO implement string methods in all classes 
+        def __str__(self):
+            raise NotImplementedError  # TODO implement string methods in all classes
