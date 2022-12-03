@@ -7,7 +7,7 @@ as well as custom datasets.
 """
 
 from torch_geometric.data import DataLoader
-from torch_geometric.datasets import MoleculeNet
+from torch_geometric.datasets import MoleculeNet, TUDataset
 import rdkit as rdkit
 
 from carate.default_interface import DefaultObject
@@ -23,7 +23,7 @@ logging.basicConfig(
 )
 
 
-class DataLoader(DefaultObject):
+class DataLoaderObject(DefaultObject):
     """
     Interface for DataLoading objects
     """
@@ -34,38 +34,17 @@ class DataLoader(DefaultObject):
     def load_data(self):
         raise NotImplementedError
 
+class StandardPytorchGeometricDataLoader(DataLoaderObject): 
 
-class StandardDataLoader(DataLoader):
-    """
-    Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
-    and provided bei TU Dortmund in TUDatasets
-    """
+    def __init__(self): 
+        self.DataSet = None 
+        raise NotImplementedError("Implement your dataset above or choose one from a standard library like PyTochGeometric")
 
-    def __init__(self, path: str, data_set_name: str, test_ratio: int, batch_size: int):
-        """
-        The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
-        The __init__ function allows us to set attributes that are specific to each object created from the class.
-        In our case, we want each data_set object to have a path, data_set_name, test_ratio and batch size attribute.
-
-        :param self: Used to Reference the object to which the function is applied.
-        :param path:str: Used to Specify the path to the dataset.
-        :param data_set_name:str: Used to Store the name of the data set.
-        :param test_ratio:int: Used to Split the data set into a training and testing set.
-        :param batch_size:int: Used to Set the batch size.
-        :return: The object of the class.
-
-        :doc-author: Julian M. Kleber
-        """
-
-        self.path = path
-        self.data_set_name = data_set_name
-        self.test_ratio = test_ratio
-        self.batch_size = batch_size
-
-    def load_datset(
-        path: str,
+    def load_data(
+        self,
         dataset_name: str,
         test_ratio: int,
+        dataset_save_path:str, 
         batch_size: int = 64,
         shuffle: bool = True,
     ) -> list:
@@ -84,14 +63,77 @@ class StandardDataLoader(DataLoader):
         :doc-author: Julian M. Kleber
         """
         method_variables = self._get_defaults(locals())
-        path, dataset_name, test_ratio, batch_size, shuffle = method_variables
-        path = "."
+        dataset_name, test_ratio, dataset_save_path, batch_size, shuffle = method_variables
         if shuffle:
-            dataset = MoleculeNet(path, name=dataset_name).shuffle()
+            dataset = self.DataSet(dataset_save_path, name=dataset_name).shuffle()
         else:
-            dataset = MoleculeNet(path, name=dataset_name).shuffle()
+            dataset = self.DataSet(dataset_save_path, name=dataset_name)
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
         return train_loader, test_loader, dataset, train_dataset, test_dataset
+
+
+
+class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
+    """
+    Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
+    and provided by the MoleculeNet collection of datasets. 
+    """
+
+    def __init__(self, dataset_save_path: str, dataset_name: str, test_ratio: int, batch_size: int, shuffle: bool = True):
+        """
+        The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
+        The __init__ function allows us to set attributes that are specific to each object created from the class.
+        In our case, we want each data_set object to have a path, dataset_name, test_ratio and batch size attribute.
+
+        :param self: Used to Reference the object to which the function is applied.
+        :param path:str: Used to Specify the path to the dataset.
+        :param dataset_name:str: Used to Store the name of the data set.
+        :param test_ratio:int: Used to Split the data set into a training and testing set.
+        :param batch_size:int: Used to Set the batch size.
+        :return: The object of the class.
+
+        :doc-author: Julian M. Kleber
+        """
+
+        self.dataset_save_path = dataset_save_path
+        self.dataset_name = dataset_name
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.DataSet = MoleculeNet
+
+
+class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
+    """
+    class for loading standard datasates from the TU Dataset collection implemented
+    by PyTorch Geometric. 
+
+    author: Julian M. Kleber
+    """ 
+
+    def __init__(self, dataset_save_path: str, dataset_name: str, test_ratio: int, batch_size: int, shuffle: bool = True):
+        """
+        The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
+        The __init__ function allows us to set attributes that are specific to each object created from the class.
+        In our case, we want each data_set object to have a path, dataset_name, test_ratio and batch size attribute.
+
+        :param self: Used to Reference the object to which the function is applied.
+        :param path:str: Used to Specify the path to the dataset.
+        :param dataset_name:str: Used to Store the name of the data set.
+        :param test_ratio:int: Used to Split the data set into a training and testing set.
+        :param batch_size:int: Used to Set the batch size.
+        :return: The object of the class.
+
+        :doc-author: Julian M. Kleber
+        """
+
+        self.dataset_save_path = dataset_save_path
+        self.dataset_name = dataset_name
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.DataSet = TUDataset
+    

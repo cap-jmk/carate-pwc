@@ -3,9 +3,13 @@ This is the heart of the application and trains / tests a algorithm on a given d
 The idea is to parametrize as much as possible. 
 
 """
-from carate.utils.file_utils import check_make_dir
-from carate.load_data import DataLoader, StandardDataLoader
+import torch
 
+from carate.models.cgc import Net
+from carate.models.default_model import DefaultModel
+from carate.utils.file_utils import check_make_dir
+from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
+from carate.default_interface import DefaultObject
 from typing import Type
 
 import logging
@@ -19,7 +23,7 @@ logging.basicConfig(
 )
 
 
-class Evaluation:
+class Evaluation(DefaultObject):
 
     """
     The evaluation class is about evaluating a given model written in PyTorch or PyTorchGeometric.
@@ -27,14 +31,21 @@ class Evaluation:
 
     def __init__(
         self,
-        model,  # TODO types
-        optimizer,  # TODO types
+
+        dataset_name: str,
+        dataset_save_path:str, 
+        model: type(DefaultModel),
+        optimizer: type(torch.optim),
+        device:type(torch.device),  # TODO types
         DataLoader: type(DataLoader),
-        epoch: int = 150,
-        num_cv: int = 5,
+        test_ratio:int, 
+        num_epoch: int = 150,
+        n_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
         gamma: int = 0.5,
+        batch_size:int=64, 
+        shuffle:bool = True, 
     ):
         """
 
@@ -53,22 +64,29 @@ class Evaluation:
 
         :doc-author: Julian M. Kleber
         """
-
-        self.epoch = epoch
+        self.dataset_name = dataset_name
+        self.dataset_save_path = dataset_save_path
+        self.test_ratio = test_ratio
+        self.num_epoch = num_epoch
         self.model = model
         self.optimizer = optimizer
         self.num_classes = num_classes
+        self.n_cv = n_cv
         self.out_dir = out_dir
         self.gamma = gamma
         self.DataLoader = DataLoader
+        self.batch_size = batch_size
+        self.shuffle = shuffle
+        self.device = device
 
     def train(
+        self,
         epoch: int,
-        model,
-        device,
-        train_loader,
-        test_loader,
-        optimizer,
+        model: type(DefaultModel),
+        device: type(torch.device),
+        train_loader, #TODO find out type
+        test_loader,   #TODO find out type
+        optimizer: type(torch.optim),
         num_classes=2,
         shrikage=51,
     ):
@@ -113,7 +131,7 @@ class Evaluation:
         accuracy = correct / len(train_loader.dataset)
         return accuracy
 
-    def test(test_loader, epoch, model, device, test=False):
+    def test(self,test_loader, epoch, model, device, test=False):
         """
         The test function is used to test the model on a dataset.
         It returns the accuracy of the model on that dataset
@@ -147,28 +165,48 @@ class Evaluation:
         return correct / len(loader.dataset)
 
     def cv(
+        self,
         n_cv: int,
         num_epoch: int,
         num_classes: int,
+        dataset_name: str, 
+        dataset_save_path: str, 
+        test_ratio: int, 
         DataLoader: type(DataLoader),
+        shuffle: bool, 
+        batch_size: int, 
+        model: type(DefaultModel), 
+        optimizer: type(torch.optim),
+        device: type(torch.device)
     ):
         """
-        The cv function takes in a dataset name, and returns the results of cross validation.
-        The function takes in a dataset name, and then splits the data into 5 folds.
-        For each fold, it trains on 4 folds and tests on 1 fold. The function also saves all
-        the metrics (losses, accuracies) for each epoch to a csv file for later analysis.
-
-        :param data_set: Used to Determine which dataset to load.
-        :param n_cv: Used to Indicate the number of iterations.
-        :param num_epoch: Used to specify the number of epochs.
-        :param num_classes: Used to specify the number of classes in the dataset.
+        The cv function takes in the following parameters:
+            n_cv (int): The number of cross-validation folds to perform.
+            num_epoch (int): The number of epochs to train for each fold.
+            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.  
+                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.  
+        
+                For example, if you have a binary classification problem with two classes {0, 1}, then this parameter should be set to 2 because there are two possible classifications; however if your data has already been one hot encoded into {[0], [0]}, then it would only make sense for this parameter to be set as 1 since there is only one possible classification per sample point now ({[0], [0]} -> 0).
+        
+                Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
+        
+            DataLoader: An instance of torchvision's DataLoader class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
+        
+        :param self: Used to Represent the instance of the class.
+        :param n_cv:int: Used to Specify the number of cross-validation folds.
+        :param num_epoch:int: Used to Specify the number of epochs to train for.
+        :param num_classes:int: Used to Determine the number of classes in the dataset.
+        :param dataset_name:str: Used to Specify the name of the dataset to be used.
+        :param DataLoader:type(DataLoader): Used to Load the data.
+        :param : Used to Specify the number of folds in a (stratified)kfold,.
         :return: A list of dictionaries.
-
+        
         :doc-author: Trelent
-        """
+    """
+    
 
-        n_cv, num_epoch, num_classes, DataLoader = self._get_defaults(locals())
 
+        n_cv, num_epoch, num_classes, dataset_name, dataset_save_path, test_ratio, DataLoader, shuffle, batch_size, model, optimizer, device = self._get_defaults(locals())
         result = []
         acc_store = []
         auc_store = []
@@ -181,7 +219,7 @@ class Evaluation:
                 dataset,
                 train_dataset,
                 test_dataset,
-            ) = DataLoader.load_data()
+            ) = DataLoader.load_data(dataset_name = dataset_name, dataset_save_path=dataset_save_path, test_ratio=test_ratio, batch_size=batch_size, shuffle=shuffle)
 
             for epoch in range(1, num_epoch):
                 train_loss = self.train(
@@ -190,6 +228,7 @@ class Evaluation:
                     device=device,
                     optimizer=optimizer,
                     train_loader=train_loader,
+                    test_loader = test_loader,
                     num_classes=num_classes,
                 )
                 loss_store.append(train_loss.cpu().tolist())

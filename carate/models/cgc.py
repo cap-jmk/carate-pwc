@@ -11,8 +11,6 @@ from torch.nn import Linear
 from torch_geometric.nn import global_add_pool, GraphConv, GATConv
 
 import numpy as np
-import torch
-
 import sklearn.metrics as metrics
 
 import logging
@@ -24,6 +22,8 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
 )
+
+
 
 
 class Net(torch.nn.Module):
