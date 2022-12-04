@@ -10,15 +10,16 @@ logging.basicConfig(
 )
 
 
-class DefaultModel(torch.nn.Module): # TODO reuse in chembee
+class DefaultModel(torch.nn.Module):  # TODO reuse in chembee
     """
     Base class for the Torch models. The subpackage is highly reusable in other projects
-    
+
     """
-    
-    def __init__(self): 
+
+    def __init__(self):
         pass
 
-
-    def forward(self): 
-        raise NotImplementedError("Please implement your forward pass according to your model archtitecture.")
+    def forward(self):
+        raise NotImplementedError(
+            "Please implement your forward pass according to your model archtitecture."
+        )

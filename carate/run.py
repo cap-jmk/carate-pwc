@@ -28,7 +28,8 @@ class Run(DefaultObject):
         self,
         dataset_name: str,
         num_features: int,
-        num_classes: int, 
+        num_classes: int,
+        shrinkage: int,
         model: type(torch.nn.Module),
         device: type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -49,6 +50,7 @@ class Run(DefaultObject):
         self.device = device
         self.num_classes = num_classes
         self.num_features = num_features
+        self.shrinkage = shrinkage
         self.model = model(
             dim=net_dimension, num_classes=num_classes, num_features=num_features
         ).to(device)
@@ -65,20 +67,20 @@ class Run(DefaultObject):
         self.shuffle = shuffle
         self.n_cv = n_cv
         self.num_epoch = num_epoch
-        
+
         self.DataLoader = DataLoader(
-                dataset_save_path=self.dataset_save_path,
-                dataset_name=self.dataset_name,
-                test_ratio=self.test_ratio,
-                batch_size=self.batch_size,
-            ) # TODO really necessary?
-        
+            dataset_save_path=self.dataset_save_path,
+            dataset_name=self.dataset_name,
+            test_ratio=self.test_ratio,
+            batch_size=self.batch_size,
+        )
+
     def run(
         self,
         device: type(torch.optim),
-        dataset_name: str = None, 
+        dataset_name: str = None,
         test_ratio: int = None,
-        dataset_save_path: str = None, 
+        dataset_save_path: str = None,
         model: type(torch.nn.Module) = None,
         optimizer: type(torch.optim) = None,
         DataLoader: type(DataLoader) = None,
@@ -86,13 +88,14 @@ class Run(DefaultObject):
         num_epoch: int = None,
         num_classes: int = None,
         num_features: int = None,
-        batch_size:int = None, 
-        shuffle: int = None, 
+        batch_size: int = None,
+        shuffle: int = None,
+        shrinkage: int = None,
     ):
 
-        (   
+        (
             device,
-            dataset_name, 
+            dataset_name,
             test_ratio,
             dataset_save_path,
             model,
@@ -102,24 +105,33 @@ class Run(DefaultObject):
             num_epoch,
             num_classes,
             num_features,
-            batch_size, 
-            shuffle, 
-        ) = self._get_defaults(locals()) # TODO Error got multiple values for n_cv it may be that the arguments are recieved in the wrong order or something
+            batch_size,
+            shuffle,
+            shrinkage,
+        ) = self._get_defaults(locals())
         self.Evaluation = Evaluation(
-            dataset_name = dataset_name, dataset_save_path = dataset_save_path, test_ratio=test_ratio, model=model, optimizer=optimizer, DataLoader=DataLoader, device=device
+            dataset_name=dataset_name,
+            dataset_save_path=dataset_save_path,
+            test_ratio=test_ratio,
+            model=model,
+            optimizer=optimizer,
+            DataLoader=DataLoader,
+            device=device,
+            shrinkage=shrinkage,
         )
-        
+
         self.Evaluation.cv(
             dataset_name=dataset_name,
-            dataset_save_path=dataset_save_path, 
-            test_ratio=test_ratio, 
+            dataset_save_path=dataset_save_path,
+            test_ratio=test_ratio,
             n_cv=n_cv,
             num_epoch=num_epoch,
             num_classes=num_classes,
             DataLoader=DataLoader,
-            shuffle= shuffle,
-            batch_size = batch_size, 
-            model = model, 
+            shuffle=shuffle,
+            batch_size=batch_size,
+            model=model,
             optimizer=optimizer,
-            device=device
+            device=device,
+            shrinkage=shrinkage,
         )

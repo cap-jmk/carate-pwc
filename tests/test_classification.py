@@ -10,6 +10,7 @@ from carate.run import Run
 from carate.models.cgc import Net
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
 
+
 def test_classification():
     dataset_name = "ENZYMES"
     num_classes = 6
@@ -23,6 +24,7 @@ def test_classification():
     test_ratio = 10
     batch_size = 64
     shuffle = True
+    shrinkage = 51
     runner = Run(
         dataset_name=dataset_name,
         num_features=num_features,
@@ -36,6 +38,7 @@ def test_classification():
         DataLoader=StandardDataLoaderTUDataset,
         test_ratio=test_ratio,
         batch_size=batch_size,
-        shuffle = shuffle
+        shuffle=shuffle,
+        shrinkage=shrinkage,
     )
     runner.run(device=device)

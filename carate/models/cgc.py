@@ -24,8 +24,6 @@ logging.basicConfig(
 )
 
 
-
-
 class Net(torch.nn.Module):
     """
     The Net is the core algorithm and needs a constructor and a

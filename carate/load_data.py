@@ -34,17 +34,19 @@ class DataLoaderObject(DefaultObject):
     def load_data(self):
         raise NotImplementedError
 
-class StandardPytorchGeometricDataLoader(DataLoaderObject): 
 
-    def __init__(self): 
-        self.DataSet = None 
-        raise NotImplementedError("Implement your dataset above or choose one from a standard library like PyTochGeometric")
+class StandardPytorchGeometricDataLoader(DataLoaderObject):
+    def __init__(self):
+        self.DataSet = None
+        raise NotImplementedError(
+            "Implement your dataset above or choose one from a standard library like PyTochGeometric"
+        )
 
     def load_data(
         self,
         dataset_name: str,
         test_ratio: int,
-        dataset_save_path:str, 
+        dataset_save_path: str,
         batch_size: int = 64,
         shuffle: bool = True,
     ) -> list:
@@ -63,7 +65,13 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
         :doc-author: Julian M. Kleber
         """
         method_variables = self._get_defaults(locals())
-        dataset_name, test_ratio, dataset_save_path, batch_size, shuffle = method_variables
+        (
+            dataset_name,
+            test_ratio,
+            dataset_save_path,
+            batch_size,
+            shuffle,
+        ) = method_variables
         if shuffle:
             dataset = self.DataSet(dataset_save_path, name=dataset_name).shuffle()
         else:
@@ -75,14 +83,20 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
         return train_loader, test_loader, dataset, train_dataset, test_dataset
 
 
-
 class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
     """
     Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
-    and provided by the MoleculeNet collection of datasets. 
+    and provided by the MoleculeNet collection of datasets.
     """
 
-    def __init__(self, dataset_save_path: str, dataset_name: str, test_ratio: int, batch_size: int, shuffle: bool = True):
+    def __init__(
+        self,
+        dataset_save_path: str,
+        dataset_name: str,
+        test_ratio: int,
+        batch_size: int,
+        shuffle: bool = True,
+    ):
         """
         The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
         The __init__ function allows us to set attributes that are specific to each object created from the class.
@@ -109,12 +123,19 @@ class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
 class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
     """
     class for loading standard datasates from the TU Dataset collection implemented
-    by PyTorch Geometric. 
+    by PyTorch Geometric.
 
     author: Julian M. Kleber
-    """ 
+    """
 
-    def __init__(self, dataset_save_path: str, dataset_name: str, test_ratio: int, batch_size: int, shuffle: bool = True):
+    def __init__(
+        self,
+        dataset_save_path: str,
+        dataset_name: str,
+        test_ratio: int,
+        batch_size: int,
+        shuffle: bool = True,
+    ):
         """
         The __init__ function is called the constructor and is automatically called when you create a new instance of this class.
         The __init__ function allows us to set attributes that are specific to each object created from the class.
@@ -136,4 +157,3 @@ class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.DataSet = TUDataset
-    

@@ -4,6 +4,7 @@ The idea is to parametrize as much as possible.
 
 """
 import torch
+import torch.nn.functional as F
 
 from carate.models.cgc import Net
 from carate.models.default_model import DefaultModel
@@ -11,6 +12,7 @@ from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
 from typing import Type
+
 
 import logging
 
@@ -31,21 +33,21 @@ class Evaluation(DefaultObject):
 
     def __init__(
         self,
-
         dataset_name: str,
-        dataset_save_path:str, 
+        dataset_save_path: str,
         model: type(DefaultModel),
         optimizer: type(torch.optim),
-        device:type(torch.device),  # TODO types
+        device: type(torch.device),  # TODO types
         DataLoader: type(DataLoader),
-        test_ratio:int, 
+        test_ratio: int,
+        shrinkage: int,
         num_epoch: int = 150,
         n_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
         gamma: int = 0.5,
-        batch_size:int=64, 
-        shuffle:bool = True, 
+        batch_size: int = 64,
+        shuffle: bool = True,
     ):
         """
 
@@ -67,6 +69,7 @@ class Evaluation(DefaultObject):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
+        self.shrinkage = shrinkage
         self.num_epoch = num_epoch
         self.model = model
         self.optimizer = optimizer
@@ -84,11 +87,11 @@ class Evaluation(DefaultObject):
         epoch: int,
         model: type(DefaultModel),
         device: type(torch.device),
-        train_loader, #TODO find out type
-        test_loader,   #TODO find out type
+        train_loader,  # TODO find out type
+        test_loader,  # TODO find out type
         optimizer: type(torch.optim),
         num_classes=2,
-        shrikage=51,
+        shrinkage=51,
     ):
         """
         The train function is used to train the model.
@@ -106,7 +109,6 @@ class Evaluation(DefaultObject):
 
         :doc-author: Trelent
         """
-
         model.train()
 
         if epoch == shrinkage:
@@ -131,7 +133,7 @@ class Evaluation(DefaultObject):
         accuracy = correct / len(train_loader.dataset)
         return accuracy
 
-    def test(self,test_loader, epoch, model, device, test=False):
+    def test(self, test_loader, epoch, model, device, test=False):
         """
         The test function is used to test the model on a dataset.
         It returns the accuracy of the model on that dataset
@@ -169,29 +171,30 @@ class Evaluation(DefaultObject):
         n_cv: int,
         num_epoch: int,
         num_classes: int,
-        dataset_name: str, 
-        dataset_save_path: str, 
-        test_ratio: int, 
+        dataset_name: str,
+        dataset_save_path: str,
+        test_ratio: int,
         DataLoader: type(DataLoader),
-        shuffle: bool, 
-        batch_size: int, 
-        model: type(DefaultModel), 
+        shuffle: bool,
+        batch_size: int,
+        model: type(DefaultModel),
         optimizer: type(torch.optim),
-        device: type(torch.device)
+        device: type(torch.device),
+        shrinkage: int,
     ):
         """
         The cv function takes in the following parameters:
             n_cv (int): The number of cross-validation folds to perform.
             num_epoch (int): The number of epochs to train for each fold.
-            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.  
-                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.  
-        
+            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.
+                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.
+
                 For example, if you have a binary classification problem with two classes {0, 1}, then this parameter should be set to 2 because there are two possible classifications; however if your data has already been one hot encoded into {[0], [0]}, then it would only make sense for this parameter to be set as 1 since there is only one possible classification per sample point now ({[0], [0]} -> 0).
-        
+
                 Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
-        
+
             DataLoader: An instance of torchvision's DataLoader class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
-        
+
         :param self: Used to Represent the instance of the class.
         :param n_cv:int: Used to Specify the number of cross-validation folds.
         :param num_epoch:int: Used to Specify the number of epochs to train for.
@@ -200,13 +203,25 @@ class Evaluation(DefaultObject):
         :param DataLoader:type(DataLoader): Used to Load the data.
         :param : Used to Specify the number of folds in a (stratified)kfold,.
         :return: A list of dictionaries.
-        
+
         :doc-author: Trelent
-    """
-    
+        """
 
-
-        n_cv, num_epoch, num_classes, dataset_name, dataset_save_path, test_ratio, DataLoader, shuffle, batch_size, model, optimizer, device = self._get_defaults(locals())
+        (
+            n_cv,
+            num_epoch,
+            num_classes,
+            dataset_name,
+            dataset_save_path,
+            test_ratio,
+            DataLoader,
+            shuffle,
+            batch_size,
+            model,
+            optimizer,
+            device,
+            shrinkage,
+        ) = self._get_defaults(locals())
         result = []
         acc_store = []
         auc_store = []
@@ -219,7 +234,13 @@ class Evaluation(DefaultObject):
                 dataset,
                 train_dataset,
                 test_dataset,
-            ) = DataLoader.load_data(dataset_name = dataset_name, dataset_save_path=dataset_save_path, test_ratio=test_ratio, batch_size=batch_size, shuffle=shuffle)
+            ) = DataLoader.load_data(
+                dataset_name=dataset_name,
+                dataset_save_path=dataset_save_path,
+                test_ratio=test_ratio,
+                batch_size=batch_size,
+                shuffle=shuffle,
+            )
 
             for epoch in range(1, num_epoch):
                 train_loss = self.train(
@@ -228,8 +249,9 @@ class Evaluation(DefaultObject):
                     device=device,
                     optimizer=optimizer,
                     train_loader=train_loader,
-                    test_loader = test_loader,
+                    test_loader=test_loader,
                     num_classes=num_classes,
+                    shrinkage=shrinkage,
                 )
                 loss_store.append(train_loss.cpu().tolist())
                 train_acc = self.test(
