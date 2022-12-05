@@ -5,6 +5,8 @@ The idea is to parametrize as much as possible.
 """
 import torch
 import torch.nn.functional as F
+import numpy as np 
+from sklearn import metrics
 
 from carate.models.cgc import Net
 from carate.models.default_model import DefaultModel
@@ -35,6 +37,7 @@ class Evaluation(DefaultObject):
         self,
         dataset_name: str,
         dataset_save_path: str,
+        result_save_dir: str,
         model: type(DefaultModel),
         optimizer: type(torch.optim),
         device: type(torch.device),  # TODO types
@@ -81,6 +84,7 @@ class Evaluation(DefaultObject):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
+        self.result_save_dir = result_save_dir
 
     def train(
         self,
@@ -133,7 +137,7 @@ class Evaluation(DefaultObject):
         accuracy = correct / len(train_loader.dataset)
         return accuracy
 
-    def test(self, test_loader, epoch, model, device, test=False):
+    def test(self, test_loader, epoch:int, model: type(DefaultModel), device:type(torch.device), test=False):
         """
         The test function is used to test the model on a dataset.
         It returns the accuracy of the model on that dataset
@@ -153,7 +157,7 @@ class Evaluation(DefaultObject):
         correct = 0
         if test:
             outs = []
-        for data in loader:
+        for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
             data = data.to(device)
             output_probs = model(data.x, data.edge_index, data.batch)
@@ -164,7 +168,7 @@ class Evaluation(DefaultObject):
         if test:
             outputs = np.concatenate(outs, axis=0).astype(float)
             self.train_store = outputs
-        return correct / len(loader.dataset)
+        return correct / len(test_loader.dataset)
 
     def cv(
         self,
@@ -181,6 +185,7 @@ class Evaluation(DefaultObject):
         optimizer: type(torch.optim),
         device: type(torch.device),
         shrinkage: int,
+        result_save_dir:str
     ):
         """
         The cv function takes in the following parameters:
@@ -221,6 +226,7 @@ class Evaluation(DefaultObject):
             optimizer,
             device,
             shrinkage,
+            result_save_dir
         ) = self._get_defaults(locals())
         result = []
         acc_store = []
@@ -285,7 +291,7 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-            with open(save_dir + data_set + "_" + str(i) + ".csv", "w") as f:
+            with open(result_save_dir + data_set + "_" + str(i) + ".csv", "w") as f:
                 json.dump(tmp, f)
                 logging.INFO(
                     "Saved iteration one to "

@@ -30,6 +30,7 @@ class Run(DefaultObject):
         num_features: int,
         num_classes: int,
         shrinkage: int,
+        result_save_dir:str,
         model: type(torch.nn.Module),
         device: type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -67,6 +68,7 @@ class Run(DefaultObject):
         self.shuffle = shuffle
         self.n_cv = n_cv
         self.num_epoch = num_epoch
+        self.result_save_dir = result_save_dir
 
         self.DataLoader = DataLoader(
             dataset_save_path=self.dataset_save_path,
@@ -91,6 +93,7 @@ class Run(DefaultObject):
         batch_size: int = None,
         shuffle: int = None,
         shrinkage: int = None,
+        result_save_dir: str = None
     ):
 
         (
@@ -108,6 +111,7 @@ class Run(DefaultObject):
             batch_size,
             shuffle,
             shrinkage,
+            result_save_dir
         ) = self._get_defaults(locals())
         self.Evaluation = Evaluation(
             dataset_name=dataset_name,
@@ -118,6 +122,7 @@ class Run(DefaultObject):
             DataLoader=DataLoader,
             device=device,
             shrinkage=shrinkage,
+            result_save_dir = result_save_dir
         )
 
         self.Evaluation.cv(
@@ -134,4 +139,5 @@ class Run(DefaultObject):
             optimizer=optimizer,
             device=device,
             shrinkage=shrinkage,
+            result_save_dir=result_save_dir
         )

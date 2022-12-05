@@ -25,6 +25,9 @@ def test_classification():
     batch_size = 64
     shuffle = True
     shrinkage = 51
+    num_epoch = 2
+    num_cv = 3
+    result_save_dir = "results/"
     runner = Run(
         dataset_name=dataset_name,
         num_features=num_features,
@@ -40,5 +43,8 @@ def test_classification():
         batch_size=batch_size,
         shuffle=shuffle,
         shrinkage=shrinkage,
+        num_epoch= num_epoch, 
+        n_cv = num_cv,
+        result_save_dir = result_save_dir
     )
     runner.run(device=device)

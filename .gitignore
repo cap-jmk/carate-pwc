@@ -155,3 +155,4 @@ plot_roc_crossval.ipynb
 notebooks/
 DevNotes.md
 data/
+*results/
