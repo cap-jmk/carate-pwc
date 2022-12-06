@@ -3,22 +3,25 @@ This is the heart of the application and trains / tests a algorithm on a given d
 The idea is to parametrize as much as possible. 
 
 """
+import json
+import numpy as np 
+
+from sklearn import metrics
 import torch
 import torch.nn.functional as F
-import numpy as np 
-from sklearn import metrics
 
 from carate.models.cgc import Net
 from carate.models.default_model import DefaultModel
 from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
+from carate.utils.file_utils import check_make_dir
 from typing import Type
 
 
 import logging
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 logging.basicConfig(
     filename="example.log",
     encoding="utf-8",
@@ -291,12 +294,13 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-            with open(result_save_dir + data_set + "_" + str(i) + ".csv", "w") as f:
+            check_make_dir(result_save_dir)
+            with open(result_save_dir + dataset_name + "_" + str(i) + ".csv", "w") as f:
                 json.dump(tmp, f)
-                logging.INFO(
+                logging.info(
                     "Saved iteration one to "
-                    + save_dir
-                    + data_set
+                    + result_save_dir
+                    + dataset_name
                     + "_"
                     + str(i)
                     + ".csv"
