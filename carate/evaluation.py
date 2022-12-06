@@ -10,8 +10,7 @@ from sklearn import metrics
 import torch
 import torch.nn.functional as F
 
-from carate.models.cgc import Net
-from carate.models.default_model import DefaultModel
+import carate.models.cgc_classification
 from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
@@ -41,7 +40,7 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model: type(DefaultModel),
+        model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
         device: type(torch.device),  # TODO types
         DataLoader: type(DataLoader),
@@ -77,7 +76,7 @@ class Evaluation(DefaultObject):
         self.test_ratio = test_ratio
         self.shrinkage = shrinkage
         self.num_epoch = num_epoch
-        self.model = model
+        self.model_net = model_net
         self.optimizer = optimizer
         self.num_classes = num_classes
         self.n_cv = n_cv
@@ -92,7 +91,7 @@ class Evaluation(DefaultObject):
     def train(
         self,
         epoch: int,
-        model: type(DefaultModel),
+        model:type(torch.nn.Module),
         device: type(torch.device),
         train_loader,  # TODO find out type
         test_loader,  # TODO find out type
@@ -140,14 +139,14 @@ class Evaluation(DefaultObject):
         accuracy = correct / len(train_loader.dataset)
         return accuracy
 
-    def test(self, test_loader, epoch:int, model: type(DefaultModel), device:type(torch.device), test=False):
+    def test(self, test_loader, epoch:int, model_net, device:type(torch.device), test=False):
         """
         The test function is used to test the model on a dataset.
         It returns the accuracy of the model on that dataset
 
         :param test_loader: Used to Pass the test data loader.
         :param epoch: Used to Keep track of the current epoch.
-        :param model: Used to Pass the model to the test function.
+        :param model_net: Used to Pass the model to the test function.
         :param device: Used to Tell torch which device to use.
         :param test=False: Used to Distinguish between training and testing.
         :return: The accuracy of the model on the test data.
@@ -155,7 +154,7 @@ class Evaluation(DefaultObject):
         :doc-author: Trelent
         """
 
-        model.eval()
+        model_net.eval()
 
         correct = 0
         if test:
@@ -163,7 +162,7 @@ class Evaluation(DefaultObject):
         for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
             data = data.to(device)
-            output_probs = model(data.x, data.edge_index, data.batch)
+            output_probs = model_net(data.x, data.edge_index, data.batch)
             output = (output_probs > 0.5).float()
             correct += (torch.argmax(output, dim=1) == data.y).float().sum()
             if test:
@@ -184,7 +183,7 @@ class Evaluation(DefaultObject):
         DataLoader: type(DataLoader),
         shuffle: bool,
         batch_size: int,
-        model: type(DefaultModel),
+        model_net:type(torch.nn.Module),
         optimizer: type(torch.optim),
         device: type(torch.device),
         shrinkage: int,
@@ -264,10 +263,10 @@ class Evaluation(DefaultObject):
                 )
                 loss_store.append(train_loss.cpu().tolist())
                 train_acc = self.test(
-                    train_loader, device=device, model=model, epoch=epoch
+                    train_loader, device=device, model_net=model_net, epoch=epoch
                 )
                 test_acc = self.test(
-                    test_loader, device=device, model=model, epoch=epoch, test=True
+                    test_loader, device=device, model_net=model_net, epoch=epoch, test=True
                 )
                 acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
                 print(

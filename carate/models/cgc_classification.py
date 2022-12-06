@@ -1,7 +1,7 @@
 """
-CGC model is named after the structure of the graph neural network. 
+cgc_classificatin model is named after the structure of the graph neural network. 
 The graph neural network is structured with a convolutional , graph attention, 
-and another convulutional layer. The CGC model was the model tested int the publication 
+and another convulutional layer. The cgc_classificatin model was the model tested int the publication 
 Introducing CARATE: Finally speaking chemistry.
 """
 import torch
@@ -59,3 +59,5 @@ class Net(torch.nn.Module):
         )  # thats not a good dropout and should be reduced
         x = self.fc2(x)
         return torch.sigmoid(x)
+
+

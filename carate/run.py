@@ -1,7 +1,7 @@
 import torch
 import click
 
-from carate.models.cgc import Net
+from carate.models.cgc_classification import Net
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.evaluation import Evaluation
 from carate.default_interface import DefaultObject
@@ -52,11 +52,11 @@ class Run(DefaultObject):
         self.num_classes = num_classes
         self.num_features = num_features
         self.shrinkage = shrinkage
-        self.model = model(
+        self.model_net = model.Net(
             dim=net_dimension, num_classes=num_classes, num_features=num_features
         ).to(device)
         if optimizer is None:
-            self.optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
+            self.optimizer = torch.optim.Adam(self.model_net.parameters(), lr=learning_rate)
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
 
@@ -83,7 +83,7 @@ class Run(DefaultObject):
         dataset_name: str = None,
         test_ratio: int = None,
         dataset_save_path: str = None,
-        model: type(torch.nn.Module) = None,
+        model_net: type(torch.nn.Module) = None,
         optimizer: type(torch.optim) = None,
         DataLoader: type(DataLoader) = None,
         n_cv: int = None,
@@ -101,7 +101,7 @@ class Run(DefaultObject):
             dataset_name,
             test_ratio,
             dataset_save_path,
-            model,
+            model_net,
             optimizer,
             DataLoader,
             n_cv,
@@ -117,7 +117,7 @@ class Run(DefaultObject):
             dataset_name=dataset_name,
             dataset_save_path=dataset_save_path,
             test_ratio=test_ratio,
-            model=model,
+            model_net=model_net,
             optimizer=optimizer,
             DataLoader=DataLoader,
             device=device,
@@ -135,7 +135,7 @@ class Run(DefaultObject):
             DataLoader=DataLoader,
             shuffle=shuffle,
             batch_size=batch_size,
-            model=model,
+            model_net=model_net,
             optimizer=optimizer,
             device=device,
             shrinkage=shrinkage,

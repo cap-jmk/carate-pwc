@@ -7,7 +7,7 @@ Tests about the classficiation abilities of the models
 import torch
 
 from carate.run import Run
-from carate.models.cgc import Net
+import carate.models.cgc_classification as CGCC
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
 
 
@@ -15,7 +15,7 @@ def test_classification():
     dataset_name = "ENZYMES"
     num_classes = 6
     num_features = 3
-    model = Net
+    model = CGCC
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     optimizer = None  # defaults to adams optimizer
     net_dimension = 364
