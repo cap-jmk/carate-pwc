@@ -1,5 +1,5 @@
 """
-cgc_classification model is named after the structure of the graph neural network. 
+cgc_regression model is named after the structure of the graph neural network. 
 The graph neural network is structured with a convolutional , graph attention, 
 and another convolutional layer. The cgc_classificatin model was the model tested int the publication 
 Introducing CARATE: Finally speaking chemistry.
@@ -25,27 +25,17 @@ logging.basicConfig(
 
 
 class Net(torch.nn.Module):
-    """
-    The Net is the core algorithm and needs a constructor and a
-    forward pass. The train, test and evaluation methods are implemented
-    in the evaluation module with the Evaluation class.
-
-    """
-
-    def __init__(
-        self, dim, num_features=2, num_classes=2
-    ):  # TODO num_features and num_classes should come from dataset
+    def __init__(self, dim):
         super(Net, self).__init__()
 
-        self.num_features = num_features
+        num_features = dataset.num_features
         self.dim = dim
-
         self.conv1 = GraphConv(num_features, dim)
-        self.conv3 = GATConv(dim, dim, dropout=0.6, heads=16)
-        self.conv5 = GraphConv(dim * 16, dim)
+        self.conv3 = GATConv(dim, dim, dropout = 0.6)
+        self.conv5 = GraphConv(dim, dim)
 
         self.fc1 = Linear(dim, dim)
-        self.fc2 = Linear(dim, num_classes)
+        self.fc2 = Linear(dim, dataset.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
@@ -54,10 +44,6 @@ class Net(torch.nn.Module):
         x = F.relu(self.conv5(x, edge_index, edge_weight))
         x = global_add_pool(x, batch)
         x = F.relu(self.fc1(x))
-        x = F.dropout(
-            x, p=0.5, training=self.training
-        )  # thats not a good dropout and should be reduced
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc2(x)
-        return torch.sigmoid(x)
-
-
+        return x

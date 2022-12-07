@@ -3,7 +3,7 @@ import click
 
 from carate.models.cgc_classification import Net
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
-from carate.evaluation import Evaluation
+from carate.evaluation.evaluation import Evaluation
 from carate.default_interface import DefaultObject
 
 from typing import Type

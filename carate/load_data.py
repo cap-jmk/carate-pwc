@@ -1,6 +1,6 @@
 """
 File for data loading from the standard datasets implemented in the pytorch_geometric #
-library. The DataSet loader is implemented as a base clase and other subclasses include loaders for standardized benchmarks
+library. The DataSet loader is implemented as a base class and other subclasses include loaders for standardized benchmarks
 as well as custom datasets. 
 
 @author: Julian M. Kleber

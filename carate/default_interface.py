@@ -21,7 +21,7 @@ class DefaultObject:
         The function checks if the value is None, if it is none then it checks to see if that key exists in the instance variables.
         If so, then it will return the instance variable associated with that key. If not, then nothing happens and None gets returned.
 
-        :param method_arguments:dict: Used to Pass in the arguments that are passed into the method.
+        :param method_arguments:dict: Used to pass in the arguments that are passed into the method.
         :return: A list of values that are either none or the value provided in the method_arguments dictionary.
 
         :doc-author: Trelent
