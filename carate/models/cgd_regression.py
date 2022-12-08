@@ -31,7 +31,7 @@ class Net(torch.nn.Module):
         num_features = dataset.num_features
         self.dim = dim
         self.conv1 = GraphConv(num_features, dim)
-        self.conv3 = GATConv(dim, dim, dropout = 0.6)
+        self.conv3 = GATConv(dim, dim, dropout=0.6)
         self.conv5 = GraphConv(dim, dim)
 
         self.fc1 = Linear(dim, dim)

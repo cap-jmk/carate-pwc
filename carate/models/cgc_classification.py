@@ -59,5 +59,3 @@ class Net(torch.nn.Module):
         )  # thats not a good dropout and should be reduced
         x = self.fc2(x)
         return torch.sigmoid(x)
-
-

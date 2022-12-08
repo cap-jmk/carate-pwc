@@ -30,8 +30,8 @@ class Run(DefaultObject):
         num_features: int,
         num_classes: int,
         shrinkage: int,
-        result_save_dir:str,
-        Evaluation: type(Evaluation), 
+        result_save_dir: str,
+        Evaluation: type(Evaluation),
         model: type(torch.nn.Module),
         device: type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -58,7 +58,9 @@ class Run(DefaultObject):
             dim=net_dimension, num_classes=num_classes, num_features=num_features
         ).to(device)
         if optimizer is None:
-            self.optimizer = torch.optim.Adam(self.model_net.parameters(), lr=learning_rate)
+            self.optimizer = torch.optim.Adam(
+                self.model_net.parameters(), lr=learning_rate
+            )
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
 
@@ -96,7 +98,7 @@ class Run(DefaultObject):
         shuffle: int = None,
         shrinkage: int = None,
         result_save_dir: str = None,
-        Evaluation: type(Evaluation) = None
+        Evaluation: type(Evaluation) = None,
     ):
 
         (
@@ -114,10 +116,9 @@ class Run(DefaultObject):
             batch_size,
             shuffle,
             shrinkage,
-            result_save_dir, 
-            Evaluation
+            result_save_dir,
+            Evaluation,
         ) = self._get_defaults(locals())
-
 
         self.Evaluation = Evaluation(
             dataset_name=dataset_name,
@@ -128,7 +129,7 @@ class Run(DefaultObject):
             DataLoader=DataLoader,
             device=device,
             shrinkage=shrinkage,
-            result_save_dir = result_save_dir
+            result_save_dir=result_save_dir,
         )
 
         self.Evaluation.cv(
@@ -145,5 +146,5 @@ class Run(DefaultObject):
             optimizer=optimizer,
             device=device,
             shrinkage=shrinkage,
-            result_save_dir=result_save_dir
+            result_save_dir=result_save_dir,
         )

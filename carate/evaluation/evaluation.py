@@ -4,7 +4,7 @@ The idea is to parametrize as much as possible.
 
 """
 import json
-import numpy as np 
+import numpy as np
 
 from sklearn import metrics
 import torch
@@ -34,7 +34,7 @@ class Evaluation(DefaultObject):
     """
     The evaluation class is about evaluating a given model written in PyTorch or PyTorchGeometric.
     """
-
+    name = "Default evaluation"
     def __init__(
         self,
         dataset_name: str,
@@ -88,10 +88,150 @@ class Evaluation(DefaultObject):
         self.device = device
         self.result_save_dir = result_save_dir
 
+    def cv(
+        self,
+        n_cv: int,
+        num_epoch: int,
+        num_classes: int,
+        dataset_name: str,
+        dataset_save_path: str,
+        test_ratio: int,
+        DataLoader: type(DataLoader),
+        shuffle: bool,
+        batch_size: int,
+        model_net: type(torch.nn.Module),
+        optimizer: type(torch.optim),
+        device: type(torch.device),
+        shrinkage: int,
+        result_save_dir: str,
+    ):
+        """
+        The cv function takes in the following parameters:
+            n_cv (int): The number of cross-validation folds to perform.
+            num_epoch (int): The number of epochs to train for each fold.
+            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.
+                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.
+
+                For example, if you have a binary classification problem with two classes {0, 1}, then this parameter should be set to 2 because there are two possible classifications; however if your data has already been one hot encoded into {[0], [0]}, then it would only make sense for this parameter to be set as 1 since there is only one possible classification per sample point now ({[0], [0]} -> 0).
+
+                Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
+
+            DataLoader: An instance of torchvision's DataLoader class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
+
+        :param self: Used to Represent the instance of the class.
+        :param n_cv:int: Used to Specify the number of cross-validation folds.
+        :param num_epoch:int: Used to Specify the number of epochs to train for.
+        :param num_classes:int: Used to Determine the number of classes in the dataset.
+        :param dataset_name:str: Used to Specify the name of the dataset to be used.
+        :param DataLoader:type(DataLoader): Used to Load the data.
+        :param : Used to Specify the number of folds in a (stratified)kfold,.
+        :return: A list of dictionaries.
+
+        :doc-author: Trelent
+        """
+
+        (
+            n_cv,
+            num_epoch,
+            num_classes,
+            dataset_name,
+            dataset_save_path,
+            test_ratio,
+            DataLoader,
+            shuffle,
+            batch_size,
+            model,
+            optimizer,
+            device,
+            shrinkage,
+            result_save_dir,
+        ) = self._get_defaults(locals())
+        result = []
+        acc_store = []
+        auc_store = []
+        loss_store = []
+        tmp = {}
+        for i in range(n_cv):
+            (
+                train_loader,
+                test_loader,
+                dataset,
+                train_dataset,
+                test_dataset,
+            ) = DataLoader.load_data(
+                dataset_name=dataset_name,
+                dataset_save_path=dataset_save_path,
+                test_ratio=test_ratio,
+                batch_size=batch_size,
+                shuffle=shuffle,
+            )
+
+            for epoch in range(1, num_epoch):
+                train_loss = self.train(
+                    epoch=epoch,
+                    model=model,
+                    device=device,
+                    optimizer=optimizer,
+                    train_loader=train_loader,
+                    test_loader=test_loader,
+                    num_classes=num_classes,
+                    shrinkage=shrinkage,
+                )
+                loss_store.append(train_loss.cpu().tolist())
+                train_acc = self.test(
+                    train_loader, device=device, model_net=model_net, epoch=epoch
+                )
+                test_acc = self.test(
+                    test_loader,
+                    device=device,
+                    model_net=model_net,
+                    epoch=epoch,
+                    test=True,
+                )
+                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                print(
+                    "Epoch: {:03d}, Train Loss: {:.7f}, "
+                    "Train Acc: {:.7f}, Test Acc: {:.7f}".format(
+                        epoch, train_loss, train_acc, test_acc
+                    )
+                )
+                y = np.zeros((len(test_dataset)))
+                x = self.train_store
+                for i in range(len(test_dataset)):
+                    y[i] = test_dataset[i].y
+                y = torch.as_tensor(y)
+                y = F.one_hot(y.long(), num_classes=num_classes).long()
+                store_auc = []
+                for i in range(len(x[0, :])):
+                    auc = metrics.roc_auc_score(y[:, i], x[:, i])
+                    print("AUC of " + str(i) + "is:", auc)
+                    store_auc.append(auc)
+                auc_store.append(store_auc)
+
+                if auc >= 0.9:
+                    break
+                tmp["Loss"] = list(loss_store)
+                tmp["Acc"] = list(acc_store)
+                tmp["AUC"] = auc_store
+            check_make_dir(result_save_dir)
+            with open(result_save_dir + dataset_name + "_" + str(i) + ".csv", "w") as f:
+                json.dump(tmp, f)
+                logging.info(
+                    "Saved iteration one to "
+                    + result_save_dir
+                    + dataset_name
+                    + "_"
+                    + str(i)
+                    + ".csv"
+                )
+            result.append(tmp)
+        return result
+
+
     def train(
         self,
         epoch: int,
-        model:type(torch.nn.Module),
+        model: type(torch.nn.Module),
         device: type(torch.device),
         train_loader,  # TODO find out type
         test_loader,  # TODO find out type
@@ -139,7 +279,9 @@ class Evaluation(DefaultObject):
         accuracy = correct / len(train_loader.dataset)
         return accuracy
 
-    def test(self, test_loader, epoch:int, model_net, device:type(torch.device), test=False):
+    def test(
+        self, test_loader, epoch: int, model_net, device: type(torch.device), test=False
+    ):
         """
         The test function is used to test the model on a dataset.
         It returns the accuracy of the model on that dataset
@@ -172,140 +314,7 @@ class Evaluation(DefaultObject):
             self.train_store = outputs
         return correct / len(test_loader.dataset)
 
-    def cv(
-        self,
-        n_cv: int,
-        num_epoch: int,
-        num_classes: int,
-        dataset_name: str,
-        dataset_save_path: str,
-        test_ratio: int,
-        DataLoader: type(DataLoader),
-        shuffle: bool,
-        batch_size: int,
-        model_net:type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device),
-        shrinkage: int,
-        result_save_dir:str
-    ):
-        """
-        The cv function takes in the following parameters:
-            n_cv (int): The number of cross-validation folds to perform.
-            num_epoch (int): The number of epochs to train for each fold.
-            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.
-                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.
+    def __str__(self):
+        return "Evaluation for "+str(self.model_net)+" with the "+self.name
 
-                For example, if you have a binary classification problem with two classes {0, 1}, then this parameter should be set to 2 because there are two possible classifications; however if your data has already been one hot encoded into {[0], [0]}, then it would only make sense for this parameter to be set as 1 since there is only one possible classification per sample point now ({[0], [0]} -> 0).
-
-                Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
-
-            DataLoader: An instance of torchvision's DataLoader class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
-
-        :param self: Used to Represent the instance of the class.
-        :param n_cv:int: Used to Specify the number of cross-validation folds.
-        :param num_epoch:int: Used to Specify the number of epochs to train for.
-        :param num_classes:int: Used to Determine the number of classes in the dataset.
-        :param dataset_name:str: Used to Specify the name of the dataset to be used.
-        :param DataLoader:type(DataLoader): Used to Load the data.
-        :param : Used to Specify the number of folds in a (stratified)kfold,.
-        :return: A list of dictionaries.
-
-        :doc-author: Trelent
-        """
-
-        (
-            n_cv,
-            num_epoch,
-            num_classes,
-            dataset_name,
-            dataset_save_path,
-            test_ratio,
-            DataLoader,
-            shuffle,
-            batch_size,
-            model,
-            optimizer,
-            device,
-            shrinkage,
-            result_save_dir
-        ) = self._get_defaults(locals())
-        result = []
-        acc_store = []
-        auc_store = []
-        loss_store = []
-        tmp = {}
-        for i in range(n_cv):
-            (
-                train_loader,
-                test_loader,
-                dataset,
-                train_dataset,
-                test_dataset,
-            ) = DataLoader.load_data(
-                dataset_name=dataset_name,
-                dataset_save_path=dataset_save_path,
-                test_ratio=test_ratio,
-                batch_size=batch_size,
-                shuffle=shuffle,
-            )
-
-            for epoch in range(1, num_epoch):
-                train_loss = self.train(
-                    epoch=epoch,
-                    model=model,
-                    device=device,
-                    optimizer=optimizer,
-                    train_loader=train_loader,
-                    test_loader=test_loader,
-                    num_classes=num_classes,
-                    shrinkage=shrinkage,
-                )
-                loss_store.append(train_loss.cpu().tolist())
-                train_acc = self.test(
-                    train_loader, device=device, model_net=model_net, epoch=epoch
-                )
-                test_acc = self.test(
-                    test_loader, device=device, model_net=model_net, epoch=epoch, test=True
-                )
-                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
-                print(
-                    "Epoch: {:03d}, Train Loss: {:.7f}, "
-                    "Train Acc: {:.7f}, Test Acc: {:.7f}".format(
-                        epoch, train_loss, train_acc, test_acc
-                    )
-                )
-                y = np.zeros((len(test_dataset)))
-                x = self.train_store
-                for i in range(len(test_dataset)):
-                    y[i] = test_dataset[i].y
-                y = torch.as_tensor(y)
-                y = F.one_hot(y.long(), num_classes=num_classes).long()
-                store_auc = []
-                for i in range(len(x[0, :])):
-                    auc = metrics.roc_auc_score(y[:, i], x[:, i])
-                    print("AUC of " + str(i) + "is:", auc)
-                    store_auc.append(auc)
-                auc_store.append(store_auc)
-
-                if auc >= 0.9:
-                    break
-                tmp["Loss"] = list(loss_store)
-                tmp["Acc"] = list(acc_store)
-                tmp["AUC"] = auc_store
-            check_make_dir(result_save_dir)
-            with open(result_save_dir + dataset_name + "_" + str(i) + ".csv", "w") as f:
-                json.dump(tmp, f)
-                logging.info(
-                    "Saved iteration one to "
-                    + result_save_dir
-                    + dataset_name
-                    + "_"
-                    + str(i)
-                    + ".csv"
-                )
-            result.append(tmp)
-        return result
-
-        def __str__(self):
-            raise NotImplementedError  # TODO implement string methods in all classes
+    

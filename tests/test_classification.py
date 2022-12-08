@@ -44,9 +44,9 @@ def test_classification():
         batch_size=batch_size,
         shuffle=shuffle,
         shrinkage=shrinkage,
-        num_epoch= num_epoch, 
-        n_cv = num_cv,
-        result_save_dir = result_save_dir,
-        Evaluation = ClassificationEvaluation
+        num_epoch=num_epoch,
+        n_cv=num_cv,
+        result_save_dir=result_save_dir,
+        Evaluation=ClassificationEvaluation,
     )
     runner.run(device=device)
