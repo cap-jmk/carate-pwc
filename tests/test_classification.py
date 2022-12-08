@@ -8,6 +8,7 @@ import torch
 
 from carate.run import Run
 import carate.models.cgc_classification as CGCC
+from carate.evaluation.classification import ClassificationEvaluation
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
 
 
@@ -45,6 +46,7 @@ def test_classification():
         shrinkage=shrinkage,
         num_epoch= num_epoch, 
         n_cv = num_cv,
-        result_save_dir = result_save_dir
+        result_save_dir = result_save_dir,
+        Evaluation = ClassificationEvaluation
     )
     runner.run(device=device)

@@ -1,8 +1,9 @@
 """
 Evaulation object for classification
 """
-
+import torch 
 from carate.evaluation.evaluation import Evaluation
+from carate.load_data import DataLoader
 
 class ClassificationEvaluation(Evaluation): 
    def __init__(

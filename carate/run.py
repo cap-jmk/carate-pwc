@@ -31,6 +31,7 @@ class Run(DefaultObject):
         num_classes: int,
         shrinkage: int,
         result_save_dir:str,
+        Evaluation: type(Evaluation), 
         model: type(torch.nn.Module),
         device: type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
@@ -52,6 +53,7 @@ class Run(DefaultObject):
         self.num_classes = num_classes
         self.num_features = num_features
         self.shrinkage = shrinkage
+        self.Evaluation = Evaluation
         self.model_net = model.Net(
             dim=net_dimension, num_classes=num_classes, num_features=num_features
         ).to(device)
@@ -93,7 +95,8 @@ class Run(DefaultObject):
         batch_size: int = None,
         shuffle: int = None,
         shrinkage: int = None,
-        result_save_dir: str = None
+        result_save_dir: str = None,
+        Evaluation: type(Evaluation) = None
     ):
 
         (
@@ -111,8 +114,11 @@ class Run(DefaultObject):
             batch_size,
             shuffle,
             shrinkage,
-            result_save_dir
+            result_save_dir, 
+            Evaluation
         ) = self._get_defaults(locals())
+
+
         self.Evaluation = Evaluation(
             dataset_name=dataset_name,
             dataset_save_path=dataset_save_path,
