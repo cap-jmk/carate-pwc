@@ -134,7 +134,6 @@ class RegressionEvaluation(Evaluation):
         device, 
         train_loader, 
         optimizer, 
-        split=20, 
         num_classes=2
     ):
         model.train()
@@ -162,11 +161,11 @@ class RegressionEvaluation(Evaluation):
 
     def test(
             self, 
-            loader, 
-            epoch, 
-            model, 
-            device, 
-            test=False):
+            test_loader, 
+            epoch:int, 
+            model_net, 
+            device: type(troch.device), 
+            ):
         
         model.eval()
         mae = 0

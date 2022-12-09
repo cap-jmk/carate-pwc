@@ -234,7 +234,6 @@ class Evaluation(DefaultObject):
         model: type(torch.nn.Module),
         device: type(torch.device),
         train_loader,  # TODO find out type
-        test_loader,  # TODO find out type
         optimizer: type(torch.optim),
         num_classes=2,
         shrinkage=51,
