@@ -14,7 +14,7 @@ class RegressionEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: type(torch.nn.Module),  # TODO should be the correct model
+        model_net: type(torch.nn.Module),  # TODO type should be the correct model
         optimizer: type(torch.optim),
         device: type(torch.device),  # TODO types
         DataLoader: type(DataLoader),
@@ -24,7 +24,6 @@ class RegressionEvaluation(Evaluation):
         n_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
-        gamma: int = 0.5,
         batch_size: int = 64,
         shuffle: bool = True,
     ):
@@ -40,7 +39,6 @@ class RegressionEvaluation(Evaluation):
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
         :param num_classes:int=2: Used to Define the number of classes in the dataset.
         :param out_dir:str="out": Used to Specify the directory where the output of your training will be stored.
-        :param gamma=0.5: Used to Set the decay rate of the loss function.
         :return: The following:.
 
         :doc-author: Julian M. Kleber
@@ -55,17 +53,47 @@ class RegressionEvaluation(Evaluation):
         self.num_classes = num_classes
         self.n_cv = n_cv
         self.out_dir = out_dir
-        self.gamma = gamma
         self.DataLoader = DataLoader
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
         self.result_save_dir = result_save_dir
     
-    def cv(self):
+    def cv(
+            self,
+            n_cv: int,
+            num_epoch: int,
+            num_classes: int,
+            dataset_name: str,
+            dataset_save_path: str,
+            test_ratio: int,
+            DataLoader: type(DataLoader),
+            shuffle: bool,
+            batch_size: int,
+            model_net: type(torch.nn.Module),
+            optimizer: type(torch.optim),
+            device: type(torch.device),
+            shrinkage: int,
+            result_save_dir: str, 
+            ):
 
         # initialize
-
+        (
+            n_cv,
+            num_epoch,
+            num_classes,
+            dataset_name,
+            dataset_save_path,
+            test_ratio,
+            DataLoader,
+            shuffle,
+            batch_size,
+            model,
+            optimizer,
+            device,
+            shrinkage,
+            result_save_dir,
+        ) = self._get_defaults(locals())
         # data container
         result = {}
         test_mae = []
@@ -121,16 +149,16 @@ class RegressionEvaluation(Evaluation):
             tmp["MAE Test"] = list(train_mae)
             tmp["MSE Test"] = list(train_mse)
             result[str(i)] = tmp
-            save_result(dataset=data_set, result=result)
+            __save_result(dataset=data_set, result=result)
         return result
 
     # TODO the functions actually need default initialization
     # TODO implement their own training and test function
     def train(
         self,
-        epoch, 
-        model, 
-        factor, 
+        epoch:int, 
+        model_net, 
+        norm_factor:int, 
         device, 
         train_loader, 
         optimizer, 
@@ -150,13 +178,13 @@ class RegressionEvaluation(Evaluation):
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model(data.x, data.edge_index, data.batch).flatten()
-            loss = torch.nn.MSELoss()
-            loss = loss(output_probs, data.y)
+            loss = torch.nn.MSELoss() # TODO either return or delete
+            loss = loss(output_probs, data.y) # TODO either return or delete
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
             loss.backward()
             optimizer.step()
-            torch.cuda.empty_cache()
+            torch.cuda.empty_cache() #TODO verify if necessary
         return mae / len(train_loader)
 
     def test(
@@ -177,7 +205,14 @@ class RegressionEvaluation(Evaluation):
             output_probs = model(data.x, data.edge_index, data.batch)
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
-            torch.cuda.empty_cache()
+            torch.cuda.empty_cache() #TOOD verify if necessary
         return mae / len(loader)
-
     
+    def __save_result(dataset, result): 
+        import csv
+        with open("/content/drive/MyDrive/CARATE_RESULTS/"+dataset+"_20split.csv", 'w') as f:
+            w = csv.writer(f)
+            for k, v in result.items():
+                w.writerow([k, v])
+
+        
