@@ -20,7 +20,6 @@ from typing import Type
 
 import logging
 
-LOGGER = logging.getLogger(__name__)
 logging.basicConfig(
     filename="example.log",
     encoding="utf-8",
@@ -34,7 +33,9 @@ class Evaluation(DefaultObject):
     """
     The evaluation class is about evaluating a given model written in PyTorch or PyTorchGeometric.
     """
+
     name = "Default evaluation"
+
     def __init__(
         self,
         dataset_name: str,
@@ -173,7 +174,6 @@ class Evaluation(DefaultObject):
                     device=device,
                     optimizer=optimizer,
                     train_loader=train_loader,
-                    test_loader=test_loader,
                     num_classes=num_classes,
                     shrinkage=shrinkage,
                 )
@@ -204,7 +204,7 @@ class Evaluation(DefaultObject):
                 store_auc = []
                 for i in range(len(x[0, :])):
                     auc = metrics.roc_auc_score(y[:, i], x[:, i])
-                    print("AUC of " + str(i) + "is:", auc)
+                    LOGGER.info("AUC of " + str(i) + "is:", auc)
                     store_auc.append(auc)
                 auc_store.append(store_auc)
 
@@ -216,8 +216,8 @@ class Evaluation(DefaultObject):
             check_make_dir(result_save_dir)
             with open(result_save_dir + dataset_name + "_" + str(i) + ".csv", "w") as f:
                 json.dump(tmp, f)
-                logging.info(
-                    "Saved iteration one to "
+                LOGGER.info(
+                    "Saved cv run to "
                     + result_save_dir
                     + dataset_name
                     + "_"
@@ -226,7 +226,6 @@ class Evaluation(DefaultObject):
                 )
             result.append(tmp)
         return result
-
 
     def train(
         self,
@@ -314,6 +313,4 @@ class Evaluation(DefaultObject):
         return correct / len(test_loader.dataset)
 
     def __str__(self):
-        return "Evaluation for "+str(self.model_net)+" with the "+self.name
-
-    
+        return "Evaluation for " + str(self.model_net) + " with the " + self.name

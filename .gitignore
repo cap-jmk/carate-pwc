@@ -156,3 +156,4 @@ notebooks/
 DevNotes.md
 data/
 *results/
+*.log

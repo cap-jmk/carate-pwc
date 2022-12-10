@@ -12,6 +12,16 @@ from carate.evaluation.classification import ClassificationEvaluation
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
 
 
+import logging
+
+logging.basicConfig(
+    filename="example.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
+
+
 def test_classification():
     dataset_name = "ENZYMES"
     num_classes = 6

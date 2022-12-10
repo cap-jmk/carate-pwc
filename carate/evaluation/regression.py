@@ -2,10 +2,21 @@
 Evaulation object for classification
 """
 import torch
+import numpy as np
+
 from carate.evaluation.evaluation import Evaluation
 from carate.load_data import DataLoader
 
+
 # TODO Logging done right
+import logging
+
+logging.basicConfig(
+    filename="example.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
 
 
 class RegressionEvaluation(Evaluation):
@@ -16,7 +27,7 @@ class RegressionEvaluation(Evaluation):
         result_save_dir: str,
         model_net: type(torch.nn.Module),  # TODO type should be the correct model
         optimizer: type(torch.optim),
-        device: type(torch.device),  # TODO types
+        device: type(torch.device),
         DataLoader: type(DataLoader),
         test_ratio: int,
         shrinkage: int,
@@ -58,24 +69,24 @@ class RegressionEvaluation(Evaluation):
         self.shuffle = shuffle
         self.device = device
         self.result_save_dir = result_save_dir
-    
+
     def cv(
-            self,
-            n_cv: int,
-            num_epoch: int,
-            num_classes: int,
-            dataset_name: str,
-            dataset_save_path: str,
-            test_ratio: int,
-            DataLoader: type(DataLoader),
-            shuffle: bool,
-            batch_size: int,
-            model_net: type(torch.nn.Module),
-            optimizer: type(torch.optim),
-            device: type(torch.device),
-            shrinkage: int,
-            result_save_dir: str, 
-            ):
+        self,
+        n_cv: int,
+        num_epoch: int,
+        num_classes: int,
+        dataset_name: str,
+        dataset_save_path: str,
+        test_ratio: int,
+        DataLoader: type(DataLoader),
+        shuffle: bool,
+        batch_size: int,
+        model_net: type(torch.nn.Module),
+        optimizer: type(torch.optim),
+        device: type(torch.device),
+        shrinkage: int,
+        result_save_dir: str,
+    ):
 
         # initialize
         (
@@ -94,6 +105,7 @@ class RegressionEvaluation(Evaluation):
             shrinkage,
             result_save_dir,
         ) = self._get_defaults(locals())
+
         # data container
         result = {}
         test_mae = []
@@ -103,11 +115,8 @@ class RegressionEvaluation(Evaluation):
         tmp = {}
 
         for i in range(n):
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            train_loader, test_loader, dataset = load_data(data_set=data_set)
-            factor = normalization_factor(data_set=dataset, num_classes=1)
-            model = Net(dim=364, dataset=dataset).to(device)
-            optimizer = torch.optim.Adam(model.parameters(), lr=0.000005)
+
+            factor = __normalization_factor(data_set=dataset, num_classes=num_classes)
             for epoch in range(1, num_epoch):
                 mae = train(
                     model=model,
@@ -137,7 +146,7 @@ class RegressionEvaluation(Evaluation):
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
 
-                print(
+                LOGGER.info(
                     "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
                         epoch, train_mae_val, train_mse_val, test_mae_val, test_mse_val
                     )
@@ -156,13 +165,13 @@ class RegressionEvaluation(Evaluation):
     # TODO implement their own training and test function
     def train(
         self,
-        epoch:int, 
-        model_net, 
-        norm_factor:int, 
-        device, 
-        train_loader, 
-        optimizer, 
-        num_classes=2
+        epoch: int,
+        model_net,
+        norm_factor: int,
+        device,
+        train_loader,
+        optimizer,
+        num_classes=2,
     ):
         model.train()
 
@@ -178,23 +187,23 @@ class RegressionEvaluation(Evaluation):
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model(data.x, data.edge_index, data.batch).flatten()
-            loss = torch.nn.MSELoss() # TODO either return or delete
-            loss = loss(output_probs, data.y) # TODO either return or delete
+            loss = torch.nn.MSELoss()  # TODO either return or delete
+            loss = loss(output_probs, data.y)  # TODO either return or delete
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
             loss.backward()
             optimizer.step()
-            torch.cuda.empty_cache() #TODO verify if necessary
+            torch.cuda.empty_cache()  # TODO verify if necessary
         return mae / len(train_loader)
 
     def test(
-            self, 
-            test_loader, 
-            epoch:int, 
-            model_net, 
-            device: type(troch.device), 
-            ):
-        
+        self,
+        test_loader,
+        epoch: int,
+        model_net,
+        device: type(troch.device),
+    ):
+
         model.eval()
         mae = 0
         for data in loader:
@@ -205,14 +214,27 @@ class RegressionEvaluation(Evaluation):
             output_probs = model(data.x, data.edge_index, data.batch)
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
-            torch.cuda.empty_cache() #TOOD verify if necessary
+            torch.cuda.empty_cache()  # TOOD verify if necessary
         return mae / len(loader)
-    
-    def __save_result(dataset, result): 
+
+    def __normaliuation_factor(self, dataset, num_classes: int):
+
+        y = np.zeros((len(data_set), 1, num_classes))
+        for i in range(len(data_set)):
+            y[i, :, :] = data_set[i].y
+        factor = np.zeros((num_classes))
+        for i in range(num_classes):
+            norm = np.linalg.norm(y[:, 0, i], ord=2)
+            factor[i] = norm
+        return factor
+
+    def __save_result(dataset, result):
+
         import csv
-        with open("/content/drive/MyDrive/CARATE_RESULTS/"+dataset+"_20split.csv", 'w') as f:
+
+        with open(
+            "/content/drive/MyDrive/CARATE_RESULTS/" + dataset + "_20split.csv", "w"
+        ) as f:
             w = csv.writer(f)
             for k, v in result.items():
                 w.writerow([k, v])
-
-        
