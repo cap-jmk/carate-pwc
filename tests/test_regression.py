@@ -9,13 +9,12 @@ import torch
 
 from carate.run import Run
 import carate.models.cgc_regression as CGCR
-from carate.evaluation.classification import ClassificationEvaluation
+from carate.evaluation.regression import RegressionEvaluation
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
 
 
 import logging
 
-LOGGER = logging.getLogger(__name__)
 logging.basicConfig(
     filename="example.log",
     encoding="utf-8",
@@ -61,7 +60,7 @@ def test_regression():
         num_epoch=num_epoch,
         n_cv=num_cv,
         result_save_dir=result_save_dir,
-        Evaluation=ClassificationEvaluation,
+        Evaluation=RegressionEvaluation,
     )
     runner.run(device=device)
 

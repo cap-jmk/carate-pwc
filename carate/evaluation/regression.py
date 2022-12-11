@@ -166,42 +166,38 @@ class RegressionEvaluation(Evaluation):
     def train(
         self,
         epoch: int,
-        model_net,
+        model_net:type(torch.nn.Module),
         norm_factor: int,
-        device,
+        device:type(torch.device),
         train_loader,
-        optimizer,
-        num_classes=2,
-    ):
-        model.train()
+        optimizer:type(torch.optim),
+        num_classes:int,
+    )->float:
 
-        if epoch == 51:
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = 0.5 * param_group["lr"]
-
-        mae = 0
+        model.train() #TODO deleted shrinkage block due to minor influence
+        mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = data.y / factor[0]
+            data.y = (data.y.numpy())/factor
+            data.y = torch.from_numpy(data.y).type(torch.FloatTensor)
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
             optimizer.zero_grad()
-            output_probs = model(data.x, data.edge_index, data.batch).flatten()
-            loss = torch.nn.MSELoss()  # TODO either return or delete
-            loss = loss(output_probs, data.y)  # TODO either return or delete
-            loss_mae = torch.nn.L1Loss()
-            mae += loss_mae(output_probs, data.y).item()
+            output_probs = model(data.x, data.edge_index, data.batch)
+            loss = torch.nn.MSELoss()
+            loss = loss(output_probs, data.y[0,:,:])
+            mse += loss.item()
             loss.backward()
             optimizer.step()
-            torch.cuda.empty_cache()  # TODO verify if necessary
-        return mae / len(train_loader)
+            torch.cuda.empty_cache()
+        return mse/len(train_loader)
 
     def test(
         self,
         test_loader,
         epoch: int,
         model_net,
-        device: type(troch.device),
+        device: type(torch.device),
     ):
 
         model.eval()

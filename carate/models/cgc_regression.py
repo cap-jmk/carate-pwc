@@ -25,17 +25,18 @@ logging.basicConfig(
 
 
 class Net(torch.nn.Module):
-    def __init__(self, dim):
+    def __init__(self, dim:int, num_classes:int, num_features:int)->None:
         super(Net, self).__init__()
 
-        num_features = dataset.num_features
+        self.num_classes = num_classes
+        self.num_features = num_features
         self.dim = dim
-        self.conv1 = GraphConv(num_features, dim)
-        self.conv3 = GATConv(dim, dim, dropout=0.6)
-        self.conv5 = GraphConv(dim, dim)
+        self.conv1 = GraphConv(self.num_features, self.dim)
+        self.conv3 = GATConv(self.dim, self.dim, dropout=0.6)
+        self.conv5 = GraphConv(self.dim, self.dim)
 
-        self.fc1 = Linear(dim, dim)
-        self.fc2 = Linear(dim, dataset.num_classes)
+        self.fc1 = Linear(self.dim, self.dim)
+        self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv1(x, edge_index, edge_weight))
