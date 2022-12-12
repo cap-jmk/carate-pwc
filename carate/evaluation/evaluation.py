@@ -189,7 +189,7 @@ class Evaluation(DefaultObject):
                     test=True,
                 )
                 acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
-                print(
+                logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, "
                     "Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc
@@ -213,24 +213,14 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-            check_make_dir(result_save_dir)
-            with open(result_save_dir + dataset_name + "_" + str(i) + ".csv", "w") as f:
-                json.dump(tmp, f)
-                LOGGER.info(
-                    "Saved cv run to "
-                    + result_save_dir
-                    + dataset_name
-                    + "_"
-                    + str(i)
-                    + ".csv"
-                )
+            self.__save_result(result_save_dir, dataset_name, data=tmp)
             result.append(tmp)
         return result
 
     def train(
         self,
         epoch: int,
-        model: type(torch.nn.Module),
+        model_net: type(torch.nn.Module),
         device: type(torch.device),
         train_loader,  # TODO find out type
         optimizer: type(torch.optim),
@@ -253,7 +243,7 @@ class Evaluation(DefaultObject):
 
         :doc-author: Trelent
         """
-        model.train()
+        model_net.train()
 
         if epoch == shrinkage:
             for param_group in optimizer.param_groups:
@@ -311,6 +301,20 @@ class Evaluation(DefaultObject):
             outputs = np.concatenate(outs, axis=0).astype(float)
             self.train_store = outputs
         return correct / len(test_loader.dataset)
+
+    def save_result(self, result_save_dir:str, dataset_name:str, n_cv:int, data:dict)->None:
+        check_make_dir(result_save_dir)
+        with open(result_save_dir + dataset_name + "_" + str(n_cv) + ".csv", "w") as f:
+                    json.dump(data, f)
+                    logging.info(
+                        "Saved cv run to "
+                        + result_save_dir
+                        + dataset_name
+                        + "_"
+                        + str(n_cv)
+                        + ".csv"
+                    )
+
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name

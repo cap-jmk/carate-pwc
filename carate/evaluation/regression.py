@@ -99,7 +99,7 @@ class RegressionEvaluation(Evaluation):
             DataLoader,
             shuffle,
             batch_size,
-            model,
+            model_net,
             optimizer,
             device,
             shrinkage,
@@ -114,39 +114,53 @@ class RegressionEvaluation(Evaluation):
         train_mse = []
         tmp = {}
 
-        for i in range(n):
+        for i in range(n_cv):
 
-            factor = __normalization_factor(data_set=dataset, num_classes=num_classes)
+            (
+                train_loader,
+                test_loader,
+                dataset,
+                train_dataset,
+                test_dataset,
+            ) = DataLoader.load_data(
+                dataset_name=dataset_name,
+                dataset_save_path=dataset_save_path,
+                test_ratio=test_ratio,
+                batch_size=batch_size,
+                shuffle=shuffle,
+            )
+            
+            norm_factor = self.__normalization_factor(dataset=dataset, num_classes=num_classes)
             for epoch in range(1, num_epoch):
-                mae = train(
-                    model=model,
+                mae = self.train(
+                    model_net=model_net,
                     epoch=epoch,
                     optimizer=optimizer,
                     train_loader=train_loader,
                     device=device,
-                    factor=factor,
+                    norm_factor=norm_factor,
                     num_classes=num_classes,
                 )
-                train_mae_val, train_mse_val = test(
-                    model,
-                    loader=train_loader,
+                train_mae_val, train_mse_val = self.test(
+                    model_net=model_net,
+                    test_loader=train_loader,
                     device=device,
-                    factor=factor,
-                    num_classes=num_classes,
-                )
-                test_mae_val, test_mse_val = test(
-                    model,
-                    loader=test_loader,
+                    norm_factor=norm_factor,
+                    epoch = epoch
+                ) # TODO might be unneccessary
+                test_mae_val, test_mse_val = self.test(
+                    model_net=model_net,
+                    test_loader=test_loader,
                     device=device,
-                    factor=factor,
-                    num_classes=num_classes,
+                    norm_factor=norm_factor,
+                    epoch = epoch
                 )
                 train_mae.append(train_mae_val)
                 train_mse.append(train_mse_val)
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
 
-                LOGGER.info(
+                logging.info(
                     "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
                         epoch, train_mae_val, train_mse_val, test_mae_val, test_mse_val
                     )
@@ -158,7 +172,7 @@ class RegressionEvaluation(Evaluation):
             tmp["MAE Test"] = list(train_mae)
             tmp["MSE Test"] = list(train_mse)
             result[str(i)] = tmp
-            __save_result(dataset=data_set, result=result)
+            self.save_result(result_save_dir = result_save_dir, dataset_name=dataset_name, n_cv = i, data=tmp)
         return result
 
     # TODO the functions actually need default initialization
@@ -167,25 +181,28 @@ class RegressionEvaluation(Evaluation):
         self,
         epoch: int,
         model_net:type(torch.nn.Module),
-        norm_factor: int,
+        norm_factor: float,
         device:type(torch.device),
         train_loader,
         optimizer:type(torch.optim),
         num_classes:int,
     )->float:
 
-        model.train() #TODO deleted shrinkage block due to minor influence
+        model_net.train() #TODO deleted shrinkage block due to minor influence
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = (data.y.numpy())/factor
+            data.y = (data.y.numpy())/norm_factor
             data.y = torch.from_numpy(data.y).type(torch.FloatTensor)
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
             optimizer.zero_grad()
-            output_probs = model(data.x, data.edge_index, data.batch)
+            output_probs = model_net(data.x, data.edge_index, data.batch)
             loss = torch.nn.MSELoss()
-            loss = loss(output_probs, data.y[0,:,:])
+            if len(data.y.size()) == 1: 
+                loss = loss(output_probs, data.y[:])
+            else: 
+                loss = loss(output_probs, data.y[:, :])
             mse += loss.item()
             loss.backward()
             optimizer.step()
@@ -196,41 +213,35 @@ class RegressionEvaluation(Evaluation):
         self,
         test_loader,
         epoch: int,
-        model_net,
+        norm_factor:float, 
+        model_net: type(torch.nn.Module),
         device: type(torch.device),
     ):
 
-        model.eval()
+        model_net.eval()
         mae = 0
-        for data in loader:
+        mse = 0
+        for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = data.y / factor[0]
+            data.y = data.y / norm_factor[0]
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
-            output_probs = model(data.x, data.edge_index, data.batch)
+            output_probs = model_net(data.x, data.edge_index, data.batch)
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
-            torch.cuda.empty_cache()  # TOOD verify if necessary
-        return mae / len(loader)
+            loss = torch.nn.MSELoss()
+            mse += loss_mae(output_probs, data.y).item()
+            torch.cuda.empty_cache()
+        return mae/len(test_loader), mse/len(test_loader)  # TODO verify if necessary
 
-    def __normaliuation_factor(self, dataset, num_classes: int):
 
-        y = np.zeros((len(data_set), 1, num_classes))
-        for i in range(len(data_set)):
-            y[i, :, :] = data_set[i].y
-        factor = np.zeros((num_classes))
+    def __normalization_factor(self, dataset, num_classes: int):
+
+        y = np.zeros((len(dataset), 1, num_classes))
+        for i in range(len(dataset)):
+            y[i, :, :] = dataset[i].y
+        norm_factor = np.zeros((num_classes))
         for i in range(num_classes):
             norm = np.linalg.norm(y[:, 0, i], ord=2)
-            factor[i] = norm
-        return factor
-
-    def __save_result(dataset, result):
-
-        import csv
-
-        with open(
-            "/content/drive/MyDrive/CARATE_RESULTS/" + dataset + "_20split.csv", "w"
-        ) as f:
-            w = csv.writer(f)
-            for k, v in result.items():
-                w.writerow([k, v])
+            norm_factor[i] = norm
+        return norm_factor

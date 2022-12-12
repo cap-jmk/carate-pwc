@@ -26,9 +26,9 @@ logging.basicConfig(
 def test_regression():
     #Find out what dataset name does the regression dataset have
 
-    dataset_name = "alchemy_full"
-    num_classes = 12
-    num_features = 6
+    dataset_name = "ZINC_test"
+    num_classes = 1
+    num_features = 18
     model = CGCR
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     optimizer = None  # defaults to adams optimizer
@@ -40,7 +40,7 @@ def test_regression():
     shuffle = True
     shrinkage = 51
     num_epoch = 2
-    num_cv = 3
+    num_cv = 2
     result_save_dir = "results/"
     runner = Run(
         dataset_name=dataset_name,
