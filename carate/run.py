@@ -10,13 +10,18 @@ from typing import Type
 
 import logging
 
-logger = logging.getLogger(__name__)
 logging.basicConfig(
     filename="example.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
 )
+
+
+@click.command()
+@click.option('-c', help='Path to config file')
+@click.option('-o', help='Path to output directory')
+#TODO add options for the other parameters to omit config file if wanted
 
 
 class Run(DefaultObject):
