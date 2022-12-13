@@ -1,0 +1,16 @@
+dataset_name = "ZINC_test"
+num_classes = 1
+num_features = 18
+model = CGCR
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+optimizer = None  # defaults to adams optimizer
+net_dimension = 364
+learning_rate = 0.0005
+dataset_save_path = "data/"
+test_ratio = 20
+batch_size = 64
+shuffle = True
+shrinkage = 51
+num_epoch = 2
+num_cv = 2
+result_save_dir = "results/"

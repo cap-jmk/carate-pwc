@@ -73,7 +73,7 @@ class Config:
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
 
-        # evaulation parameters
+        # evuluation parameters
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio

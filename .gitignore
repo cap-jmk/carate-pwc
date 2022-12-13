@@ -157,3 +157,6 @@ DevNotes.md
 data/
 *results/
 *.log
+example_config/
+carate/utils/config.py
+carate/utils/config.json
