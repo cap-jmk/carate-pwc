@@ -11,11 +11,18 @@ Molecular representation is wrecked. Seriously! We chemists talk with an ancient
 
 The success of transformer models is evident. Applied to molecules we need a graph-based transformer. Such models can then learn hidden representations of a molecule better suited to describe a molecule. 
 
-Evidence of a mixed-perspective was given in [chembee](https://codeberg.org/sail.black/chembee.git)
+For a chemist it is quite intuitive but seldomly modelled as such: A molecule exhibits properties through its combined *electronic and structural features*
 
+* Evidence of this perspective  was given in [chembee](https://codeberg.org/sail.black/chembee.git). 
+
+* Mathematical equivalence of the variational principle and neural networks was given in the thesis [Markov-chain modelling of dynmaic interation patterns in supramolecular complexes](https://www.researchgate.net/publication/360107521_Markov-chain_modelling_of_dynamic_interaction_patterns_in_supramolecular_complexes). 
+
+* The failure of the BOA is described in the case of diatomic tranistion metal fluorides is described in a [Can Fluorine form triple bonds?](https://chemrxiv.org/engage/chemrxiv/article-details/620f745121686706d17ac316)
+
+* Evidence of quantum-mechanical simulations via molecular dynamics is given in a seminal work [Direct Simulation of Bose-Einstein-Condensates using molecular dynmaics and the Lennard-Jones potential](https://www.researchgate.net/publication/360560870_Direct_simulation_of_Bose-Einstein_condesates_using_molecular_dynamics_and_the_Lennard-Jones_potential)
 # Scope
 
-The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](https://codeberg.org/sail.black/chembee.git) pattern. 
+The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](https://codeberg.org/sail.black/chembee.git) pattern. Actually, the chembee pattern is mimicked in this project to provide a stand alone tool. The overall structure of the program is reusable for other deep-learning projects and will be transferred to an own project that should work similar to opinionated frameworks. 
 
 # Installation on CPU 
 
@@ -30,6 +37,10 @@ pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[defau
 pip install torch-cluster #addtional does not work on CPU
 pip install torch-spline-conv #additional does not work on CPU
 ``` 
+
+# Outlook 
+
+The program is 
 
 # Cite 
 
