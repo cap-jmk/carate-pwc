@@ -5,7 +5,7 @@ from carate.models.cgc_classification import Net
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.evaluation.evaluation import Evaluation
 from carate.default_interface import DefaultObject
-
+from carate.config import Config
 from typing import Type
 
 import logging
@@ -86,6 +86,20 @@ class Run(DefaultObject):
             batch_size=self.batch_size,
         )
 
+    @classmethod
+    def __init__(self, config_filepath:str)->None:
+
+        config = Config(file_name=config_filepath)
+        self.__init_config(config)
+    
+    @classmethod
+    def __init__(self, json_object:dict)->None:
+
+        config = Config(json_object=json_object)
+        self.__init_config(config)
+       
+
+
     def run(
         self,
         device: type(torch.optim),
@@ -104,7 +118,7 @@ class Run(DefaultObject):
         shrinkage: int = None,
         result_save_dir: str = None,
         Evaluation: type(Evaluation) = None,
-    ):
+    )->None:
 
         (
             device,
@@ -153,3 +167,54 @@ class Run(DefaultObject):
             shrinkage=shrinkage,
             result_save_dir=result_save_dir,
         )
+
+    def __init_config(self, config:type(Config))->None: 
+        """
+        The __init_config function initializes the configuration of the model.
+        
+        Parameters: 
+            config (type(Config)): The configuration object that contains all parameters for training and evaluation.
+        
+            Returns: None
+        
+        :param self: Used to Represent the instance of the class.
+        :param config:type(Config): Used to Pass in the config class.
+        :return: None.
+        
+        :doc-author: Julian M. Kleber
+        """
+        
+
+        self.dataset_name = config.dataset_name
+        self.device = config.device
+        self.num_classes = config.num_classes
+        self.num_features = config.num_features
+        self.shrinkage = config.shrinkage
+        self.Evaluation = config.Evaluation
+        self.model_net = config.model.Net(
+            dim=net_dimension, num_classes=num_classes, num_features=num_features
+        ).to(device)
+        if config.optimizer is None:
+            self.optimizer = torch.optim.Adam(
+                self.model_net.parameters(), lr=learning_rate
+            )
+        self.net_dimension = config.net_dimension
+        self.learning_rate = config.learning_rate
+
+        # evaulation parameters
+        self.dataset_name = config.dataset_name
+        self.dataset_save_path = config.dataset_save_path
+        self.test_ratio = config.test_ratio
+        self.batch_size = config.batch_size
+        self.shuffle = config.shuffle
+        self.n_cv = config.n_cv
+        self.num_epoch = config.num_epoch
+        self.result_save_dir = config.result_save_dir
+
+        self.DataLoader = DataLoader(
+            dataset_save_path=self.dataset_save_path,
+            dataset_name=self.dataset_name,
+            test_ratio=self.test_ratio,
+            batch_size=self.batch_size,
+        )
+
