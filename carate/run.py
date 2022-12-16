@@ -18,9 +18,7 @@ logging.basicConfig(
 )
 
 
-@click.command()
-@click.option('-c', help='Path to config file')
-@click.option('-o', help='Path to output directory')
+
 #TODO add options for the other parameters to omit config file if wanted
 
 
@@ -87,17 +85,18 @@ class Run(DefaultObject):
         )
 
     @classmethod
-    def __init__(self, config_filepath:str)->None:
+    def from_file(cls, config_filepath:str)->None:
 
-        config = Config(file_name=config_filepath)
-        self.__init_config(config)
-    
+        self.config = Config.from_file(file_name=config_filepath)
+        run_object = Run.from_json(config)
+        return run_object
+        
     @classmethod
-    def __init__(self, json_object:dict)->None:
+    def from_json(cls, json_object:dict)->None:
 
-        config = Config(json_object=json_object)
-        self.__init_config(config)
-       
+        self.config = Config(json_object=json_object)
+        run_object = Run.__init_config(config)
+        return run_object
 
 
     def run(
@@ -183,38 +182,39 @@ class Run(DefaultObject):
         
         :doc-author: Julian M. Kleber
         """
-        
-
-        self.dataset_name = config.dataset_name
-        self.device = config.device
-        self.num_classes = config.num_classes
-        self.num_features = config.num_features
-        self.shrinkage = config.shrinkage
-        self.Evaluation = config.Evaluation
-        self.model_net = config.model.Net(
-            dim=net_dimension, num_classes=num_classes, num_features=num_features
-        ).to(device)
         if config.optimizer is None:
-            self.optimizer = torch.optim.Adam(
+            optimizer = torch.optim.Adam(
                 self.model_net.parameters(), lr=learning_rate
             )
-        self.net_dimension = config.net_dimension
-        self.learning_rate = config.learning_rate
+        return cls(
+        dataset_name = config.dataset_name,
+        device = config.device,
+        num_classes = config.num_classes,
+        num_features = config.num_features,
+        shrinkage = config.shrinkage,
+        Evaluation = config.Evaluation,
+        model_net = config.model.Net(
+            dim=net_dimension, num_classes=num_classes, num_features=num_features
+        ).to(device),
+        
+        optimizer = optimizer,
+        net_dimension = config.net_dimension,
+        learning_rate = config.learning_rate,
 
         # evaulation parameters
-        self.dataset_name = config.dataset_name
-        self.dataset_save_path = config.dataset_save_path
-        self.test_ratio = config.test_ratio
-        self.batch_size = config.batch_size
-        self.shuffle = config.shuffle
-        self.n_cv = config.n_cv
-        self.num_epoch = config.num_epoch
-        self.result_save_dir = config.result_save_dir
+        dataset_save_path = config.dataset_save_path,
+        test_ratio = config.test_ratio,
+        batch_size = config.batch_size,
+        shuffle = config.shuffle,
+        n_cv = config.n_cv,
+        num_epoch = config.num_epoch,
+        result_save_dir = config.result_save_dir,
 
-        self.DataLoader = DataLoader(
+        DataLoader = config.DataLoader(
             dataset_save_path=self.dataset_save_path,
             dataset_name=self.dataset_name,
             test_ratio=self.test_ratio,
             batch_size=self.batch_size,
+        )
         )
 

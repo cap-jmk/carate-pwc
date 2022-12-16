@@ -1,7 +1,7 @@
 import subprocess
 from carate.utils.file_utils import save_json_to_file
 
-def convert_py_to_json(file_name:str, out_name:str)->dict: 
+def convert_py_to_json(file_name:str, out_name:str=None)->dict: 
     """
     The convert_py_to_json function takes in a file name and an output file name. 
     It reads the input file, which is assumed to be a .py config file with key value pairs separated by spaces. 
@@ -23,8 +23,10 @@ def convert_py_to_json(file_name:str, out_name:str)->dict:
             json_dict[tmp[0]] = None
         else:
             json_dict[tmp[0]] = tmp[2]
-    
-    save_json_to_file(json_dict, file_name=out_name)
+
+    if out_name is not None:
+        save_json_to_file(json_dict, file_name=out_name)
+        
     return json_dict
 
 def read_file(file_name:str)->list[str]:

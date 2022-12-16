@@ -23,6 +23,6 @@ logging.basicConfig(
 
 
 def test_classification():
-    config_filename = "/tests/config/classification_test_config.py"
-    runner = Config(file_name = config_filename)
+    config_filepath = "tests/config/classification_test_config.py"
+    runner = Run.from_file(config_filepath = config_filepath)
     runner.run(device=device)

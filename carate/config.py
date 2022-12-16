@@ -10,7 +10,7 @@ import torch
 from carate.evaluation import evaluation, classification, regression
 from carate.models import cgc_classification, cgc_regression
 from carate.load_data import DataLoader, StandardPytorchGeometricDataLoader, StandardDataLoaderTUDataset, StandardDataLoaderMoleculeNet
-
+from carate.utils.convert_to_json import convert_py_to_json
 
 EVALUATION_MAP = {
     "regression" : regression.RegressionEvaluation,
@@ -85,18 +85,16 @@ class Config:
         self.result_save_dir = result_save_dir
     
 
-    @classmethod
-    def __init__(self, json_object:dict=None)->None: 
-
-        self.__initialize(json_object)
     
     @classmethod
-    def __init__(self, file_name:str)->None:
+    def from_file(cls, file_name:str)->None:
 
-        json_object = deserialization(file_name)
-        self.__initialize(json_object)
-    
-    def __initialize(self, json_object:dict): 
+        json_object = convert_py_to_json(file_name)
+        config_object = Config.from_json(json_object)
+        return config_object
+
+    @classmethod
+    def from_json(cls, json_object:dict): 
         """
         The __initialize function is a helper function that initializes the class with the parameters
         specified in the json_object. The json_object is a dictionary of key-value pairs, where each key 
@@ -109,24 +107,24 @@ class Config:
         
         :doc-author: Julian M. Kleber
         """
-        
-        self.model = MODEL_MAP[json_object["model"]]
-        self.optimizer = get_optimizer(json_object["optimizer"])
-        self.Evaluation = EVALUATION_MAP[json_object["evaluation"]]
-        self.DataLoader = DATA_LOADER_MAP[json_object["data_loader"]]
-        # model parameters
-        self.dataset_name = json_object["dataset_name"]
-        self.num_classes = json_object["num_classes"]
-        self.num_features = json_object["num_features"]
-        self.shrinkage = json_object["shrinkage"]
-        self.net_dimension = json_object["net_dimension"]
-        self.learning_rate = json_object["learning_rate"]
-        # evuluation parameters
-        self.dataset_name = json_object["dataset_name"]
-        self.dataset_save_path = json_object["dataset_save_path"]
-        self.test_ratio = json_object["test_ratio"]
-        self.batch_size = json_object["batch_size"]
-        self.shuffle = json_object["shuffle"]
-        self.n_cv = json_object["n_cv"]
-        self.num_epoch = json_object["num_epoch"]
-        self.result_save_dir = json_object["result_save_dir"]
+        return cls(
+        model = MODEL_MAP[json_object["model"]],
+        optimizer = get_optimizer(json_object["optimizer"]),
+        Evaluation = EVALUATION_MAP[json_object["evaluation"]],
+        DataLoader = DATA_LOADER_MAP[json_object["data_loader"]],
+        #model parameters
+        dataset_name = json_object["dataset_name"],
+        num_classes = json_object["num_classes"],
+        num_features = json_object["num_features"],
+        shrinkage = json_object["shrinkage"],
+        net_dimension = json_object["net_dimension"],
+        learning_rate = json_object["learning_rate"],
+        #evaluation parameters
+        dataset_save_path = json_object["dataset_save_path"],
+        test_ratio = json_object["test_ratio"],
+        batch_size = json_object["batch_size"],
+        shuffle = json_object["shuffle"],
+        n_cv = json_object["n_cv"],
+        num_epoch = json_object["num_epoch"],
+        result_save_dir = json_object["result_save_dir"]
+        )
