@@ -32,7 +32,7 @@ class RegressionEvaluation(Evaluation):
         test_ratio: int,
         shrinkage: int,
         num_epoch: int = 150,
-        n_cv: int = 5,
+        num_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
         batch_size: int = 64,
@@ -62,7 +62,7 @@ class RegressionEvaluation(Evaluation):
         self.model_net = model_net
         self.optimizer = optimizer
         self.num_classes = num_classes
-        self.n_cv = n_cv
+        self.num_cv = num_cv
         self.out_dir = out_dir
         self.DataLoader = DataLoader
         self.batch_size = batch_size
@@ -72,25 +72,25 @@ class RegressionEvaluation(Evaluation):
 
     def cv(
         self,
-        n_cv: int,
-        num_epoch: int,
-        num_classes: int,
-        dataset_name: str,
-        dataset_save_path: str,
-        test_ratio: int,
-        DataLoader: type(DataLoader),
-        shuffle: bool,
-        batch_size: int,
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device),
-        shrinkage: int,
-        result_save_dir: str,
+        num_cv: int = None,
+        num_epoch: int = None,
+        num_classes: int = None,
+        dataset_name: str = None,
+        dataset_save_path: str = None,
+        test_ratio: int = None,
+        DataLoader: type(DataLoader) = None,
+        shuffle: bool = None,
+        batch_size: int = None,
+        model_net: type(torch.nn.Module) = None,
+        optimizer: type(torch.optim) = None,
+        device: type(torch.device) = None,
+        shrinkage: int = None,
+        result_save_dir: str = None,
     ):
 
         # initialize
         (
-            n_cv,
+            num_cv,
             num_epoch,
             num_classes,
             dataset_name,
@@ -114,7 +114,7 @@ class RegressionEvaluation(Evaluation):
         train_mse = []
         tmp = {}
 
-        for i in range(n_cv):
+        for i in range(num_cv):
 
             (
                 train_loader,
@@ -129,8 +129,10 @@ class RegressionEvaluation(Evaluation):
                 batch_size=batch_size,
                 shuffle=shuffle,
             )
-            
-            norm_factor = self.__normalization_factor(dataset=dataset, num_classes=num_classes)
+
+            norm_factor = self.__normalization_factor(
+                dataset=dataset, num_classes=num_classes
+            )
             for epoch in range(1, num_epoch):
                 mae = self.train(
                     model_net=model_net,
@@ -146,14 +148,14 @@ class RegressionEvaluation(Evaluation):
                     test_loader=train_loader,
                     device=device,
                     norm_factor=norm_factor,
-                    epoch = epoch
-                ) # TODO might be unneccessary
+                    epoch=epoch,
+                )  # TODO might be unneccessary
                 test_mae_val, test_mse_val = self.test(
                     model_net=model_net,
                     test_loader=test_loader,
                     device=device,
                     norm_factor=norm_factor,
-                    epoch = epoch
+                    epoch=epoch,
                 )
                 train_mae.append(train_mae_val)
                 train_mse.append(train_mse_val)
@@ -172,7 +174,12 @@ class RegressionEvaluation(Evaluation):
             tmp["MAE Test"] = list(train_mae)
             tmp["MSE Test"] = list(train_mse)
             result[str(i)] = tmp
-            self.save_result(result_save_dir = result_save_dir, dataset_name=dataset_name, n_cv = i, data=tmp)
+            self.save_result(
+                result_save_dir=result_save_dir,
+                dataset_name=dataset_name,
+                num_cv=i,
+                data=tmp,
+            )
         return result
 
     # TODO the functions actually need default initialization
@@ -180,40 +187,40 @@ class RegressionEvaluation(Evaluation):
     def train(
         self,
         epoch: int,
-        model_net:type(torch.nn.Module),
+        model_net: type(torch.nn.Module),
         norm_factor: float,
-        device:type(torch.device),
+        device: type(torch.device),
         train_loader,
-        optimizer:type(torch.optim),
-        num_classes:int,
-    )->float:
+        optimizer: type(torch.optim),
+        num_classes: int,
+    ) -> float:
 
-        model_net.train() #TODO deleted shrinkage block due to minor influence
+        model_net.train()  # TODO deleted shrinkage block due to minor influence
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = (data.y.numpy())/norm_factor
+            data.y = (data.y.numpy()) / norm_factor
             data.y = torch.from_numpy(data.y).type(torch.FloatTensor)
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model_net(data.x, data.edge_index, data.batch)
             loss = torch.nn.MSELoss()
-            if len(data.y.size()) == 1: 
+            if len(data.y.size()) == 1:
                 loss = loss(output_probs, data.y[:])
-            else: 
+            else:
                 loss = loss(output_probs, data.y[:, :])
             mse += loss.item()
             loss.backward()
             optimizer.step()
             torch.cuda.empty_cache()
-        return mse/len(train_loader)
+        return mse / len(train_loader)
 
     def test(
         self,
         test_loader,
         epoch: int,
-        norm_factor:float, 
+        norm_factor: float,
         model_net: type(torch.nn.Module),
         device: type(torch.device),
     ):
@@ -232,8 +239,9 @@ class RegressionEvaluation(Evaluation):
             loss = torch.nn.MSELoss()
             mse += loss_mae(output_probs, data.y).item()
             torch.cuda.empty_cache()
-        return mae/len(test_loader), mse/len(test_loader)  # TODO verify if necessary
-
+        return mae / len(test_loader), mse / len(
+            test_loader
+        )  # TODO verify if necessary
 
     def __normalization_factor(self, dataset, num_classes: int):
 

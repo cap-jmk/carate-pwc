@@ -33,8 +33,8 @@ class Net(torch.nn.Module):
     """
 
     def __init__(
-        self, dim:int, num_features:int, num_classes:int
-    )->None:  # TODO num_features and num_classes should come from dataset
+        self, dim: int, num_features: int, num_classes: int
+    ) -> None:  # TODO num_features and num_classes should come from dataset
         super(Net, self).__init__()
 
         self.num_classes = num_classes

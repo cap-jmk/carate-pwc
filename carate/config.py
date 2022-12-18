@@ -9,35 +9,37 @@ import torch
 
 from carate.evaluation import evaluation, classification, regression
 from carate.models import cgc_classification, cgc_regression
-from carate.load_data import DataLoader, StandardPytorchGeometricDataLoader, StandardDataLoaderTUDataset, StandardDataLoaderMoleculeNet
+from carate.load_data import (
+    DataLoader,
+    StandardPytorchGeometricDataLoader,
+    StandardDataLoaderTUDataset,
+    StandardDataLoaderMoleculeNet,
+)
 from carate.utils.convert_to_json import convert_py_to_json
 
 EVALUATION_MAP = {
-    "regression" : regression.RegressionEvaluation,
+    "regression": regression.RegressionEvaluation,
     "classification": classification.ClassificationEvaluation,
-    "evaluation": evaluation.Evaluation
+    "evaluation": evaluation.Evaluation,
 }
 
-MODEL_MAP = {
-    "cgc_classification" : cgc_classification, 
-    "cgc_regression" : cgc_regression
-}
+MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
 DATA_LOADER_MAP = {
-    "StandardPyG" : StandardPytorchGeometricDataLoader,
-    "StandardTUD" : StandardDataLoaderTUDataset,
-    "StandardMolNet": StandardDataLoaderMoleculeNet
+    "StandardPyG": StandardPytorchGeometricDataLoader,
+    "StandardTUD": StandardDataLoaderTUDataset,
+    "StandardMolNet": StandardDataLoaderMoleculeNet,
 }
 
 
+class Config:
+    """
+    The Config class is an object representation of the configuration of the model. It aims to provide a middle layer between
+    some user input and the run interface. It is also possible to use it via the web because of the method overload of the constructor.
+    """
 
-class Config: 
-    """
-    The Config class is an object representation of the configuration of the model. It aims to provide a middle layer between 
-    some user input and the run interface. It is also possible to use it via the web because of the method overload of the constructor. 
-    """
     def __init__(
-        self, 
+        self,
         dataset_name: str,
         num_features: int,
         num_classes: int,
@@ -45,7 +47,7 @@ class Config:
         result_save_dir: str,
         Evaluation: type(evaluation.Evaluation),
         model,
-        optimizer: str= None,
+        optimizer: str = None,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -54,10 +56,10 @@ class Config:
         shuffle: bool = True,
         data_loader: str = None,
         num_cv: int = 5,
-        num_epoch:int =150,
+        num_epoch: int = 150,
     ):
 
-        # fill with maps 
+        # fill with maps
         self.model = model
         self.optimizer = optimizer
         self.Evaluation = Evaluation
@@ -80,48 +82,46 @@ class Config:
         self.num_cv = num_cv
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
-    
 
-    
     @classmethod
-    def from_file(cls, file_name:str)->None:
+    def from_file(cls, file_name: str) -> None:
 
         json_object = convert_py_to_json(file_name)
         config_object = Config.from_json(json_object)
         return config_object
 
     @classmethod
-    def from_json(cls, json_object:dict): 
+    def from_json(cls, json_object: dict):
         """
         The __initialize function is a helper function that initializes the class with the parameters
-        specified in the json_object. The json_object is a dictionary of key-value pairs, where each key 
-        is one of the following: model, optimizer, evaluation, data loader. Each value is another dictionary 
+        specified in the json_object. The json_object is a dictionary of key-value pairs, where each key
+        is one of the following: model, optimizer, evaluation, data loader. Each value is another dictionary
         of key-value pairs specific to that particular object.
-        
+
         :param self: Used to Represent the instance of the class.
         :param json_object:dict: Used to pass in the json object that is read from the config file.
         :return: A dictionary of the parameters for each class.
-        
+
         :doc-author: Julian M. Kleber
         """
         return cls(
-        model = MODEL_MAP[json_object["model"]],
-        optimizer = json_object["optimizer"],
-        Evaluation = EVALUATION_MAP[json_object["evaluation"]],
-        data_loader = DATA_LOADER_MAP[json_object["data_loader"]],
-        #model parameters
-        dataset_name = json_object["dataset_name"],
-        num_classes = int(json_object["num_classes"]),
-        num_features = int(json_object["num_features"]),
-        shrinkage = int(json_object["shrinkage"]),
-        net_dimension = int(json_object["net_dimension"]),
-        learning_rate = float(json_object["learning_rate"]),
-        #evaluation parameters
-        dataset_save_path = json_object["dataset_save_path"],
-        test_ratio = int(json_object["test_ratio"]),
-        batch_size = int(json_object["batch_size"]),
-        shuffle = bool(json_object["shuffle"]),
-        num_cv = int(json_object["num_cv"]),
-        num_epoch = int(json_object["num_epoch"]),
-        result_save_dir = json_object["result_save_dir"]
+            model=MODEL_MAP[json_object["model"]],
+            optimizer=json_object["optimizer"],
+            Evaluation=EVALUATION_MAP[json_object["evaluation"]],
+            data_loader=DATA_LOADER_MAP[json_object["data_loader"]],
+            # model parameters
+            dataset_name=json_object["dataset_name"],
+            num_classes=int(json_object["num_classes"]),
+            num_features=int(json_object["num_features"]),
+            shrinkage=int(json_object["shrinkage"]),
+            net_dimension=int(json_object["net_dimension"]),
+            learning_rate=float(json_object["learning_rate"]),
+            # evaluation parameters
+            dataset_save_path=json_object["dataset_save_path"],
+            test_ratio=int(json_object["test_ratio"]),
+            batch_size=int(json_object["batch_size"]),
+            shuffle=bool(json_object["shuffle"]),
+            num_cv=int(json_object["num_cv"]),
+            num_epoch=int(json_object["num_epoch"]),
+            result_save_dir=json_object["result_save_dir"],
         )

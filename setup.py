@@ -19,6 +19,8 @@ setuptools.setup(
         "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
         "Operating System :: OS Independent",
     ],
-    install_requires=[black,],
+    install_requires=[
+        black,
+    ],
     python_requires=">=3.9",
 )

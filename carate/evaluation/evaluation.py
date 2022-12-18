@@ -48,7 +48,7 @@ class Evaluation(DefaultObject):
         test_ratio: int,
         shrinkage: int,
         num_epoch: int = 150,
-        n_cv: int = 5,
+        num_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
         gamma: int = 0.5,
@@ -80,7 +80,7 @@ class Evaluation(DefaultObject):
         self.model_net = model_net
         self.optimizer = optimizer
         self.num_classes = num_classes
-        self.n_cv = n_cv
+        self.num_cv = num_cv
         self.out_dir = out_dir
         self.gamma = gamma
         self.DataLoader = DataLoader
@@ -91,7 +91,7 @@ class Evaluation(DefaultObject):
 
     def cv(
         self,
-        n_cv: int,
+        num_cv: int,
         num_epoch: int,
         num_classes: int,
         dataset_name: str,
@@ -108,7 +108,7 @@ class Evaluation(DefaultObject):
     ):
         """
         The cv function takes in the following parameters:
-            n_cv (int): The number of cross-validation folds to perform.
+            num_cv (int): The number of cross-validation folds to perform.
             num_epoch (int): The number of epochs to train for each fold.
             num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.
                 If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.
@@ -120,7 +120,7 @@ class Evaluation(DefaultObject):
             DataLoader: An instance of torchvision's DataLoader class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
 
         :param self: Used to Represent the instance of the class.
-        :param n_cv:int: Used to Specify the number of cross-validation folds.
+        :param num_cv:int: Used to Specify the number of cross-validation folds.
         :param num_epoch:int: Used to Specify the number of epochs to train for.
         :param num_classes:int: Used to Determine the number of classes in the dataset.
         :param dataset_name:str: Used to Specify the name of the dataset to be used.
@@ -132,7 +132,7 @@ class Evaluation(DefaultObject):
         """
 
         (
-            n_cv,
+            num_cv,
             num_epoch,
             num_classes,
             dataset_name,
@@ -141,7 +141,7 @@ class Evaluation(DefaultObject):
             DataLoader,
             shuffle,
             batch_size,
-            model,
+            model_net,
             optimizer,
             device,
             shrinkage,
@@ -152,7 +152,7 @@ class Evaluation(DefaultObject):
         auc_store = []
         loss_store = []
         tmp = {}
-        for i in range(n_cv):
+        for i in range(num_cv):
             (
                 train_loader,
                 test_loader,
@@ -170,7 +170,7 @@ class Evaluation(DefaultObject):
             for epoch in range(1, num_epoch):
                 train_loss = self.train(
                     epoch=epoch,
-                    model=model,
+                    model_net=model_net,
                     device=device,
                     optimizer=optimizer,
                     train_loader=train_loader,
@@ -204,7 +204,8 @@ class Evaluation(DefaultObject):
                 store_auc = []
                 for i in range(len(x[0, :])):
                     auc = metrics.roc_auc_score(y[:, i], x[:, i])
-                    LOGGER.info("AUC of " + str(i) + "is:", auc)
+
+                    logging.info("AUC of " + str(i) + "is:", auc)
                     store_auc.append(auc)
                 auc_store.append(store_auc)
 
@@ -213,7 +214,7 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-            self.__save_result(result_save_dir, dataset_name, data=tmp)
+            self.save_result(result_save_dir = result_save_dir, dataset_name = dataset_name, data=tmp, num_cv = i)
             result.append(tmp)
         return result
 
@@ -257,7 +258,7 @@ class Evaluation(DefaultObject):
             data.y = F.one_hot(data.y, num_classes=num_classes).type(torch.FloatTensor)
             data = data.to(device)
             optimizer.zero_grad()
-            output_probs = model(data.x, data.edge_index, data.batch)
+            output_probs = model_net(data.x, data.edge_index, data.batch)
             output = (output_probs > 0.5).float()
             loss = torch.nn.BCELoss()
             loss = loss(output_probs, data.y)
@@ -302,19 +303,20 @@ class Evaluation(DefaultObject):
             self.train_store = outputs
         return correct / len(test_loader.dataset)
 
-    def save_result(self, result_save_dir:str, dataset_name:str, n_cv:int, data:dict)->None:
+    def save_result(
+        self, result_save_dir: str, dataset_name: str, num_cv: int, data: dict
+    ) -> None:
         check_make_dir(result_save_dir)
-        with open(result_save_dir + dataset_name + "_" + str(n_cv) + ".csv", "w") as f:
-                    json.dump(data, f)
-                    logging.info(
-                        "Saved cv run to "
-                        + result_save_dir
-                        + dataset_name
-                        + "_"
-                        + str(n_cv)
-                        + ".csv"
-                    )
-
+        with open(result_save_dir + dataset_name + "_" + str(num_cv) + ".csv", "w") as f:
+            json.dump(data, f)
+            logging.info(
+                "Saved cv run to "
+                + result_save_dir
+                + dataset_name
+                + "_"
+                + str(num_cv)
+                + ".csv"
+            )
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name

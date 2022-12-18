@@ -7,7 +7,9 @@ from carate.load_data import StandardDataLoaderTUDataset
 from carate.config import Config
 from carate.models import cgc_classification
 from carate.evaluation import classification
-def test_config(): 
+
+
+def test_config():
     config_filepath = "tests/config/classification_test_config.py"
     config = Config.from_file(file_name=config_filepath)
     assert config.dataset_name == "ENZYMES"

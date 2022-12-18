@@ -24,9 +24,8 @@ logging.basicConfig(
 
 
 def test_regression():
-    #Find out what dataset name does the regression dataset have
+    # Find out what dataset name does the regression dataset have
 
-    
     runner = Run(
         dataset_name=dataset_name,
         num_features=num_features,
@@ -43,9 +42,8 @@ def test_regression():
         shuffle=shuffle,
         shrinkage=shrinkage,
         num_epoch=num_epoch,
-        n_cv=num_cv,
+        num_cv=num_cv,
         result_save_dir=result_save_dir,
         Evaluation=RegressionEvaluation,
     )
     runner.run(device=device)
-

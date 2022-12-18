@@ -25,7 +25,7 @@ logging.basicConfig(
 
 
 class Net(torch.nn.Module):
-    def __init__(self, dim:int, num_classes:int, num_features:int)->None:
+    def __init__(self, dim: int, num_classes: int, num_features: int) -> None:
         super(Net, self).__init__()
 
         self.num_classes = num_classes

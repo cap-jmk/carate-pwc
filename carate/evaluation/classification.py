@@ -19,7 +19,7 @@ class ClassificationEvaluation(Evaluation):
         test_ratio: int,
         shrinkage: int,
         num_epoch: int = 150,
-        n_cv: int = 5,
+        num_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
         gamma: int = 0.5,
@@ -51,7 +51,7 @@ class ClassificationEvaluation(Evaluation):
         self.model_net = model_net
         self.optimizer = optimizer
         self.num_classes = num_classes
-        self.n_cv = n_cv
+        self.num_cv = num_cv
         self.out_dir = out_dir
         self.gamma = gamma
         self.DataLoader = DataLoader
