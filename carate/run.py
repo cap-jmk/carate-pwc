@@ -2,10 +2,11 @@ import torch
 import click
 
 from carate.models.cgc_classification import Net
-from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
+from carate.load_data import DataLoader
 from carate.evaluation.evaluation import Evaluation
 from carate.default_interface import DefaultObject
 from carate.config import Config
+from carate.optimizer import get_optimizer
 from typing import Type
 
 import logging
@@ -36,10 +37,10 @@ class Run(DefaultObject):
         result_save_dir: str,
         Evaluation: type(Evaluation),
         model: type(torch.nn.Module),
+        optimizer_str: str,
         device: type(torch.device) = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
         ),
-        optimizer: type(torch.optim) = None,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -60,13 +61,10 @@ class Run(DefaultObject):
         self.model_net = model.Net(
             dim=net_dimension, num_classes=num_classes, num_features=num_features
         ).to(device)
-        if optimizer is None:
-            self.optimizer = torch.optim.Adam(
-                self.model_net.parameters(), lr=learning_rate
-            )
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
-
+        self.get_optimizer(optimizer_str, self.model, self.learning_rate)
+        
         # evaulation parameters
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
@@ -87,14 +85,14 @@ class Run(DefaultObject):
     @classmethod
     def from_file(cls, config_filepath:str)->None:
 
-        self.config = Config.from_file(file_name=config_filepath)
-        run_object = Run.from_json(config)
+        config = Config.from_file(file_name=config_filepath)
+        run_object = Run.__init_config(config)
         return run_object
-        
+
     @classmethod
     def from_json(cls, json_object:dict)->None:
 
-        self.config = Config(json_object=json_object)
+        config = Config.from_json(json_object=json_object)
         run_object = Run.__init_config(config)
         return run_object
 
@@ -167,7 +165,8 @@ class Run(DefaultObject):
             result_save_dir=result_save_dir,
         )
 
-    def __init_config(self, config:type(Config))->None: 
+    @classmethod
+    def __init_config(cls, config:type(Config))->None: 
         """
         The __init_config function initializes the configuration of the model.
         
@@ -186,15 +185,16 @@ class Run(DefaultObject):
             optimizer = torch.optim.Adam(
                 self.model_net.parameters(), lr=learning_rate
             )
+        assert 1 ==2, str(config.num_features) + " classes:" +str(config.num_classes) + " dim:"+str(config.net_dimension)
         return cls(
         dataset_name = config.dataset_name,
-        device = config.device,
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu"),
         num_classes = config.num_classes,
         num_features = config.num_features,
         shrinkage = config.shrinkage,
         Evaluation = config.Evaluation,
         model_net = config.model.Net(
-            dim=net_dimension, num_classes=num_classes, num_features=num_features
+            dim=config.net_dimension, num_classes=config.num_classes, num_features=config.num_features
         ).to(device),
         
         optimizer = optimizer,

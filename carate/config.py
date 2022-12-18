@@ -30,9 +30,6 @@ DATA_LOADER_MAP = {
 }
 
 
-def get_optimizer(optimizer_str:str)->type(torch.optim):
-    if optimizer_str == "adams": 
-        return  torch.optim.Adam(self.model_net.parameters(), lr=learning_rate)
 
 class Config: 
     """
@@ -46,8 +43,8 @@ class Config:
         num_classes: int,
         shrinkage: int,
         result_save_dir: str,
-        evaluation: str,
-        model: str,
+        Evaluation: type(evaluation.Evaluation),
+        model,
         optimizer: str= None,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
@@ -56,15 +53,15 @@ class Config:
         batch_size: int = 64,
         shuffle: bool = True,
         data_loader: str = None,
-        n_cv: int = 5,
+        num_cv: int = 5,
         num_epoch:int =150,
     ):
 
         # fill with maps 
-        self.model = MODEL_MAP[model]
-        self.optimizer = get_optimizer(optimizer)
-        self.Evaluation = EVALUATION_MAP[evaluation]
-        self.DataLoader = DATA_LOADER_MAP[data_loader]
+        self.model = model
+        self.optimizer = optimizer
+        self.Evaluation = Evaluation
+        self.DataLoader = data_loader
 
         # model parameters
         self.dataset_name = dataset_name
@@ -80,7 +77,7 @@ class Config:
         self.test_ratio = test_ratio
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.n_cv = n_cv
+        self.num_cv = num_cv
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
     
@@ -109,22 +106,22 @@ class Config:
         """
         return cls(
         model = MODEL_MAP[json_object["model"]],
-        optimizer = get_optimizer(json_object["optimizer"]),
+        optimizer = json_object["optimizer"],
         Evaluation = EVALUATION_MAP[json_object["evaluation"]],
-        DataLoader = DATA_LOADER_MAP[json_object["data_loader"]],
+        data_loader = DATA_LOADER_MAP[json_object["data_loader"]],
         #model parameters
         dataset_name = json_object["dataset_name"],
-        num_classes = json_object["num_classes"],
-        num_features = json_object["num_features"],
-        shrinkage = json_object["shrinkage"],
-        net_dimension = json_object["net_dimension"],
-        learning_rate = json_object["learning_rate"],
+        num_classes = int(json_object["num_classes"]),
+        num_features = int(json_object["num_features"]),
+        shrinkage = int(json_object["shrinkage"]),
+        net_dimension = int(json_object["net_dimension"]),
+        learning_rate = float(json_object["learning_rate"]),
         #evaluation parameters
         dataset_save_path = json_object["dataset_save_path"],
-        test_ratio = json_object["test_ratio"],
-        batch_size = json_object["batch_size"],
-        shuffle = json_object["shuffle"],
-        n_cv = json_object["n_cv"],
-        num_epoch = json_object["num_epoch"],
+        test_ratio = int(json_object["test_ratio"]),
+        batch_size = int(json_object["batch_size"]),
+        shuffle = bool(json_object["shuffle"]),
+        num_cv = int(json_object["num_cv"]),
+        num_epoch = int(json_object["num_epoch"]),
         result_save_dir = json_object["result_save_dir"]
         )
