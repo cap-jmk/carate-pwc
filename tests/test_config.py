@@ -1,5 +1,7 @@
 """
-Just check if the initialization of the config file is correct. 
+Test to verify if the initialization of the config file is correct. 
+
+:author: Julian M. Kleber
 """
 
 from carate.load_data import StandardDataLoaderTUDataset
@@ -20,12 +22,12 @@ def test_config():
     assert config.optimizer == "adams"
     assert config.net_dimension == 364
     assert config.learning_rate == 0.0005
-    assert config.dataset_save_path == "data/"
+    assert config.dataset_save_path == "tests/data/"
     assert config.test_ratio == 10
     assert config.batch_size == 64
     assert config.shuffle == True
     assert config.shrinkage == 51
     assert config.num_epoch == 2
-    assert config.num_cv == 3
-    assert config.result_save_dir == "results/"
+    assert config.num_cv == 2
+    assert config.result_save_dir == "tests/results/ENZYMES"
     assert config.DataLoader == StandardDataLoaderTUDataset

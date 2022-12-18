@@ -14,7 +14,7 @@ import carate.models.cgc_classification
 from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
-from carate.utils.file_utils import check_make_dir
+from carate.utils.file_utils import prepare_file_name_saving
 from typing import Type
 
 
@@ -197,15 +197,15 @@ class Evaluation(DefaultObject):
                 )
                 y = np.zeros((len(test_dataset)))
                 x = self.train_store
-                for i in range(len(test_dataset)):
-                    y[i] = test_dataset[i].y
+                for j in range(len(test_dataset)):
+                    y[j] = test_dataset[j].y
                 y = torch.as_tensor(y)
                 y = F.one_hot(y.long(), num_classes=num_classes).long()
                 store_auc = []
-                for i in range(len(x[0, :])):
-                    auc = metrics.roc_auc_score(y[:, i], x[:, i])
+                for j in range(len(x[0, :])):
+                    auc = metrics.roc_auc_score(y[:, j], x[:, j])
 
-                    logging.info("AUC of " + str(i) + "is:", auc)
+                    logging.info("AUC of " + str(j) + "is:", auc)
                     store_auc.append(auc)
                 auc_store.append(store_auc)
 
@@ -306,8 +306,8 @@ class Evaluation(DefaultObject):
     def save_result(
         self, result_save_dir: str, dataset_name: str, num_cv: int, data: dict
     ) -> None:
-        check_make_dir(result_save_dir)
-        with open(result_save_dir + dataset_name + "_" + str(num_cv) + ".csv", "w") as f:
+        file_name = prepare_file_name_saving(result_save_dir, dataset_name+"_"+str(num_cv), suffix=".csv")
+        with open(file_name, "w") as f:
             json.dump(data, f)
             logging.info(
                 "Saved cv run to "
@@ -320,3 +320,9 @@ class Evaluation(DefaultObject):
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name
+    
+
+    
+    def save_model(self, result_save_dir: str, dataset_name: str, num_cv: int, num_epoch, model_net: type(torch.nn.Module)): 
+
+        torch.save(model.state_dict(), PATH)

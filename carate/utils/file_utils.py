@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 
 
-def prepare_file_name_saving(prefix: str, file_name: str, ending: str) -> str:
+def prepare_file_name_saving(prefix: str, file_name: str, suffix: str) -> str:
     """
     The prepare_file_name_saving function takes a prefix and file name as input. It checks to see if the directory exists, and makes it if not. Then it returns the full path of the file.
 
@@ -26,7 +26,7 @@ def prepare_file_name_saving(prefix: str, file_name: str, ending: str) -> str:
     """
     check_make_dir(prefix)
     file_name = make_full_filename(prefix, file_name)
-    file_name = check_file_name(file_name, ending)
+    file_name = check_file_name(file_name, suffix)
     return file_name
 
 

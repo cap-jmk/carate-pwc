@@ -1,3 +1,8 @@
+"""
+Tests the file converter that converts a config file to a json for using to initialize a Run object. 
+
+"""
+
 from carate.utils.convert_to_json import convert_py_to_json, read_file
 
 

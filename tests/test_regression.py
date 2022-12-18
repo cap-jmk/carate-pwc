@@ -2,8 +2,9 @@
 Perform tests on the functionality of running models against 
 a regression dataset 
 
-@author: Julian M. Kleber
+:author: Julian M. Kleber
 """
+import os 
 
 import torch
 
@@ -24,26 +25,12 @@ logging.basicConfig(
 
 
 def test_regression():
-    # Find out what dataset name does the regression dataset have
 
-    runner = Run(
-        dataset_name=dataset_name,
-        num_features=num_features,
-        num_classes=num_classes,
-        model=model,
-        device=device,
-        optimizer=optimizer,
-        net_dimension=net_dimension,
-        learning_rate=learning_rate,
-        dataset_save_path=dataset_save_path,
-        DataLoader=StandardDataLoaderTUDataset,
-        test_ratio=test_ratio,
-        batch_size=batch_size,
-        shuffle=shuffle,
-        shrinkage=shrinkage,
-        num_epoch=num_epoch,
-        num_cv=num_cv,
-        result_save_dir=result_save_dir,
-        Evaluation=RegressionEvaluation,
-    )
-    runner.run(device=device)
+    config_filepath = "tests/config/regression_test_config.py"
+    runner = Run.from_file(config_filepath=config_filepath)
+    runner.run() # takes instance attributes as parameters for the run() function
+    result_dir_content = os.listdir("tests/results/ZINC_test")
+    assert len(result_dir_content) == 2
+    assert result_dir_content[0] == "ZINC_test_0.csv"
+    assert result_dir_content[1] == "ZINC_test_1.csv"
+
