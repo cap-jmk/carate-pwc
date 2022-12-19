@@ -30,5 +30,4 @@ def test_classification():
     runner.run() # takes instance attributes as parameters for the run() function
     result_dir_content = os.listdir("tests/results/ENZYMES")
     assert len(result_dir_content) == 2
-    assert result_dir_content[0] == "ENZYMES_0.csv"
-    assert result_dir_content[1] == "ENZYMES_1.csv"
+    assert "ENZYMES_0.csv" in result_dir_content and "ENZYMES_1.csv" in result_dir_content
