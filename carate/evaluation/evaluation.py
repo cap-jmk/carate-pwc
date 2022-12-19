@@ -214,7 +214,12 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-            self.save_result(result_save_dir = result_save_dir, dataset_name = dataset_name, data=tmp, num_cv = i)
+            self.save_result(
+                result_save_dir=result_save_dir,
+                dataset_name=dataset_name,
+                data=tmp,
+                num_cv=i,
+            )
             result.append(tmp)
         return result
 
@@ -306,7 +311,9 @@ class Evaluation(DefaultObject):
     def save_result(
         self, result_save_dir: str, dataset_name: str, num_cv: int, data: dict
     ) -> None:
-        file_name = prepare_file_name_saving(result_save_dir, dataset_name+"_"+str(num_cv), suffix=".csv")
+        file_name = prepare_file_name_saving(
+            result_save_dir, dataset_name + "_" + str(num_cv), suffix=".csv"
+        )
         with open(file_name, "w") as f:
             json.dump(data, f)
             logging.info(
@@ -320,9 +327,14 @@ class Evaluation(DefaultObject):
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name
-    
 
-    
-    def save_model(self, result_save_dir: str, dataset_name: str, num_cv: int, num_epoch, model_net: type(torch.nn.Module)): 
+    def save_model(
+        self,
+        result_save_dir: str,
+        dataset_name: str,
+        num_cv: int,
+        num_epoch,
+        model_net: type(torch.nn.Module),
+    ):
 
         torch.save(model.state_dict(), PATH)

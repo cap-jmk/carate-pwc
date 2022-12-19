@@ -61,7 +61,7 @@ class Run(DefaultObject):
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
         self.optimizer = optimizer
-        
+
         # evaulation parameters
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
@@ -90,7 +90,7 @@ class Run(DefaultObject):
 
     def run(
         self,
-        device: type(torch.optim)=None,
+        device: type(torch.optim) = None,
         dataset_name: str = None,
         test_ratio: int = None,
         dataset_save_path: str = None,
@@ -173,14 +173,17 @@ class Run(DefaultObject):
         :doc-author: Julian M. Kleber
         """
 
-        
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         model_net = config.model.Net(
             dim=int(config.net_dimension),
             num_classes=int(config.num_classes),
             num_features=int(config.num_features),
         ).to(device)
-        optimizer = get_optimizer(optimizer_str = config.optimizer, model_net = model_net, learning_rate = config.learning_rate)
+        optimizer = get_optimizer(
+            optimizer_str=config.optimizer,
+            model_net=model_net,
+            learning_rate=config.learning_rate,
+        )
         return cls(
             dataset_name=config.dataset_name,
             device=device,

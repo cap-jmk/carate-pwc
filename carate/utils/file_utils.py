@@ -30,29 +30,28 @@ def prepare_file_name_saving(prefix: str, file_name: str, suffix: str) -> str:
     return file_name
 
 
-def insert_string_in_file_name(file_name: str, insertion: str, ending: str)-> str:
+def insert_string_in_file_name(file_name: str, insertion: str, ending: str) -> str:
     """
     The insert_string_in_file_name function takes a file_name and inserts a string into the file name.
-    
-    The insertion is placed before the extension of the file, or if there is no extension, it will be placed at 
-    the end of the filename with an ending specified by you. If you do not specify an ending then one must be present in 
+
+    The insertion is placed before the extension of the file, or if there is no extension, it will be placed at
+    the end of the filename with an ending specified by you. If you do not specify an ending then one must be present in
     the original filename. For example:
-    
+
         >>> insert_string_in_file_name("foo", "bar") # doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
         Traceback (most recent call last): ... ValueError: You must either specify an ending in...
-    
+
         >>> insert_string("foo", "bar", ".txt") # doctest: +ELLIPSIS +NORMALIZE WHITESPACE) == 'foo'+'bar'+'.txt') == 'foobar.txt') True
-    
+
         >>> insert('/path/to/somefile', 'baz', '.py') # doctest: +ELLIPSIS NORMALIZE WHITESPACE) == '/path/to'/somefile'+'baz''+.py') == '/path/to'/somefilebaz+.py') True
-    
+
     :param file_name:str: Used to Pass the file name to the function.
     :param insertion:str: Used to Specify what string you want to insert into the file name.
     :param ending:str: Used to Specify the file extension.
     :return: A string.
-    
+
     :doc-author: Trelent
     """
-    
 
     root, ext = os.path.splitext(file_name)
 
@@ -97,7 +96,7 @@ def prepare_data_decicion_lib(data_set: object, columns: list = None) -> tuple()
     return (X, y)
 
 
-def check_file_name(file_name: str, ending: str)->None:
+def check_file_name(file_name: str, ending: str) -> None:
     """
     The check_name_plot function checks that the file_name ends with .png.
     If it does not, then check_name_plot appends .png to the end of the file_name.
@@ -116,7 +115,7 @@ def check_file_name(file_name: str, ending: str)->None:
     return file_name
 
 
-def make_full_filename(prefix:str, file_name:str)->None:
+def make_full_filename(prefix: str, file_name: str) -> None:
     """
     The make_full_filename function takes a prefix and a file_name as input.
     If the prefix is None, then the file_name is returned unchanged.
@@ -163,24 +162,24 @@ def check_make_dir(dir_name: str) -> None:
         LOGGER.info(dir_name + "folder already exists.")
 
 
-def load_json_from_file(file_name: str)->dict:
+def load_json_from_file(file_name: str) -> dict:
     """
     The load_json_from_file function takes a file name as an argument and returns the contents of that file in JSON format.
-    
+
     Parameters:
-    
+
         file_name (str): The name of the JSON-formatted text file to be loaded.
-        
+
     Returns:
-    
+
         data (dict): A dictionary containing all of the information from the specified text file.
-    
+
     :param file_name:str: Used to Specify the file name to be read.
     :return: A python dictionary.
-    
+
     :doc-author: Julian M. Kleber
     """
-    
+
     import json
 
     with open(file_name, "r") as f:
@@ -188,7 +187,7 @@ def load_json_from_file(file_name: str)->dict:
     return data
 
 
-def save_json_to_file(dictionary, file_name: str = None, suffix: str = ".json")->None:
+def save_json_to_file(dictionary, file_name: str = None, suffix: str = ".json") -> None:
     """
     The save_json function saves a dictionary to a json file.
 
@@ -215,7 +214,7 @@ def save_json_to_file(dictionary, file_name: str = None, suffix: str = ".json")-
         LOGGER.info("Saved json " + str(file_name))
 
 
-def make_date_file_name(prefix: str = "", file_name: str = "", suffix: str = "")->str:
+def make_date_file_name(prefix: str = "", file_name: str = "", suffix: str = "") -> str:
     """
     The make_date_file_name function creates a file name with the date and time
     stamp in the format YYYY-MM-DD_HH:MM:SS.out.  The prefix, file_name, and suffix
@@ -236,18 +235,17 @@ def make_date_file_name(prefix: str = "", file_name: str = "", suffix: str = "")
     return timestr
 
 
-def get_grid_positions(rows: int, cols: int)->list:
+def get_grid_positions(rows: int, cols: int) -> list:
     """
     The get_grid_positions function takes in the number of rows and columns in a grid,
     and returns a list of tuples containing all possible positions on that grid.
-    
+
     :param rows:int: Used to Specify the number of rows in the grid.
     :param cols:int: Used to Specify the number of columns in the grid.
     :return: A list of tuples.
-    
+
     :doc-author: Trelent
     """
-    
 
     grid = []
     for i in range(2, rows):

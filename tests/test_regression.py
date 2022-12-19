@@ -4,7 +4,7 @@ a regression dataset
 
 :author: Julian M. Kleber
 """
-import os 
+import os
 
 import torch
 
@@ -28,8 +28,10 @@ def test_regression():
 
     config_filepath = "tests/config/regression_test_config.py"
     runner = Run.from_file(config_filepath=config_filepath)
-    runner.run() # takes instance attributes as parameters for the run() function
+    runner.run()  # takes instance attributes as parameters for the run() function
     result_dir_content = os.listdir("tests/results/ZINC_test")
     assert len(result_dir_content) == 2
-    assert r"ZINC_test_0.csv" in result_dir_content and "ZINC_test_1.csv" in result_dir_content
-
+    assert (
+        r"ZINC_test_0.csv" in result_dir_content
+        and "ZINC_test_1.csv" in result_dir_content
+    )
