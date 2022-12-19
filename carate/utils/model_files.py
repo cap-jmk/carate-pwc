@@ -6,7 +6,11 @@ Utility file for model checkpoints file operations
 
 import torch
 
-from carate.utils.file_utils import prepare_file_name_saving, load_json_from_file
+from carate.utils.file_utils import (
+    prepare_file_name_saving,
+    load_json_from_file,
+    make_full_filename,
+)
 
 
 def load_model(
@@ -27,9 +31,45 @@ def load_model(
 
     parameters = load_model_parameters(model_params_path)
     model = model_net(**parameters)
-    model.load_state_dict(torch.load(PATH))
+    model.load_state_dict(torch.load(model_path))
     model.eval()
     return model
+
+
+def save_model(
+    self,
+    result_save_dir: str,
+    dataset_name: str,
+    num_cv: int,
+    num_epoch,
+    model_net: type(torch.nn.Module),
+):
+    """
+    The save_model function saves the model to a file.
+
+    The save_model function saves the model to a file. The filename is constructed from the dataset name, number of cross-validation folds, and number of epochs trained on.
+
+    :param result_save_dir:str: Used to specify the directory where the model will be saved.
+    :param dataset_name:str: Used to name the file.
+    :param num_cv:int: Used to make the filename unique.
+    :param num_epoch: Used to save the model after a certain number of epochs.
+    :param model_net:type(torch.nn.Module): Used to save the model.
+    :param : Used to specify the directory where the model will be saved.
+    :return: The path of the saved model.
+
+    :doc-author: Julian M. Kleber
+    """
+
+    save_path = make_full_filename(
+        prefix=result_save_dir,
+        file_name=dataset_name
+        + "_CV-"
+        + str(num_cv)
+        + "_Epoch-"
+        + str(num_epoch)
+        + "pt",
+    )
+    torch.save(model.state_dict(), save_path)
 
 
 def load_model_parameters(model_params_file_path: str) -> dict:
@@ -64,10 +104,10 @@ def save_model_parameters(model_net: type(torch.nn.Module), save_dir: str) -> No
         Returns: None
 
     :param model_net:type(torch.nn.Module): Used to specify the type of model that is being used.
-    :param save_path:str: Used to Save the model architecture in a csv file.
+    :param save_path:str: Used to save the model architecture in a json file.
     :return: A dictionary of the model architecture (model_architecture).
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     model_architecture = model_net().__dict__

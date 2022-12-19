@@ -36,6 +36,8 @@ class Config:
     """
     The Config class is an object representation of the configuration of the model. It aims to provide a middle layer between
     some user input and the run interface. It is also possible to use it via the web because of the method overload of the constructor.
+
+    :author: Julian M. Kleber
     """
 
     def __init__(
@@ -45,6 +47,7 @@ class Config:
         num_classes: int,
         shrinkage: int,
         result_save_dir: str,
+        model_save_freq: int,
         Evaluation: type(evaluation.Evaluation),
         model,
         optimizer: str = None,
@@ -73,7 +76,7 @@ class Config:
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
 
-        # evuluation parameters
+        # evaluation parameters
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
@@ -82,9 +85,21 @@ class Config:
         self.num_cv = num_cv
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
+        self.model_save_freq = model_save_freq
 
     @classmethod
     def from_file(cls, file_name: str) -> None:
+        """
+        The from_file function takes a file name as an argument and returns a Config object.
+        The function reads the file, converts it to JSON, then uses the from_json method to create
+        the Config object.
+
+        :param cls: Used to create a new instance of the class.
+        :param file_name:str: Used to specify the name of the file to be used.
+        :return: A config object.
+
+        :doc-author: Julian M. Kleber
+        """
 
         json_object = convert_py_to_json(file_name)
         config_object = Config.from_json(json_object)
@@ -93,35 +108,36 @@ class Config:
     @classmethod
     def from_json(cls, json_object: dict):
         """
-        The __initialize function is a helper function that initializes the class with the parameters
-        specified in the json_object. The json_object is a dictionary of key-value pairs, where each key
-        is one of the following: model, optimizer, evaluation, data loader. Each value is another dictionary
-        of key-value pairs specific to that particular object.
+        The from_json function is a class method that takes in a json object and returns an instance of the Config class.
+        The function is used to load the configuration from a file, which can be done by calling:
+            config = Config.from_json(json_object)
 
-        :param self: Used to Represent the instance of the class.
-        :param json_object:dict: Used to pass in the json object that is read from the config file.
-        :return: A dictionary of the parameters for each class.
+        :param cls: Used to Create an instance of the class that is calling this method.
+        :param json_object:dict: Used to Pass in the json object that is read from the file.
+        :return: A class object.
 
         :doc-author: Julian M. Kleber
         """
+
         return cls(
             model=MODEL_MAP[json_object["model"]],
             optimizer=json_object["optimizer"],
             Evaluation=EVALUATION_MAP[json_object["evaluation"]],
             data_loader=DATA_LOADER_MAP[json_object["data_loader"]],
             # model parameters
-            dataset_name=json_object["dataset_name"],
+            dataset_name=str(json_object["dataset_name"]),
             num_classes=int(json_object["num_classes"]),
             num_features=int(json_object["num_features"]),
             shrinkage=int(json_object["shrinkage"]),
             net_dimension=int(json_object["net_dimension"]),
             learning_rate=float(json_object["learning_rate"]),
             # evaluation parameters
-            dataset_save_path=json_object["dataset_save_path"],
+            dataset_save_path=str(json_object["dataset_save_path"]),
             test_ratio=int(json_object["test_ratio"]),
             batch_size=int(json_object["batch_size"]),
             shuffle=bool(json_object["shuffle"]),
             num_cv=int(json_object["num_cv"]),
             num_epoch=int(json_object["num_epoch"]),
-            result_save_dir=json_object["result_save_dir"],
+            result_save_dir=str(json_object["result_save_dir"]),
+            model_save_freq=int(json_object["model_save_freq"]),
         )

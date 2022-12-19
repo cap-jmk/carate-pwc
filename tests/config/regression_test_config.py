@@ -15,3 +15,4 @@ num_epoch = 2
 num_cv = 2
 result_save_dir = "tests/results/ZINC_test"
 data_loader = "StandardTUD"
+model_save_freq = 1

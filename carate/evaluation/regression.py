@@ -37,6 +37,7 @@ class RegressionEvaluation(Evaluation):
         out_dir: str = r"./out",
         batch_size: int = 64,
         shuffle: bool = True,
+        model_save_freq: int = 100,
     ):
         """
 
@@ -69,6 +70,7 @@ class RegressionEvaluation(Evaluation):
         self.shuffle = shuffle
         self.device = device
         self.result_save_dir = result_save_dir
+        self.model_save_freq = model_save_freq
 
     def cv(
         self,
@@ -104,6 +106,7 @@ class RegressionEvaluation(Evaluation):
             device,
             shrinkage,
             result_save_dir,
+            model_save_freq,
         ) = self._get_defaults(locals())
 
         # data container
@@ -161,7 +164,14 @@ class RegressionEvaluation(Evaluation):
                 train_mse.append(train_mse_val)
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
-
+                self.save_model(
+                    model_save_freq=model_save_freq,
+                    result_save_dir=result_save_dir,
+                    dataset_name=dataset_name,
+                    num_cv=num_cv,
+                    num_epoch=num_epoch,
+                    model_net=model_net,
+                )
                 logging.info(
                     "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
                         epoch, train_mae_val, train_mse_val, test_mae_val, test_mse_val

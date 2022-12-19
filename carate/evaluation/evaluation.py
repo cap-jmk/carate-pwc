@@ -2,6 +2,7 @@
 This is the heart of the application and trains / tests a algorithm on a given dataset. 
 The idea is to parametrize as much as possible. 
 
+:author: Julian M. Kleber
 """
 import json
 import numpy as np
@@ -11,6 +12,12 @@ import torch
 import torch.nn.functional as F
 
 import carate.models.cgc_classification
+from carate.utils.model_files import (
+    save_model,
+    save_model_parameters,
+    load_model,
+    load_model_parameters,
+)
 from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
@@ -54,6 +61,7 @@ class Evaluation(DefaultObject):
         gamma: int = 0.5,
         batch_size: int = 64,
         shuffle: bool = True,
+        model_save_freq: int = 100,
     ):
         """
 
@@ -88,6 +96,7 @@ class Evaluation(DefaultObject):
         self.shuffle = shuffle
         self.device = device
         self.result_save_dir = result_save_dir
+        self.model_save_freq = model_save_freq
 
     def cv(
         self,
@@ -105,6 +114,7 @@ class Evaluation(DefaultObject):
         device: type(torch.device),
         shrinkage: int,
         result_save_dir: str,
+        model_save_freq: int,
     ):
         """
         The cv function takes in the following parameters:
@@ -146,12 +156,14 @@ class Evaluation(DefaultObject):
             device,
             shrinkage,
             result_save_dir,
+            model_save_freq,
         ) = self._get_defaults(locals())
         result = []
         acc_store = []
         auc_store = []
         loss_store = []
         tmp = {}
+        save_model_parameters(model_net, save_dir=result_save_dir)
         for i in range(num_cv):
             (
                 train_loader,
@@ -214,6 +226,16 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
+
+                self.save_model(
+                    model_save_freq=model_save_freq,
+                    result_save_dir=result_save_dir,
+                    dataset_name=dataset_name,
+                    num_cv=num_cv,
+                    num_epoch=num_epoch,
+                    model_net=model_net,
+                )
+
             self.save_result(
                 result_save_dir=result_save_dir,
                 dataset_name=dataset_name,
@@ -278,16 +300,17 @@ class Evaluation(DefaultObject):
     ):
         """
         The test function is used to test the model on a dataset.
-        It returns the accuracy of the model on that dataset
+        It returns the accuracy of the model on that dataset calculated as
+        the average of the atomic accuracy for each batch in the dataloader
 
-        :param test_loader: Used to Pass the test data loader.
-        :param epoch: Used to Keep track of the current epoch.
-        :param model_net: Used to Pass the model to the test function.
-        :param device: Used to Tell torch which device to use.
-        :param test=False: Used to Distinguish between training and testing.
+        :param test_loader: Used to pass the test data loader.
+        :param epoch: Used to keep track of the current epoch.
+        :param model_net: Used to pass the model to the test function.
+        :param device: Used to tell torch which device to use.
+        :param test=False: Used to distinguish between training and testing.
         :return: The accuracy of the model on the test data.
 
-        :doc-author: Trelent
+        :doc-author: Julian M. Kleber
         """
 
         model_net.eval()
@@ -311,8 +334,23 @@ class Evaluation(DefaultObject):
     def save_result(
         self, result_save_dir: str, dataset_name: str, num_cv: int, data: dict
     ) -> None:
+        """
+        The save_result function saves the results of a cross-validation run to a .json file. The goal is to provide
+        a json interface of cv results for later analysis of the training runs.
+
+
+        :param self: Used to represent the instance of the class.
+        :param result_save_dir:str: Used to specify the directory where the results will be saved.
+        :param dataset_name:str: Used to identify the dataset.
+        :param num_cv:int: Used to specify the number of cross validation runs.
+        :param data:dict: Used to store the results of each cross validation run.
+        :return: None.
+
+        :doc-author: Julian M. Kleber
+        """
+
         file_name = prepare_file_name_saving(
-            result_save_dir, dataset_name + "_" + str(num_cv), suffix=".csv"
+            result_save_dir, dataset_name + "_" + str(num_cv), suffix=".json"
         )
         with open(file_name, "w") as f:
             json.dump(data, f)
@@ -325,16 +363,50 @@ class Evaluation(DefaultObject):
                 + ".csv"
             )
 
-    def __str__(self):
-        return "Evaluation for " + str(self.model_net) + " with the " + self.name
-
     def save_model(
         self,
+        model_save_freq: int,
         result_save_dir: str,
         dataset_name: str,
         num_cv: int,
-        num_epoch,
+        num_epoch: int,
         model_net: type(torch.nn.Module),
-    ):
+    ) -> None:
+        """
+        The save_model function saves the model to a file.
 
-        torch.save(model.state_dict(), PATH)
+        The save_model function saves the model to a file. The filename is based on
+        the dataset name, number of cross-validation folds, and epoch number. The
+        file is saved in the result_save_dir directory with an extension of .pt (for
+        PyTorch). If this directory does not exist, it will be created before saving
+        the file.
+
+        :param model_save_freq:int: Used to determine how often the model should be saved.
+        :param result_save_dir:str: Used to specify the directory where the model will be saved.
+        :param dataset_name:str: Used to save the model with a name that includes the dataset it was trained on.
+        :param num_cv:int: Used to specify which cross validation fold the model is being saved for.
+        :param num_epoch:int: Used to save the model at a certain epoch.
+        :param model_net:type(torch.nn.Module): Used to save the model.
+        :param : Used to save the model at a certain frequency.
+        :return: None.
+
+        :doc-author: Julian M. Kleber
+        """
+
+        if model_save_freq % epoch == 0:
+            save_model(
+                result_save_dir=result_save_dir,
+                dataset_name=dataset_name,
+                num_cv=i,
+                num_epoch=num_epoch,
+                model_net=model_net,
+            )
+
+    def save_model_parameters(
+        self, model_net: type(torch.nn.Module()), save_dir: str
+    ) -> None:
+
+        save_model_parameters(model_net=model_net, save_dir=save_dir)
+
+    def __str__(self):
+        return "Evaluation for " + str(self.model_net) + " with the " + self.name
