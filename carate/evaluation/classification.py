@@ -14,8 +14,9 @@ class ClassificationEvaluation(Evaluation):
         result_save_dir: str,
         model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
-        device: type(torch.device),  # TODO types
+        device: type(torch.device), 
         DataLoader: type(DataLoader),
+        model_save_freq:int,
         test_ratio: int,
         shrinkage: int,
         num_epoch: int = 150,
@@ -59,3 +60,4 @@ class ClassificationEvaluation(Evaluation):
         self.shuffle = shuffle
         self.device = device
         self.result_save_dir = result_save_dir
+        self.model_save_freq = model_save_freq

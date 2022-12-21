@@ -6,7 +6,7 @@ import numpy as np
 
 from carate.evaluation.evaluation import Evaluation
 from carate.load_data import DataLoader
-
+from carate.utils.model_files import save_model_parameters
 
 # TODO Logging done right
 import logging
@@ -88,6 +88,7 @@ class RegressionEvaluation(Evaluation):
         device: type(torch.device) = None,
         shrinkage: int = None,
         result_save_dir: str = None,
+        model_save_freq: int = None
     ):
 
         # initialize
@@ -117,6 +118,7 @@ class RegressionEvaluation(Evaluation):
         train_mse = []
         tmp = {}
 
+        save_model_parameters(model_net=model_net, save_dir=result_save_dir)
         for i in range(num_cv):
 
             (
@@ -136,7 +138,7 @@ class RegressionEvaluation(Evaluation):
             norm_factor = self.__normalization_factor(
                 dataset=dataset, num_classes=num_classes
             )
-            for epoch in range(1, num_epoch):
+            for epoch in range(1, num_epoch+1):
                 mae = self.train(
                     model_net=model_net,
                     epoch=epoch,
@@ -164,12 +166,12 @@ class RegressionEvaluation(Evaluation):
                 train_mse.append(train_mse_val)
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
-                self.save_model(
+                self.save_model_checkpoint(
                     model_save_freq=model_save_freq,
                     result_save_dir=result_save_dir,
                     dataset_name=dataset_name,
-                    num_cv=num_cv,
-                    num_epoch=num_epoch,
+                    num_cv=i,
+                    num_epoch=epoch,
                     model_net=model_net,
                 )
                 logging.info(

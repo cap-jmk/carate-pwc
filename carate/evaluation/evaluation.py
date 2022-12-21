@@ -179,7 +179,7 @@ class Evaluation(DefaultObject):
                 shuffle=shuffle,
             )
 
-            for epoch in range(1, num_epoch):
+            for epoch in range(1, num_epoch+1):
                 train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
@@ -226,13 +226,12 @@ class Evaluation(DefaultObject):
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = auc_store
-
-                self.save_model(
+                self.save_model_checkpoint(
                     model_save_freq=model_save_freq,
                     result_save_dir=result_save_dir,
                     dataset_name=dataset_name,
-                    num_cv=num_cv,
-                    num_epoch=num_epoch,
+                    num_cv=i,
+                    num_epoch=epoch,
                     model_net=model_net,
                 )
 
@@ -348,9 +347,9 @@ class Evaluation(DefaultObject):
 
         :doc-author: Julian M. Kleber
         """
-
+        prefix = result_save_dir +"/data/"
         file_name = prepare_file_name_saving(
-            result_save_dir, dataset_name + "_" + str(num_cv), suffix=".json"
+            prefix=prefix, file_name = dataset_name + "_" + str(num_cv), suffix=".json"
         )
         with open(file_name, "w") as f:
             json.dump(data, f)
@@ -363,7 +362,7 @@ class Evaluation(DefaultObject):
                 + ".csv"
             )
 
-    def save_model(
+    def save_model_checkpoint(
         self,
         model_save_freq: int,
         result_save_dir: str,
@@ -393,20 +392,16 @@ class Evaluation(DefaultObject):
         :doc-author: Julian M. Kleber
         """
 
-        if model_save_freq % epoch == 0:
+        if num_epoch % model_save_freq == 0:
             save_model(
                 result_save_dir=result_save_dir,
                 dataset_name=dataset_name,
-                num_cv=i,
+                num_cv=num_cv,
                 num_epoch=num_epoch,
-                model_net=model_net,
+                model_net=model_net
             )
 
-    def save_model_parameters(
-        self, model_net: type(torch.nn.Module()), save_dir: str
-    ) -> None:
-
-        save_model_parameters(model_net=model_net, save_dir=save_dir)
+        
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name

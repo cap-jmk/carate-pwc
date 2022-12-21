@@ -34,6 +34,7 @@ class Run(DefaultObject):
         num_classes: int,
         shrinkage: int,
         result_save_dir: str,
+        model_save_freq:float,
         Evaluation: type(Evaluation),
         model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
@@ -49,6 +50,7 @@ class Run(DefaultObject):
         DataLoader: type(DataLoader) = None,
         num_cv: int = 5,
         num_epoch=150,
+
     ):
         # model parameters
         self.dataset_name = dataset_name
@@ -61,7 +63,7 @@ class Run(DefaultObject):
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
         self.optimizer = optimizer
-
+        self.model_save_freq = model_save_freq
         # evaulation parameters
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
@@ -106,6 +108,7 @@ class Run(DefaultObject):
         shrinkage: int = None,
         result_save_dir: str = None,
         Evaluation: type(Evaluation) = None,
+        model_save_freq: type(int) = None
     ) -> None:
 
         (
@@ -125,6 +128,7 @@ class Run(DefaultObject):
             shrinkage,
             result_save_dir,
             Evaluation,
+            model_save_freq
         ) = self._get_defaults(locals())
 
         self.Evaluation = Evaluation(
@@ -137,6 +141,7 @@ class Run(DefaultObject):
             device=device,
             shrinkage=shrinkage,
             result_save_dir=result_save_dir,
+            model_save_freq = model_save_freq
         )
 
         self.Evaluation.cv(
@@ -154,6 +159,7 @@ class Run(DefaultObject):
             device=device,
             shrinkage=shrinkage,
             result_save_dir=result_save_dir,
+            model_save_freq = model_save_freq
         )
 
     @classmethod
@@ -209,4 +215,5 @@ class Run(DefaultObject):
                 test_ratio=config.test_ratio,
                 batch_size=config.batch_size,
             ),
+            model_save_freq=int(config.model_save_freq)
         )
