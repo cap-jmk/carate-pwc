@@ -38,6 +38,17 @@ pip install torch-cluster
 pip install torch-spline-conv 
 ``` 
 
+# Usage 
+
+```bash 
+bash install.sh
+```
+
+```bash
+carate -c path_to_config_file.py
+```
+
+
 # Outlook 
 
 The program is 

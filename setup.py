@@ -6,21 +6,28 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="carate",
-    version="0.1.0",
+    version="0.1.1",
     author="Julian M. Kleber",
     author_email="julian.kleber@sail.black",
     description="Graph-based encoder algorithm",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="http://www.codeberg/sail.black/serial-sphinx",
-    packages=setuptools.find_packages(include=["serial_sphinx"]),
+    url="http://www.codeberg/sail.black/carate",
+    packages=setuptools.find_packages(include=["carate*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        black,
+        "black",
+        "Click"
     ],
+    entry_points={
+        'console_scripts': [
+            'carate = carate.automate:train_algorithm',
+        ],
+    },
     python_requires=">=3.9",
 )
+

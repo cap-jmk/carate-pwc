@@ -179,7 +179,7 @@ class Evaluation(DefaultObject):
                 shuffle=shuffle,
             )
 
-            for epoch in range(1, num_epoch+1):
+            for epoch in range(1, num_epoch + 1):
                 train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
@@ -200,7 +200,8 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store.append(
+                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, "
                     "Train Acc: {:.7f}, Test Acc: {:.7f}".format(
@@ -281,7 +282,8 @@ class Evaluation(DefaultObject):
         correct = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = F.one_hot(data.y, num_classes=num_classes).type(torch.FloatTensor)
+            data.y = F.one_hot(data.y, num_classes=num_classes).type(
+                torch.FloatTensor)
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model_net(data.x, data.edge_index, data.batch)
@@ -347,9 +349,9 @@ class Evaluation(DefaultObject):
 
         :doc-author: Julian M. Kleber
         """
-        prefix = result_save_dir +"/data/"
+        prefix = result_save_dir + "/data/"
         file_name = prepare_file_name_saving(
-            prefix=prefix, file_name = dataset_name + "_" + str(num_cv), suffix=".json"
+            prefix=prefix, file_name=dataset_name + "_" + str(num_cv), suffix=".json"
         )
         with open(file_name, "w") as f:
             json.dump(data, f)
@@ -398,10 +400,8 @@ class Evaluation(DefaultObject):
                 dataset_name=dataset_name,
                 num_cv=num_cv,
                 num_epoch=num_epoch,
-                model_net=model_net
+                model_net=model_net,
             )
-
-        
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name

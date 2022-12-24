@@ -67,5 +67,6 @@ def sanitize_raw_py(raw_input: list[str]) -> list[str]:
         if line == "\n":
             continue
         else:
-            result.append(line.replace("\n", "").replace('"', "").replace("'", ""))
+            result.append(line.replace("\n", "").replace(
+                '"', "").replace("'", ""))
     return result

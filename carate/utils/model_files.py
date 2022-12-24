@@ -10,7 +10,7 @@ from carate.utils.file_utils import (
     prepare_file_name_saving,
     load_json_from_file,
     make_full_filename,
-    save_json_to_file
+    save_json_to_file,
 )
 
 
@@ -59,15 +59,12 @@ def save_model(
 
     :doc-author: Julian M. Kleber
     """
-    prefix = result_save_dir +"/checkpoints/"
+    prefix = result_save_dir + "/checkpoints/"
     save_path = prepare_file_name_saving(
         prefix=prefix,
-        file_name=dataset_name
-        + "_CV-"
-        + str(num_cv)
-        + "_Epoch-"
-        + str(num_epoch),
-        suffix = ".pt"
+        file_name=dataset_name + "_CV-" +
+        str(num_cv) + "_Epoch-" + str(num_epoch),
+        suffix=".pt",
     )
     torch.save(model_net.state_dict(), save_path)
 
@@ -109,9 +106,9 @@ def save_model_parameters(model_net: type(torch.nn.Module), save_dir: str) -> No
 
     :doc-author: Julian M. Kleber
     """
-    prefix = save_dir +"/model_parameters/"
+    prefix = save_dir + "/model_parameters/"
     model_architecture = model_net.__dict__
     file_name = prepare_file_name_saving(
         prefix=prefix, file_name="model_architecture", suffix=".json"
     )
-    save_json_to_file(model_architecture, file_name = file_name)
+    save_json_to_file(model_architecture, file_name=file_name)

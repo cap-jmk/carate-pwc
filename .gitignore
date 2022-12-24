@@ -160,3 +160,4 @@ data/
 example_config/
 carate/utils/config.py
 carate/utils/config.json
+*carate_config_files/*

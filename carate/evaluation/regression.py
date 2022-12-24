@@ -25,7 +25,8 @@ class RegressionEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: type(torch.nn.Module),  # TODO type should be the correct model
+        # TODO type should be the correct model
+        model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
         device: type(torch.device),
         DataLoader: type(DataLoader),
@@ -88,7 +89,7 @@ class RegressionEvaluation(Evaluation):
         device: type(torch.device) = None,
         shrinkage: int = None,
         result_save_dir: str = None,
-        model_save_freq: int = None
+        model_save_freq: int = None,
     ):
 
         # initialize
@@ -138,7 +139,7 @@ class RegressionEvaluation(Evaluation):
             norm_factor = self.__normalization_factor(
                 dataset=dataset, num_classes=num_classes
             )
-            for epoch in range(1, num_epoch+1):
+            for epoch in range(1, num_epoch + 1):
                 mae = self.train(
                     model_net=model_net,
                     epoch=epoch,
