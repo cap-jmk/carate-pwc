@@ -31,7 +31,7 @@ class RegressionEvaluation(Evaluation):
         device: type(torch.device),
         DataLoader: type(DataLoader),
         test_ratio: int,
-        shrinkage: int,
+        gamma: int,
         num_epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
@@ -59,7 +59,7 @@ class RegressionEvaluation(Evaluation):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
-        self.shrinkage = shrinkage
+        self.gamma = gamma
         self.num_epoch = num_epoch
         self.model_net = model_net
         self.optimizer = optimizer
@@ -87,7 +87,7 @@ class RegressionEvaluation(Evaluation):
         model_net: type(torch.nn.Module) = None,
         optimizer: type(torch.optim) = None,
         device: type(torch.device) = None,
-        shrinkage: int = None,
+        gamma: int = None,
         result_save_dir: str = None,
         model_save_freq: int = None,
     ):
@@ -106,7 +106,7 @@ class RegressionEvaluation(Evaluation):
             model_net,
             optimizer,
             device,
-            shrinkage,
+            gamma,
             result_save_dir,
             model_save_freq,
         ) = self._get_defaults(locals())
@@ -208,7 +208,7 @@ class RegressionEvaluation(Evaluation):
         num_classes: int,
     ) -> float:
 
-        model_net.train()  # TODO deleted shrinkage block due to minor influence
+        model_net.train()  # TODO deleted gamma block due to minor influence
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)

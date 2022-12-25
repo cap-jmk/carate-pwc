@@ -26,7 +26,7 @@ def test_config():
     assert config.test_ratio == 10
     assert config.batch_size == 64
     assert config.shuffle == True
-    assert config.shrinkage == 51
+    assert config.gamma == 51
     assert config.num_epoch == 2
     assert config.num_cv == 2
     assert config.result_save_dir == "tests/results/ENZYMES"

@@ -46,7 +46,7 @@ class Config:
         dataset_name: str,
         num_features: int,
         num_classes: int,
-        shrinkage: int,
+        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
         Evaluation: type(evaluation.Evaluation),
@@ -73,7 +73,7 @@ class Config:
         self.dataset_name = dataset_name
         self.num_classes = num_classes
         self.num_features = num_features
-        self.shrinkage = shrinkage
+        self.gamma = gamma
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
 
@@ -129,7 +129,7 @@ class Config:
             dataset_name=str(json_object["dataset_name"]),
             num_classes=int(json_object["num_classes"]),
             num_features=int(json_object["num_features"]),
-            shrinkage=int(json_object["shrinkage"]),
+            gamma=int(json_object["gamma"]),
             net_dimension=int(json_object["net_dimension"]),
             learning_rate=float(json_object["learning_rate"]),
             # evaluation parameters

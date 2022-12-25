@@ -32,7 +32,7 @@ class Run(DefaultObject):
         dataset_name: str,
         num_features: int,
         num_classes: int,
-        shrinkage: int,
+        gamma: int,
         result_save_dir: str,
         model_save_freq: float,
         Evaluation: type(Evaluation),
@@ -56,7 +56,7 @@ class Run(DefaultObject):
         self.device = device
         self.num_classes = num_classes
         self.num_features = num_features
-        self.shrinkage = shrinkage
+        self.gamma = gamma
         self.Evaluation = Evaluation
         self.model_net = model_net
         self.net_dimension = net_dimension
@@ -104,7 +104,7 @@ class Run(DefaultObject):
         num_features: int = None,
         batch_size: int = None,
         shuffle: int = None,
-        shrinkage: int = None,
+        gamma: int = None,
         result_save_dir: str = None,
         Evaluation: type(Evaluation) = None,
         model_save_freq: type(int) = None,
@@ -124,7 +124,7 @@ class Run(DefaultObject):
             num_features,
             batch_size,
             shuffle,
-            shrinkage,
+            gamma,
             result_save_dir,
             Evaluation,
             model_save_freq,
@@ -138,7 +138,7 @@ class Run(DefaultObject):
             optimizer=optimizer,
             DataLoader=DataLoader,
             device=device,
-            shrinkage=shrinkage,
+            gamma=gamma,
             result_save_dir=result_save_dir,
             model_save_freq=model_save_freq,
         )
@@ -156,7 +156,7 @@ class Run(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             device=device,
-            shrinkage=shrinkage,
+            gamma=gamma,
             result_save_dir=result_save_dir,
             model_save_freq=model_save_freq,
         )
@@ -194,7 +194,7 @@ class Run(DefaultObject):
             device=device,
             num_classes=config.num_classes,
             num_features=config.num_features,
-            shrinkage=config.shrinkage,
+            gamma=config.gamma,
             Evaluation=config.Evaluation,
             model_net=model_net,
             optimizer=optimizer,

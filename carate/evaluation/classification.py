@@ -18,7 +18,6 @@ class ClassificationEvaluation(Evaluation):
         DataLoader: type(DataLoader),
         model_save_freq: int,
         test_ratio: int,
-        shrinkage: int,
         num_epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
@@ -47,7 +46,7 @@ class ClassificationEvaluation(Evaluation):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
-        self.shrinkage = shrinkage
+        self.gamma = gamma
         self.num_epoch = num_epoch
         self.model_net = model_net
         self.optimizer = optimizer

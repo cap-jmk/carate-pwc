@@ -50,10 +50,9 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
-        device: type(torch.device),  # TODO types
+        device: type(torch.device), 
         DataLoader: type(DataLoader),
         test_ratio: int,
-        shrinkage: int,
         num_epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
@@ -83,7 +82,7 @@ class Evaluation(DefaultObject):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
-        self.shrinkage = shrinkage
+        self.gamma = gamma
         self.num_epoch = num_epoch
         self.model_net = model_net
         self.optimizer = optimizer
@@ -112,7 +111,7 @@ class Evaluation(DefaultObject):
         model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
         device: type(torch.device),
-        shrinkage: int,
+        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
     ):
@@ -154,7 +153,7 @@ class Evaluation(DefaultObject):
             model_net,
             optimizer,
             device,
-            shrinkage,
+            gamma,
             result_save_dir,
             model_save_freq,
         ) = self._get_defaults(locals())
@@ -187,7 +186,7 @@ class Evaluation(DefaultObject):
                     optimizer=optimizer,
                     train_loader=train_loader,
                     num_classes=num_classes,
-                    shrinkage=shrinkage,
+                    gamma=gamma,
                 )
                 loss_store.append(train_loss.cpu().tolist())
                 train_acc = self.test(
@@ -218,7 +217,7 @@ class Evaluation(DefaultObject):
                 for j in range(len(x[0, :])):
                     auc = metrics.roc_auc_score(y[:, j], x[:, j])
 
-                    logging.info("AUC of " + str(j) + "is:", auc)
+                    logging.info("AUC of " + str(j) + "is:", str(auc))
                     store_auc.append(auc)
                 auc_store.append(store_auc)
 
@@ -253,7 +252,7 @@ class Evaluation(DefaultObject):
         train_loader,  # TODO find out type
         optimizer: type(torch.optim),
         num_classes=2,
-        shrinkage=51,
+        gamma=51,
     ):
         """
         The train function is used to train the model.
@@ -273,7 +272,7 @@ class Evaluation(DefaultObject):
         """
         model_net.train()
 
-        if epoch == shrinkage:
+        if epoch == gamma:
             for param_group in optimizer.param_groups:
                 param_group["lr"] = (
                     gamma * param_group["lr"]
