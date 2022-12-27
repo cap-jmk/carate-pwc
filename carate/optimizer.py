@@ -5,18 +5,18 @@ Module to handle optimizer initalization
 @author Julian M. Kleber
 """
 import torch
-
+from typing import Type
 
 def get_optimizer(
-    optimizer_str: str, model_net: type(torch.nn.Module), learning_rate: float
-) -> type(torch.optim):
+    optimizer_str: str, model_net: Type[torch.nn.Module], learning_rate: float
+) -> Type[torch.optim.Optimizer]:
     """
     The get_optimizer function takes in a string and returns the corresponding optimizer.
         Args:
             optimizer_str (str): The name of the desired optimizer.
 
         Returns:
-            type(torch.optim): The corresponding torch optimization function for the given string.
+            Type[torch.optim.Optimizer]: The corresponding torch optimization function for the given string.
 
     :param optimizer_str:str: Used to Specify the type of optimizer we want to use.
     :param model: Used to Get the parameters of the model.

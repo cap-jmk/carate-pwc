@@ -1,4 +1,12 @@
+"""Default Interface defining the Base object for all other objects. 
+Especially the __get_default_method is provided for all base objects. 
+
+:author: Julian M. Kleber
+"""
+from typing import Type, Optional
+
 import logging
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
