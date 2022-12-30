@@ -48,6 +48,12 @@ bash install.sh
 carate -c path_to_config_file.py
 ```
 
+## Training results 
+
+Most of the training results are saved in pairs. The reason for this data structure is simply that the training can be interrupted for any reason. However the current result may still be saved or sent across a 
+given network. 
+
+Therefore any ETL or data processing might not be affected by any interruption on the training machine.
 
 # Outlook 
 

@@ -349,6 +349,8 @@ class Evaluation(DefaultObject):
 
         :doc-author: Julian M. Kleber
         """
+
+        # TODO Append result
         prefix = result_save_dir + "/data/"
         file_name = prepare_file_name_saving(
             prefix=prefix, file_name=dataset_name + "_" + str(num_cv), suffix=".json"
@@ -404,13 +406,14 @@ class Evaluation(DefaultObject):
             )
 
     def load_model_checkpoint(model_path:str, model_params_path:str, model_net:torch.nn.Module)->torch.nn.Module: 
-        
+
 
         (model_path, 
         model_params_path, 
         model_net) = self._get_defaults(locals())
         
         model_net_cp = load_model(model_path, model_params_path, model_net)
+        self.model_net = model_net_cp # set the model of the evaluation object to the checkpoint 
         return model_net_cp
 
     def __str__(self):
