@@ -8,6 +8,7 @@ import json
 import numpy as np
 
 from sklearn import metrics
+
 import torch
 import torch.nn.functional as F
 
@@ -22,8 +23,8 @@ from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
 from carate.utils.file_utils import prepare_file_name_saving
-from typing import Type
 
+from typing import Type
 
 import logging
 
@@ -217,7 +218,7 @@ class Evaluation(DefaultObject):
                 for j in range(len(x[0, :])):
                     auc = metrics.roc_auc_score(y[:, j], x[:, j])
 
-                    logging.info("AUC of " + str(j) + "is:", str(auc))
+                    logging.info("AUC of " + str(j) + "is:" + str(auc))
                     store_auc.append(auc)
                 auc_store.append(store_auc)
 
@@ -401,6 +402,16 @@ class Evaluation(DefaultObject):
                 num_epoch=num_epoch,
                 model_net=model_net,
             )
+
+    def load_model_checkpoint(model_path:str, model_params_path:str, model_net:torch.nn.Module)->torch.nn.Module: 
+        
+
+        (model_path, 
+        model_params_path, 
+        model_net) = self._get_defaults(locals())
+        
+        model_net_cp = load_model(model_path, model_params_path, model_net)
+        return model_net_cp
 
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name

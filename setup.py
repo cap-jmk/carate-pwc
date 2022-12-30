@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="carate",
-    version="0.1.1",
+    version="0.1.2",
     author="Julian M. Kleber",
     author_email="julian.kleber@sail.black",
     description="Graph-based encoder algorithm",
