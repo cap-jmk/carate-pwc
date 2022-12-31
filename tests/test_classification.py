@@ -29,23 +29,22 @@ def test_classification():
     runner = Run.from_file(config_filepath=config_filepath)
     runner.run()  # takes instance attributes as parameters for the run() function
     result_dir_content = os.listdir("tests/results/ENZYMES/data")
-    result_dir_content_data = [x for x in  result_dir_content if x.endswith(".json")]
+    result_dir_content_data = [x for x in result_dir_content if x.endswith(".json")]
     assert len(result_dir_content_data) == 2
     assert (
-        "ENZYMES_0.json" in result_dir_content_data and "ENZYMES_1.json" in result_dir_content
+        "ENZYMES_0.json" in result_dir_content_data
+        and "ENZYMES_1.json" in result_dir_content
     )
     result_dir_content = os.listdir("tests/results/ENZYMES/checkpoints")
-    result_dir_content_data = [x for x in  result_dir_content if x.endswith(".pt")]
+    result_dir_content_data = [x for x in result_dir_content if x.endswith(".pt")]
     assert len(result_dir_content_data) == 4
     assert (
-            "ENZYMES_CV-0_Epoch-1.pt" in result_dir_content_data 
+        "ENZYMES_CV-0_Epoch-1.pt" in result_dir_content_data
         and "ENZYMES_CV-0_Epoch-2.pt" in result_dir_content
         and "ENZYMES_CV-1_Epoch-1.pt" in result_dir_content
         and "ENZYMES_CV-1_Epoch-2.pt" in result_dir_content
     )
     result_dir_content = os.listdir("tests/results/ENZYMES/model_parameters")
-    result_dir_content_data = [x for x in  result_dir_content if x.endswith(".json")]
+    result_dir_content_data = [x for x in result_dir_content if x.endswith(".json")]
     assert len(result_dir_content_data) == 1
-    assert (
-        "model_architecture.json" in result_dir_content_data 
-    )
+    assert "model_architecture.json" in result_dir_content_data

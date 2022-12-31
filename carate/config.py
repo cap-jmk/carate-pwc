@@ -23,8 +23,7 @@ EVALUATION_MAP = {
     "evaluation": evaluation.Evaluation,
 }
 
-MODEL_MAP = {"cgc_classification": cgc_classification,
-             "cgc_regression": cgc_regression}
+MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
 DATA_LOADER_MAP = {
     "StandardPyG": StandardPytorchGeometricDataLoader,

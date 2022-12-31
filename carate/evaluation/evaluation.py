@@ -18,6 +18,7 @@ from carate.utils.model_files import (
     save_model_parameters,
     load_model,
     load_model_parameters,
+    get_latest_checkpoint,
 )
 from carate.utils.file_utils import check_make_dir
 from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
@@ -51,7 +52,7 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_net: type(torch.nn.Module),
         optimizer: type(torch.optim),
-        device: type(torch.device), 
+        device: type(torch.device),
         DataLoader: type(DataLoader),
         test_ratio: int,
         num_epoch: int = 150,
@@ -180,6 +181,17 @@ class Evaluation(DefaultObject):
             )
 
             for epoch in range(1, num_epoch + 1):
+
+                if epoch > 1:
+
+                    model_path = get_latest_checkpoint(search_dir=result_save_dir)
+                    model_net = self.load_model_checkpoint(
+                        model_path=model_path,
+                        model_params_path=result_save_dir
+                        + "/model_parameters/model_architecture.json",
+                        model_net=model_net,
+                    )
+
                 train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
@@ -200,11 +212,9 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append(
-                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
                 logging.info(
-                    "Epoch: {:03d}, Train Loss: {:.7f}, "
-                    "Train Acc: {:.7f}, Test Acc: {:.7f}".format(
+                    "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc
                     )
                 )
@@ -222,26 +232,20 @@ class Evaluation(DefaultObject):
                     store_auc.append(auc)
                 auc_store.append(store_auc)
 
-                if auc >= 0.9:
-                    break
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
-                tmp["AUC"] = auc_store
-                self.save_model_checkpoint(
-                    model_save_freq=model_save_freq,
-                    result_save_dir=result_save_dir,
-                    dataset_name=dataset_name,
-                    num_cv=i,
-                    num_epoch=epoch,
-                    model_net=model_net,
+                tmp["AUC"] = list(auc_store)
+
+                self.save_whole_checkpoint(
+                    model_save_freq = model_save_freq,
+                    result_save_dir = result_save_dir,
+                    dataset_name = dataset_name,
+                    num_cv = num_cv,
+                    num_epoch = epoch,
+                    model_net = model_net,
+                    data = tmp
                 )
 
-            self.save_result(
-                result_save_dir=result_save_dir,
-                dataset_name=dataset_name,
-                data=tmp,
-                num_cv=i,
-            )
             result.append(tmp)
         return result
 
@@ -282,8 +286,7 @@ class Evaluation(DefaultObject):
         correct = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = F.one_hot(data.y, num_classes=num_classes).type(
-                torch.FloatTensor)
+            data.y = F.one_hot(data.y, num_classes=num_classes).type(torch.FloatTensor)
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model_net(data.x, data.edge_index, data.batch)
@@ -333,7 +336,12 @@ class Evaluation(DefaultObject):
         return correct / len(test_loader.dataset)
 
     def save_result(
-        self, result_save_dir: str, dataset_name: str, num_cv: int, data: dict
+        self,
+        result_save_dir: str,
+        dataset_name: str,
+        num_cv: int,
+        num_epoch: int,
+        data: dict,
     ) -> None:
         """
         The save_result function saves the results of a cross-validation run to a .json file. The goal is to provide
@@ -344,27 +352,66 @@ class Evaluation(DefaultObject):
         :param result_save_dir:str: Used to specify the directory where the results will be saved.
         :param dataset_name:str: Used to identify the dataset.
         :param num_cv:int: Used to specify the number of cross validation runs.
+        :param num_epoch int: Epoch the run was saved in
         :param data:dict: Used to store the results of each cross validation run.
         :return: None.
 
         :doc-author: Julian M. Kleber
         """
 
-        # TODO Append result
         prefix = result_save_dir + "/data/"
         file_name = prepare_file_name_saving(
-            prefix=prefix, file_name=dataset_name + "_" + str(num_cv), suffix=".json"
+            prefix=prefix,
+            file_name=dataset_name + "_CV-" + str(num_cv) + "_Epoch_" + str(num_epoch),
+            suffix=".json",
         )
         with open(file_name, "w") as f:
             json.dump(data, f)
             logging.info(
-                "Saved cv run to "
+                "Saved"
+                + str(num_epoch)
+                + "of cv"
+                + str(num_cv)
+                + " run to "
                 + result_save_dir
                 + dataset_name
                 + "_"
                 + str(num_cv)
                 + ".csv"
             )
+
+    def save_whole_checkpoint(
+        self,
+        model_save_freq: int,
+        result_save_dir: str,
+        dataset_name: str,
+        num_cv: int,
+        num_epoch: int,
+        model_net: type(torch.nn.Module),
+        data:dict
+    ) -> None:
+
+        if num_epoch % model_save_freq == 0:
+
+            self.save_model_checkpoint(
+                model_save_freq=model_save_freq,
+                result_save_dir=result_save_dir,
+                dataset_name=dataset_name,
+                num_cv=num_cv,
+                num_epoch=num_epoch,
+                model_net=model_net,
+            )
+
+            self.save_result(
+                result_save_dir=result_save_dir,
+                dataset_name=dataset_name,
+                data=data,
+                num_cv=num_cv,
+                num_epoch=num_epoch,
+            )
+        logging.info(
+            f"Successfully saved a checkpoint for epoch {num_epoch} in CV {num_cv}"
+        )
 
     def save_model_checkpoint(
         self,
@@ -396,24 +443,24 @@ class Evaluation(DefaultObject):
         :doc-author: Julian M. Kleber
         """
 
-        if num_epoch % model_save_freq == 0:
-            save_model(
-                result_save_dir=result_save_dir,
-                dataset_name=dataset_name,
-                num_cv=num_cv,
-                num_epoch=num_epoch,
-                model_net=model_net,
-            )
+        save_model(
+            result_save_dir=result_save_dir,
+            dataset_name=dataset_name,
+            num_cv=num_cv,
+            num_epoch=num_epoch,
+            model_net=model_net,
+        )
 
-    def load_model_checkpoint(model_path:str, model_params_path:str, model_net:torch.nn.Module)->torch.nn.Module: 
+    def load_model_checkpoint(
+        self, model_path: str, model_params_path: str, model_net: torch.nn.Module
+    ) -> torch.nn.Module:
 
+        (model_path, model_params_path, model_net) = self._get_defaults(locals())
 
-        (model_path, 
-        model_params_path, 
-        model_net) = self._get_defaults(locals())
-        
         model_net_cp = load_model(model_path, model_params_path, model_net)
-        self.model_net = model_net_cp # set the model of the evaluation object to the checkpoint 
+        self.model_net = (
+            model_net_cp  # set the model of the evaluation object to the checkpoint
+        )
         return model_net_cp
 
     def __str__(self):

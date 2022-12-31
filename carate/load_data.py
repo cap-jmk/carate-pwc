@@ -73,12 +73,11 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
             shuffle,
         ) = method_variables
         if shuffle:
-            dataset = self.DataSet(
-                dataset_save_path, name=dataset_name).shuffle()
+            dataset = self.DataSet(dataset_save_path, name=dataset_name).shuffle()
         else:
             dataset = self.DataSet(dataset_save_path, name=dataset_name)
         test_dataset = dataset[: len(dataset) // test_ratio]
-        train_dataset = dataset[len(dataset) // test_ratio:]
+        train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
         return train_loader, test_loader, dataset, train_dataset, test_dataset

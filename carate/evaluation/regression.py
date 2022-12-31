@@ -182,17 +182,21 @@ class RegressionEvaluation(Evaluation):
                 )
                 torch.cuda.empty_cache()
 
-            tmp["MAE Train"] = list(train_mae)
-            tmp["MSE Train"] = list(train_mse)
-            tmp["MAE Test"] = list(train_mae)
-            tmp["MSE Test"] = list(train_mse)
+                tmp["MAE Train"] = list(train_mae)
+                tmp["MSE Train"] = list(train_mse)
+                tmp["MAE Test"] = list(train_mae)
+                tmp["MSE Test"] = list(train_mse)
+                
+                self.save_whole_checkpoint(
+                    model_save_freq = model_save_freq,
+                    result_save_dir = result_save_dir,
+                    dataset_name = dataset_name,
+                    num_cv = num_cv,
+                    num_epoch = epoch,
+                    model_net = model_net,
+                    data = tmp
+                )
             result[str(i)] = tmp
-            self.save_result(
-                result_save_dir=result_save_dir,
-                dataset_name=dataset_name,
-                num_cv=i,
-                data=tmp,
-            )
         return result
 
     # TODO the functions actually need default initialization

@@ -19,15 +19,11 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    install_requires=[
-        "black",
-        "Click"
-    ],
+    install_requires=["black", "Click"],
     entry_points={
-        'console_scripts': [
-            'carate = carate.automate:train_algorithm',
+        "console_scripts": [
+            "carate = carate.automate:train_algorithm",
         ],
     },
     python_requires=">=3.9",
 )
-

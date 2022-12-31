@@ -3,6 +3,7 @@ Utility file for model checkpoints file operations
 
 :author: Julian M. Kleber
 """
+import os
 
 import torch
 
@@ -11,6 +12,7 @@ from carate.utils.file_utils import (
     load_json_from_file,
     make_full_filename,
     save_json_to_file,
+    check_make_dir,
 )
 
 
@@ -59,11 +61,11 @@ def save_model(
 
     :doc-author: Julian M. Kleber
     """
-    prefix = result_save_dir + "/checkpoints/"
+    prefix = result_save_dir + "/checkpoints/CV_" + str(num_cv)
+    check_make_dir(prefix)
     save_path = prepare_file_name_saving(
         prefix=prefix,
-        file_name=dataset_name + "_CV-" +
-        str(num_cv) + "_Epoch-" + str(num_epoch),
+        file_name=dataset_name + "_Epoch-" + str(num_epoch),
         suffix=".pt",
     )
     torch.save(model_net.state_dict(), save_path)
@@ -112,3 +114,8 @@ def save_model_parameters(model_net: type(torch.nn.Module), save_dir: str) -> No
         prefix=prefix, file_name="model_architecture", suffix=".json"
     )
     save_json_to_file(model_architecture, file_name=file_name)
+
+
+def get_latest_checkpoint(search_dir: str) -> str:
+
+    checkpoints = os.listdir(search_dir)
