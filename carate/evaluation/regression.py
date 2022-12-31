@@ -186,15 +186,15 @@ class RegressionEvaluation(Evaluation):
                 tmp["MSE Train"] = list(train_mse)
                 tmp["MAE Test"] = list(train_mae)
                 tmp["MSE Test"] = list(train_mse)
-                
+
                 self.save_whole_checkpoint(
-                    model_save_freq = model_save_freq,
-                    result_save_dir = result_save_dir,
-                    dataset_name = dataset_name,
-                    num_cv = num_cv,
-                    num_epoch = epoch,
-                    model_net = model_net,
-                    data = tmp
+                    model_save_freq=model_save_freq,
+                    result_save_dir=result_save_dir,
+                    dataset_name=dataset_name,
+                    num_cv=num_cv,
+                    num_epoch=epoch,
+                    model_net=model_net,
+                    data=tmp,
                 )
             result[str(i)] = tmp
         return result

@@ -237,13 +237,13 @@ class Evaluation(DefaultObject):
                 tmp["AUC"] = list(auc_store)
 
                 self.save_whole_checkpoint(
-                    model_save_freq = model_save_freq,
-                    result_save_dir = result_save_dir,
-                    dataset_name = dataset_name,
-                    num_cv = num_cv,
-                    num_epoch = epoch,
-                    model_net = model_net,
-                    data = tmp
+                    model_save_freq=model_save_freq,
+                    result_save_dir=result_save_dir,
+                    dataset_name=dataset_name,
+                    num_cv=num_cv,
+                    num_epoch=epoch,
+                    model_net=model_net,
+                    data=tmp,
                 )
 
             result.append(tmp)
@@ -388,7 +388,7 @@ class Evaluation(DefaultObject):
         num_cv: int,
         num_epoch: int,
         model_net: type(torch.nn.Module),
-        data:dict
+        data: dict,
     ) -> None:
 
         if num_epoch % model_save_freq == 0:
