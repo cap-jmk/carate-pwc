@@ -16,9 +16,7 @@ from carate.utils.file_utils import (
 )
 
 
-def load_model(
-    model_path: str, model_params_path: str, model_net: type(torch.nn.Module)
-):
+def load_model(model_path: str, model_net: type(torch.nn.Module)):
     """
     The load_model function takes in a model_path, model_params_path and the type of network to be loaded.
     It then loads the parameters from the params file into a dictionary and uses that to create an instance of
@@ -32,11 +30,60 @@ def load_model(
     :doc-author: Julian M. Kleber
     """
 
-    parameters = load_model_parameters(model_params_path)
-    model = model_net(**parameters)
+    model = model_net()
     model.load_state_dict(torch.load(model_path))
     model.eval()
     return model
+
+
+def load_model_training_checkpoint(
+    checkpoint_path: str,
+    model_net: type(torch.nn.Module)
+) -> Tuple[type(torch.nn.Module), type(torch.optim)]:
+
+    # For any bug fixing please consult the PyTorch documentation:  https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
+
+    model = TheModelClass(*args, **kwargs)
+    optimizer = TheOptimizerClass(*args, **kwargs)
+
+    checkpoint = torch.load(checkpoint_path)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    epoch = checkpoint["epoch"]
+    loss = checkpoint["loss"]
+    model.train()
+    return model, optimizer
+
+
+def save_model_training_checkpoint(
+    result_save_dir: str,
+    dataset_name: str,
+    num_cv: int,
+    num_epoch: int,
+    model_net: type(torch.nn.Module),
+    optimizer: type(torch.optim),
+    loss: float,
+) -> None:
+
+    # For any bug fixing please refer to https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
+
+    prefix = result_save_dir + "/checkpoints/CV_" + str(num_cv)
+    check_make_dir(prefix)
+    save_path = prepare_file_name_saving(
+        prefix=prefix,
+        file_name=dataset_name + "_Epoch-" + str(num_epoch),
+        suffix=".tar",
+    )
+    torch.save(
+        {
+            "epoch": num_epoch,
+            "cv": num_cv,
+            "model_state_dict": model.state_dict(),
+            "optimizer_state_dict": optimizer.state_dict(),
+            "loss": loss,
+        },
+        save_path,
+    )
 
 
 def save_model(

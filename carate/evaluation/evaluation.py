@@ -14,9 +14,9 @@ import torch.nn.functional as F
 
 import carate.models.cgc_classification
 from carate.utils.model_files import (
-    save_model,
+    save_model_training_checkpoint,
     save_model_parameters,
-    load_model,
+    load_model_training_checkpoint,
     load_model_parameters,
     get_latest_checkpoint,
 )
@@ -182,16 +182,6 @@ class Evaluation(DefaultObject):
 
             for epoch in range(1, num_epoch + 1):
 
-                if epoch > 1:
-
-                    model_path = get_latest_checkpoint(search_dir=result_save_dir)
-                    model_net = self.load_model_checkpoint(
-                        model_path=model_path,
-                        model_params_path=result_save_dir
-                        + "/model_parameters/model_architecture.json",
-                        model_net=model_net,
-                    )
-
                 train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
@@ -236,15 +226,23 @@ class Evaluation(DefaultObject):
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = list(auc_store)
 
-                self.save_whole_checkpoint(
-                    model_save_freq=model_save_freq,
-                    result_save_dir=result_save_dir,
-                    dataset_name=dataset_name,
-                    num_cv=num_cv,
-                    num_epoch=epoch,
-                    model_net=model_net,
-                    data=tmp,
-                )
+                if num_epoch % model_save_freq == 0:
+
+                    self.save_whole_checkpoint(
+                        model_save_freq=model_save_freq,
+                        result_save_dir=result_save_dir,
+                        dataset_name=dataset_name,
+                        num_cv=num_cv,
+                        num_epoch=epoch,
+                        model_net=model_net,
+                        data=tmp,
+                    )
+
+                    model_path = get_latest_checkpoint(search_dir=result_save_dir)
+                    model_net = self.load_model_checkpoint(
+                        model_path=model_path,
+                        model_net=model_net,
+                    )
 
             result.append(tmp)
         return result
@@ -382,7 +380,6 @@ class Evaluation(DefaultObject):
 
     def save_whole_checkpoint(
         self,
-        model_save_freq: int,
         result_save_dir: str,
         dataset_name: str,
         num_cv: int,
@@ -391,31 +388,27 @@ class Evaluation(DefaultObject):
         data: dict,
     ) -> None:
 
-        if num_epoch % model_save_freq == 0:
+        self.save_model_checkpoint(
+            result_save_dir=result_save_dir,
+            dataset_name=dataset_name,
+            num_cv=num_cv,
+            num_epoch=num_epoch,
+            model_net=model_net,
+        )
 
-            self.save_model_checkpoint(
-                model_save_freq=model_save_freq,
-                result_save_dir=result_save_dir,
-                dataset_name=dataset_name,
-                num_cv=num_cv,
-                num_epoch=num_epoch,
-                model_net=model_net,
-            )
-
-            self.save_result(
-                result_save_dir=result_save_dir,
-                dataset_name=dataset_name,
-                data=data,
-                num_cv=num_cv,
-                num_epoch=num_epoch,
-            )
+        self.save_result(
+            result_save_dir=result_save_dir,
+            dataset_name=dataset_name,
+            data=data,
+            num_cv=num_cv,
+            num_epoch=num_epoch,
+        )
         logging.info(
             f"Successfully saved a checkpoint for epoch {num_epoch} in CV {num_cv}"
         )
 
     def save_model_checkpoint(
         self,
-        model_save_freq: int,
         result_save_dir: str,
         dataset_name: str,
         num_cv: int,
@@ -431,7 +424,6 @@ class Evaluation(DefaultObject):
         PyTorch). If this directory does not exist, it will be created before saving
         the file.
 
-        :param model_save_freq:int: Used to determine how often the model should be saved.
         :param result_save_dir:str: Used to specify the directory where the model will be saved.
         :param dataset_name:str: Used to save the model with a name that includes the dataset it was trained on.
         :param num_cv:int: Used to specify which cross validation fold the model is being saved for.
@@ -443,7 +435,7 @@ class Evaluation(DefaultObject):
         :doc-author: Julian M. Kleber
         """
 
-        save_model(
+        save_model_training_checkpoint(
             result_save_dir=result_save_dir,
             dataset_name=dataset_name,
             num_cv=num_cv,
@@ -452,12 +444,10 @@ class Evaluation(DefaultObject):
         )
 
     def load_model_checkpoint(
-        self, model_path: str, model_params_path: str, model_net: torch.nn.Module
+        self, model_path: str, model_net: torch.nn.Module
     ) -> torch.nn.Module:
 
-        (model_path, model_params_path, model_net) = self._get_defaults(locals())
-
-        model_net_cp = load_model(model_path, model_params_path, model_net)
+        model_net_cp = load_model_training_checkpoint(checkpoint_path=checkpoint_path, model_net  =model_net)
         self.model_net = (
             model_net_cp  # set the model of the evaluation object to the checkpoint
         )
