@@ -13,6 +13,7 @@ import carate.models.cgc_regression as CGCR
 from carate.evaluation.regression import RegressionEvaluation
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
 
+from typing import Type
 
 import logging
 

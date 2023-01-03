@@ -6,7 +6,7 @@ import numpy as np
 
 from carate.evaluation.evaluation import Evaluation
 from carate.load_data import DataLoader
-from carate.utils.model_files import save_model_parameters
+from carate.utils.model_files import save_model_parameters, get_latest_checkpoint
 
 # TODO Logging done right
 import logging
@@ -140,7 +140,7 @@ class RegressionEvaluation(Evaluation):
                 dataset=dataset, num_classes=num_classes
             )
             for epoch in range(1, num_epoch + 1):
-                mae = self.train(
+                train_mae_loss = self.train(
                     model_net=model_net,
                     epoch=epoch,
                     optimizer=optimizer,
@@ -167,14 +167,6 @@ class RegressionEvaluation(Evaluation):
                 train_mse.append(train_mse_val)
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
-                self.save_model_checkpoint(
-                    model_save_freq=model_save_freq,
-                    result_save_dir=result_save_dir,
-                    dataset_name=dataset_name,
-                    num_cv=i,
-                    num_epoch=epoch,
-                    model_net=model_net,
-                )
                 logging.info(
                     "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
                         epoch, train_mae_val, train_mse_val, test_mae_val, test_mse_val
@@ -187,20 +179,30 @@ class RegressionEvaluation(Evaluation):
                 tmp["MAE Test"] = list(train_mae)
                 tmp["MSE Test"] = list(train_mse)
 
-                self.save_whole_checkpoint(
-                    model_save_freq=model_save_freq,
-                    result_save_dir=result_save_dir,
-                    dataset_name=dataset_name,
-                    num_cv=num_cv,
-                    num_epoch=epoch,
-                    model_net=model_net,
-                    data=tmp,
-                )
+                if epoch % model_save_freq == 0:
+                    self.save_whole_checkpoint(
+                        result_save_dir=result_save_dir,
+                        dataset_name=dataset_name,
+                        num_cv=i,
+                        num_epoch=epoch,
+                        model_net=model_net,
+                        data=tmp,
+                        optimizer=optimizer,
+                        loss=train_mae_loss,
+                    )
+
+                    latest_checkpoint_path = get_latest_checkpoint(
+                        search_dir=result_save_dir, num_cv=i, epoch=epoch
+                    )
+                    model_net = self.load_model_checkpoint(
+                        checkpoint_path=latest_checkpoint_path,
+                        model_net=model_net,
+                        optimizer=optimizer,
+                    )
             result[str(i)] = tmp
         return result
 
     # TODO the functions actually need default initialization
-    # TODO implement their own training and test function
     def train(
         self,
         epoch: int,

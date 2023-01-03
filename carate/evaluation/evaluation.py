@@ -25,7 +25,7 @@ from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
 from carate.utils.file_utils import prepare_file_name_saving
 
-from typing import Type
+from typing import Type, Tuple
 
 import logging
 
@@ -210,40 +210,37 @@ class Evaluation(DefaultObject):
                 )
                 y = np.zeros((len(test_dataset)))
                 x = self.train_store
+
                 for j in range(len(test_dataset)):
                     y[j] = test_dataset[j].y
+
                 y = torch.as_tensor(y)
                 y = F.one_hot(y.long(), num_classes=num_classes).long()
                 store_auc = []
+
                 for j in range(len(x[0, :])):
                     auc = metrics.roc_auc_score(y[:, j], x[:, j])
-
                     logging.info("AUC of " + str(j) + "is:" + str(auc))
                     store_auc.append(auc)
+
                 auc_store.append(store_auc)
 
                 tmp["Loss"] = list(loss_store)
                 tmp["Acc"] = list(acc_store)
                 tmp["AUC"] = list(auc_store)
 
-                if num_epoch % model_save_freq == 0:
+                if epoch % model_save_freq == 0:
 
                     self.save_whole_checkpoint(
-                        model_save_freq=model_save_freq,
                         result_save_dir=result_save_dir,
                         dataset_name=dataset_name,
-                        num_cv=num_cv,
+                        num_cv=i,
                         num_epoch=epoch,
                         model_net=model_net,
                         data=tmp,
+                        optimizer=optimizer,
+                        loss=train_loss,
                     )
-
-                    model_path = get_latest_checkpoint(search_dir=result_save_dir)
-                    model_net = self.load_model_checkpoint(
-                        model_path=model_path,
-                        model_net=model_net,
-                    )
-
             result.append(tmp)
         return result
 
@@ -386,6 +383,8 @@ class Evaluation(DefaultObject):
         num_epoch: int,
         model_net: type(torch.nn.Module),
         data: dict,
+        optimizer: type(torch.optim),
+        loss: float,
     ) -> None:
 
         self.save_model_checkpoint(
@@ -394,6 +393,8 @@ class Evaluation(DefaultObject):
             num_cv=num_cv,
             num_epoch=num_epoch,
             model_net=model_net,
+            optimizer=optimizer,
+            loss=loss,
         )
 
         self.save_result(
@@ -414,6 +415,8 @@ class Evaluation(DefaultObject):
         num_cv: int,
         num_epoch: int,
         model_net: type(torch.nn.Module),
+        optimizer: type(torch.optim),
+        loss: float,
     ) -> None:
         """
         The save_model function saves the model to a file.
@@ -441,13 +444,20 @@ class Evaluation(DefaultObject):
             num_cv=num_cv,
             num_epoch=num_epoch,
             model_net=model_net,
+            optimizer=optimizer,
+            loss=loss,
         )
 
     def load_model_checkpoint(
-        self, model_path: str, model_net: torch.nn.Module
+        self,
+        checkpoint_path: str,
+        model_net: type(torch.nn.Module),
+        optimizer=type(torch.optim),
     ) -> torch.nn.Module:
 
-        model_net_cp = load_model_training_checkpoint(checkpoint_path=checkpoint_path, model_net  =model_net)
+        model_net_cp = load_model_training_checkpoint(
+            checkpoint_path=checkpoint_path, model_net=model_net, optimizer=optimizer
+        )
         self.model_net = (
             model_net_cp  # set the model of the evaluation object to the checkpoint
         )

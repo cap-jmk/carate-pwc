@@ -15,6 +15,8 @@ from carate.utils.file_utils import (
     check_make_dir,
 )
 
+from typing import Tuple
+
 
 def load_model(model_path: str, model_net: type(torch.nn.Module)):
     """
@@ -38,14 +40,14 @@ def load_model(model_path: str, model_net: type(torch.nn.Module)):
 
 def load_model_training_checkpoint(
     checkpoint_path: str,
-    model_net: type(torch.nn.Module)
+    model_net: type(torch.nn.Module),
+    optimizer: type(torch.optim),
 ) -> Tuple[type(torch.nn.Module), type(torch.optim)]:
 
     # For any bug fixing please consult the PyTorch documentation:  https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
 
-    model = TheModelClass(*args, **kwargs)
-    optimizer = TheOptimizerClass(*args, **kwargs)
-
+    model = model_net
+    optimizer = optimizer
     checkpoint = torch.load(checkpoint_path)
     model.load_state_dict(checkpoint["model_state_dict"])
     optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
@@ -78,7 +80,7 @@ def save_model_training_checkpoint(
         {
             "epoch": num_epoch,
             "cv": num_cv,
-            "model_state_dict": model.state_dict(),
+            "model_state_dict": model_net.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
             "loss": loss,
         },
@@ -163,6 +165,15 @@ def save_model_parameters(model_net: type(torch.nn.Module), save_dir: str) -> No
     save_json_to_file(model_architecture, file_name=file_name)
 
 
-def get_latest_checkpoint(search_dir: str) -> str:
+def get_latest_checkpoint(search_dir: str, num_cv: int, epoch: int) -> str:
 
+    if not search_dir.endswith("/"):
+        search_dir += "/"
+
+    search_dir += "checkpoints"
+    checkpoint_dirs = os.listdir(search_dir)
+    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index("CV_" + str(num_cv))]
+    search_dir += "/" + correct_sub_dir
     checkpoints = os.listdir(search_dir)
+    checkpoints = sorted(checkpoints)
+    return checkpoints[:-1]

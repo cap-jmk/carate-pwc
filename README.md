@@ -47,6 +47,10 @@ bash install.sh
 ```bash
 carate -c path_to_config_file.py
 ```
+Example when CLI is not working
+```bash
+ python mcf.py
+```
 
 ## Training results 
 
@@ -57,7 +61,7 @@ Therefore any ETL or data processing might not be affected by any interruption o
 
 # Outlook 
 
-The program is 
+The program is meant to be run as a simple CLI. Not quite there yet. 
 
 # Cite 
 

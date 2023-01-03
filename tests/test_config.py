@@ -9,6 +9,7 @@ from carate.load_data import StandardDataLoaderTUDataset
 from carate.config import Config
 from carate.models import cgc_classification
 from carate.evaluation import classification
+from typing import Type
 
 
 def test_config():

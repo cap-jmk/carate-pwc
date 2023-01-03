@@ -15,6 +15,8 @@ from carate.config import Config
 
 import logging
 
+from typing import Type
+
 logging.basicConfig(
     filename="example.log",
     encoding="utf-8",
