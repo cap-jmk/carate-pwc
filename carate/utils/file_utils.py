@@ -3,11 +3,12 @@ import json
 import time
 import logging
 
-import logging
+
+from typing import Tuple, List
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(
-    filename="example.log",
+    filename="train.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -240,11 +241,11 @@ def get_grid_positions(rows: int, cols: int) -> list:
     The get_grid_positions function takes in the number of rows and columns in a grid,
     and returns a list of tuples containing all possible positions on that grid.
 
-    :param rows:int: Used to Specify the number of rows in the grid.
-    :param cols:int: Used to Specify the number of columns in the grid.
+    :param rows:int: Used to specify the number of rows in the grid.
+    :param cols:int: Used to specify the number of columns in the grid.
     :return: A list of tuples.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     grid = []
@@ -252,3 +253,30 @@ def get_grid_positions(rows: int, cols: int) -> list:
         for j in range(cols):
             grid.append((i, j))
     return grid
+
+
+def search_subdirs(dir_name: str) -> Tuple[List[str]]:
+    """
+    The search_subdirs function takes a directory name as input and returns a tuple of two lists.
+    The first list contains all the files in the directory, including those in subdirectories. The second list contains
+    all the subdirectories.
+
+    :param dir_name:str: Used to Specify the directory that we want to search.
+    :return: A tuple of two lists.
+
+    :doc-author: Julian M. Kleber
+    """
+    if not dir_name.endswith("/"): 
+        dir_name += "/"
+    
+    result_files = []
+    sub_dirs = []
+    for path, subdirs, files in os.walk(dir_name):
+        for name in files:
+            result_files.append(os.path.join(path, name))
+        for subdir in subdirs:
+            sub_dirs.append(os.path.join(path, subdir))
+
+    return (result_files, sub_dirs)
+
+

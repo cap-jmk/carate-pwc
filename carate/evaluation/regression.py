@@ -12,7 +12,7 @@ from carate.utils.model_files import save_model_parameters, get_latest_checkpoin
 import logging
 
 logging.basicConfig(
-    filename="example.log",
+    filename="train.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -191,14 +191,6 @@ class RegressionEvaluation(Evaluation):
                         loss=train_mae_loss,
                     )
 
-                    latest_checkpoint_path = get_latest_checkpoint(
-                        search_dir=result_save_dir, num_cv=i, epoch=epoch
-                    )
-                    model_net = self.load_model_checkpoint(
-                        checkpoint_path=latest_checkpoint_path,
-                        model_net=model_net,
-                        optimizer=optimizer,
-                    )
             result[str(i)] = tmp
         return result
 

@@ -9,6 +9,7 @@ from carate.utils.file_utils import (
     insert_string_in_file_name,
     load_json_from_file,
     save_json_to_file,
+    search_subdirs
 )
 
 
@@ -121,3 +122,29 @@ def test_save_json_to_file():
     save_json_to_file(a, file_name=file_name)
     loaded_a = load_json_from_file(file_name=file_name)
     assert list(loaded_a.keys()) == list(a.keys())
+
+
+def test_search_subdir(): 
+    """
+    The test_search_subdir function tests the search_subdirs function.
+    It does this by creating a directory with two subdirectories, each containing one file. 
+    The test then calls the search_subdirs function on the parent directory and checks that it returns all three files and both directories.
+
+    :return: A list of files and a list of directories.
+
+    :doc-author: Trelent
+    """
+
+
+    search_dir = "tests/data/test_dir_search/"
+    result_files, result_dirs = search_subdirs(dir_name = search_dir)
+    
+    assert len(result_files) == 4
+    files = ['tests/data/test_dir_search/dir2/file1', 'tests/data/test_dir_search/dir2/dir1/file1','tests/data/test_dir_search/dir2/file2 ', 'tests/data/test_dir_search/dir1/file1']
+    for name in files:
+        assert name in result_files 
+    
+    reference_sub_dirs = ["tests/data/test_dir_search/dir1", "tests/data/test_dir_search/dir2", "tests/data/test_dir_search/dir2/dir1"]
+    assert len(result_dirs) == 3
+    for ref in reference_sub_dirs:
+        assert ref in result_dirs 

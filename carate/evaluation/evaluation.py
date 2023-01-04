@@ -30,7 +30,7 @@ from typing import Type, Tuple
 import logging
 
 logging.basicConfig(
-    filename="example.log",
+    filename="train.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -354,10 +354,10 @@ class Evaluation(DefaultObject):
         :doc-author: Julian M. Kleber
         """
 
-        prefix = result_save_dir + "/data/"
+        prefix = result_save_dir + "/data/" + "CV_" + str(num_cv)
         file_name = prepare_file_name_saving(
             prefix=prefix,
-            file_name=dataset_name + "_CV-" + str(num_cv) + "_Epoch_" + str(num_epoch),
+            file_name=dataset_name + "_Epoch_" + str(num_epoch),
             suffix=".json",
         )
         with open(file_name, "w") as f:

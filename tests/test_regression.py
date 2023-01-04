@@ -18,7 +18,7 @@ from typing import Type
 import logging
 
 logging.basicConfig(
-    filename="example.log",
+    filename="train.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -30,14 +30,22 @@ def test_regression():
     config_filepath = "tests/config/regression_test_config.py"
     runner = Run.from_file(config_filepath=config_filepath)
     runner.run()  # takes instance attributes as parameters for the run() function
-    result_dir_content = os.listdir("tests/results/ZINC_test/data")
+    result_dir_content = result_dir_content, subdir_content = [
+        (os.path.join(path, name), os.path.join(path, subdir))
+        for name in files
+        for path, subdirs, files in os.walk("tests/results/ZINC_test/data")
+    ]
     result_dir_content_data = [x for x in result_dir_content if x.endswith(".json")]
     assert len(result_dir_content_data) == 2
     assert (
         r"ZINC_test_0.json" in result_dir_content
         and "ZINC_test_1.json" in result_dir_content
     )
-    result_dir_content = os.listdir("tests/results/ZINC_test/checkpoints")
+    result_dir_content, subdir_content = [
+        (os.path.join(path, name), os.path.join(path, subdir))
+        for name in files
+        for path, subdirs, files in os.walk("tests/results/ZINC_test/checkpoints")
+    ]
     result_dir_content_data = [x for x in result_dir_content if x.endswith(".pt")]
     assert len(result_dir_content_data) == 4
     assert (
