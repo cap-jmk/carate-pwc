@@ -1,8 +1,10 @@
+from typing import Optional
+
 import subprocess
-from carate.utils.file_utils import save_json_to_file
+from amarium.utils import save_json_to_file
 
 
-def convert_py_to_json(file_name: str, out_name: str = None) -> dict:
+def convert_py_to_json(file_name: str, out_name: Optional[str] = None) -> dict:
     """
     The convert_py_to_json function takes in a file name and an output file name.
     It reads the input file, which is assumed to be a .py config file with key value pairs separated by spaces.

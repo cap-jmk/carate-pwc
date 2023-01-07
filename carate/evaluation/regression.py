@@ -3,9 +3,10 @@ Evaulation object for classification
 """
 import torch
 import numpy as np
+from typing import Type, Optional
 
 from carate.evaluation.evaluation import Evaluation
-from carate.load_data import DataLoader
+from carate.load_data import DataLoaderObject
 from carate.utils.model_files import save_model_parameters, get_latest_checkpoint
 
 # TODO Logging done right
@@ -26,10 +27,10 @@ class RegressionEvaluation(Evaluation):
         dataset_save_path: str,
         result_save_dir: str,
         # TODO type should be the correct model
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device),
-        DataLoader: type(DataLoader),
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
+        device: Type[torch.device],
+        DataLoader: Type[DataLoaderObject],
         test_ratio: int,
         gamma: int,
         num_epoch: int = 150,
@@ -45,7 +46,7 @@ class RegressionEvaluation(Evaluation):
         :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
         :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_loader:Type(DataLoader): Used to Specify the type of data loader that is used. Is implemented according to
+        :param data_loader:Type[DataLoaderObject]: Used to Specify the type of data loader that is used. Is implemented according to
                                              the interface given in load_data.py by the class DataLoader.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
@@ -75,21 +76,21 @@ class RegressionEvaluation(Evaluation):
 
     def cv(
         self,
-        num_cv: int = None,
-        num_epoch: int = None,
-        num_classes: int = None,
-        dataset_name: str = None,
-        dataset_save_path: str = None,
-        test_ratio: int = None,
-        DataLoader: type(DataLoader) = None,
-        shuffle: bool = None,
-        batch_size: int = None,
-        model_net: type(torch.nn.Module) = None,
-        optimizer: type(torch.optim) = None,
-        device: type(torch.device) = None,
-        gamma: int = None,
-        result_save_dir: str = None,
-        model_save_freq: int = None,
+        num_cv: int,
+        num_epoch: int,
+        num_classes: int,
+        dataset_name: str,
+        dataset_save_path: str,
+        test_ratio: int,
+        DataLoader: Type[DataLoaderObject],
+        shuffle: bool,
+        batch_size: int,
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
+        device: Type[torch.device],
+        gamma: int,
+        result_save_dir: str,
+        model_save_freq: int,
     ):
 
         # initialize
@@ -198,11 +199,11 @@ class RegressionEvaluation(Evaluation):
     def train(
         self,
         epoch: int,
-        model_net: type(torch.nn.Module),
+        model_net: Type[torch.nn.Module],
         norm_factor: float,
-        device: type(torch.device),
+        device: Type[torch.device],
         train_loader,
-        optimizer: type(torch.optim),
+        optimizer: Type[torch.optim.Optimizer],
         num_classes: int,
     ) -> float:
 
@@ -232,8 +233,8 @@ class RegressionEvaluation(Evaluation):
         test_loader,
         epoch: int,
         norm_factor: float,
-        model_net: type(torch.nn.Module),
-        device: type(torch.device),
+        model_net: Type[torch.nn.Module],
+        device: Type[torch.device],
     ):
 
         model_net.eval()
@@ -254,7 +255,7 @@ class RegressionEvaluation(Evaluation):
             test_loader
         )  # TODO verify if necessary
 
-    def __normalization_factor(self, dataset, num_classes: int):
+    def __normalization_factor(self, dataset, num_classes: int) -> float:
 
         y = np.zeros((len(dataset), 1, num_classes))
         for i in range(len(dataset)):

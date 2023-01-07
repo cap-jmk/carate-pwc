@@ -1,5 +1,5 @@
 """
-Tests the file converter that converts a config file to a json for using to initialize a Run object. 
+Tests the file converter that converts a config file to a json for using to initialize a Run object.
 
 """
 

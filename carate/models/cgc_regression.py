@@ -1,7 +1,7 @@
 """
-cgc_regression model is named after the structure of the graph neural network. 
-The graph neural network is structured with a convolutional , graph attention, 
-and another convolutional layer. The cgc_classificatin model was the model tested int the publication 
+cgc_regression model is named after the structure of the graph neural network.
+The graph neural network is structured with a convolutional , graph attention,
+and another convolutional layer. The cgc_classificatin model was the model tested int the publication
 Introducing CARATE: Finally speaking chemistry.
 """
 import torch
@@ -31,6 +31,7 @@ class Net(torch.nn.Module):
         self.num_classes = num_classes
         self.num_features = num_features
         self.dim = dim
+
         self.conv1 = GraphConv(self.num_features, self.dim)
         self.conv3 = GATConv(self.dim, self.dim, dropout=0.6)
         self.conv5 = GraphConv(self.dim, self.dim)
