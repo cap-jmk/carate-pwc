@@ -1,4 +1,11 @@
-from typing import Optional
+"""
+Module for handling config files used to start 
+the training and evaluation process 
+
+:author: Julian M. Kleber
+"""
+
+from typing import Optional, List
 
 import subprocess
 from amarium.utils import save_json_to_file
@@ -33,7 +40,7 @@ def convert_py_to_json(file_name: str, out_name: Optional[str] = None) -> dict:
     return json_dict
 
 
-def read_file(file_name: str) -> list[str]:
+def read_file(file_name: str) -> List[str]:
     """
     The read_file function takes a file name as input and returns the contents of that file as a list of strings.
     The function also formats the code using black before reading it in.
@@ -47,13 +54,13 @@ def read_file(file_name: str) -> list[str]:
     subprocess.run(
         ["black", file_name], capture_output=True
     )  # format file to avoid misunderstandings
-    with open(file_name) as file:
+    with open(file_name, "r", encoding="utf-8") as file:
         raw = file.readlines()
     result = sanitize_raw_py(raw)
     return result
 
 
-def sanitize_raw_py(raw_input: list[str]) -> list[str]:
+def sanitize_raw_py(raw_input: List[str]) -> List[str]:
     """
     The sanitize_raw_py function takes in a list of strings and returns a list of strings.
     The function removes all newline characters from the input, as well as any quotation marks or apostrophes.

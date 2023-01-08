@@ -3,7 +3,7 @@ File for data loading from the standard datasets implemented in the pytorch_geom
 library. The DataSet loader is implemented as a base class and other subclasses include loaders for standardized benchmarks
 as well as custom datasets.
 
-@author: Julian M. Kleber
+:author: Julian M. Kleber
 """
 from typing import Type, Optional, List
 from abc import ABC, abstractclassmethod, abstractmethod
@@ -25,8 +25,6 @@ logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
 )
-
-
 
 
 class DataLoaderObject(ABC, DefaultObject):
@@ -53,14 +51,14 @@ class DataLoaderObject(ABC, DefaultObject):
         batch_size: int,
         shuffle: bool,
     ) -> None:
-        raise NotImplementedError # pragma: no cover
+        raise NotImplementedError  # pragma: no cover
 
     @abstractmethod
-    def __repr__(self): 
-        raise NotImplementedError # pragme: no cover
+    def __repr__(self):
+        raise NotImplementedError  # pragme: no cover
+
 
 class StandardPytorchGeometricDataLoader(DataLoaderObject):
-    
     @classmethod
     def load_data(
         cls,
@@ -69,7 +67,11 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
         dataset_save_path: str,
         batch_size: int = 64,
         shuffle: bool = True,
-    ) -> List[Type[torch_geometric.datasets.molecule_net.MoleculeNet] | Type[torch_geometric.loader.dataloader.DataLoader] | Type[torch_geometric.datasets.tu_dataset.TUDataset]]:
+    ) -> List[
+        Type[torch_geometric.datasets.molecule_net.MoleculeNet]
+        | Type[torch_geometric.loader.dataloader.DataLoader]
+        | Type[torch_geometric.datasets.tu_dataset.TUDataset]
+    ]:
         """
         The load_dataset function loads a standard dataset, splits it into a training and testing set,
         and returns the appropriate dataloaders for each. The test_ratio parameter specifies what percentage of
@@ -89,7 +91,7 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
             dataset = cls.DataSet(dataset_save_path, name=dataset_name).shuffle()
         else:
             dataset = cls.DataSet(dataset_save_path, name=dataset_name)
-        
+
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
@@ -103,8 +105,8 @@ class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
     Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
     and provided by the MoleculeNet collection of datasets.
     """
-    DataSet = MoleculeNet
 
+    DataSet = MoleculeNet
 
     def __init__(
         self,
@@ -129,15 +131,13 @@ class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
         :doc-author: Julian M. Kleber
         """
 
-        self.dataset_save_path=dataset_save_path
-        self.dataset_name=dataset_name
-        self.test_ratio=test_ratio
-        self.batch_size=batch_size
-        self.shuffle=shuffle
+        self.dataset_save_path = dataset_save_path
+        self.dataset_name = dataset_name
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
+        self.shuffle = shuffle
 
-        
-
-    def __repr__(self): 
+    def __repr__(self):
         return "StandardMoleculeNet"
 
 
@@ -148,7 +148,9 @@ class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
 
     author: Julian M. Kleber
     """
+
     DataSet = TUDataset
+
     def __init__(
         self,
         dataset_save_path: str,
@@ -172,14 +174,11 @@ class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
         :doc-author: Julian M. Kleber
         """
 
-        
-        self.dataset_save_path=dataset_save_path
-        self.dataset_name=dataset_name
-        self.test_ratio=test_ratio
-        self.batch_size=batch_size
-        self.shuffle=shuffle
-        
-        
+        self.dataset_save_path = dataset_save_path
+        self.dataset_name = dataset_name
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
+        self.shuffle = shuffle
 
-    def __repr__(self): 
+    def __repr__(self):
         return "StandardTUD"

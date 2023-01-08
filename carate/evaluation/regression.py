@@ -265,3 +265,4 @@ class RegressionEvaluation(Evaluation):
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
         return norm_factor
+

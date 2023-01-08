@@ -1,8 +1,10 @@
 """
 cgc_classification model is named after the structure of the graph neural network.
 The graph neural network is structured with a convolutional , graph attention,
-and another convolutional layer. The cgc_classificatin model was the model tested int the publication
-Introducing CARATE: Finally speaking chemistry.
+and another convolutional layer. The cgc_classificatin model was the model 
+tested int the publication Introducing CARATE: Finally speaking chemistry.
+
+:author: Julian M. Kleber
 """
 import torch
 import torch.nn.functional as F

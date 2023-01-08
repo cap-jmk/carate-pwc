@@ -6,19 +6,20 @@ is text files then there is a need to convert them.
 @author = Julian M. Kleber
 """
 import torch
-
-from typing import Type, Optional
+from typing import Type, Optional, Dict, TypeVar, Any
 
 from carate.evaluation import evaluation, classification, regression
 from carate.models import cgc_classification, cgc_regression
 from carate.load_data import (
-    DataLoader,
+    DataLoaderObject,
     StandardPytorchGeometricDataLoader,
     StandardDataLoaderTUDataset,
     StandardDataLoaderMoleculeNet,
 )
 from carate.utils.convert_to_json import convert_py_to_json
 
+
+EvaluationMap: Dict[str, Type[evaluation.Evaluation]]
 EVALUATION_MAP = {
     "regression": regression.RegressionEvaluation,
     "classification": classification.ClassificationEvaluation,
@@ -27,6 +28,7 @@ EVALUATION_MAP = {
 
 MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
+DATA_LOADER_MAP : Dict[str, DataLoaderObject]
 DATA_LOADER_MAP = {
     "StandardPyG": StandardPytorchGeometricDataLoader,
     "StandardTUD": StandardDataLoaderTUDataset,
@@ -34,6 +36,7 @@ DATA_LOADER_MAP = {
 }
 
 
+Config = TypeVar('Config')
 class Config:
     """
     The Config class is an object representation of the configuration of the model. It aims to provide a middle layer between
@@ -50,7 +53,8 @@ class Config:
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
-        Evaluation: type(evaluation.Evaluation),
+        Evaluation: Type[evaluation.Evaluation],
+        data_loader: Type[DataLoaderObject],
         model,
         optimizer: str = None,
         net_dimension: int = 364,
@@ -59,7 +63,7 @@ class Config:
         test_ratio: int = 20,
         batch_size: int = 64,
         shuffle: bool = True,
-        data_loader: str = None,
+        
         num_cv: int = 5,
         num_epoch: int = 150,
     ):
@@ -90,7 +94,7 @@ class Config:
         self.model_save_freq = model_save_freq
 
     @classmethod
-    def from_file(cls, file_name: str) -> None:
+    def from_file(cls, file_name: str) -> Config:
         """
         The from_file function takes a file name as an argument and returns a Config object.
         The function reads the file, converts it to JSON, then uses the from_json method to create
@@ -108,7 +112,7 @@ class Config:
         return config_object
 
     @classmethod
-    def from_json(cls, json_object: dict):
+    def from_json(cls, json_object: Dict[Any, Any]) -> Config:
         """
         The from_json function is a class method that takes in a json object and returns an instance of the Config class.
         The function is used to load the configuration from a file, which can be done by calling:

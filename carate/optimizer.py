@@ -7,6 +7,7 @@ Module to handle optimizer initalization
 import torch
 from typing import Type
 
+
 def get_optimizer(
     optimizer_str: str, model_net: Type[torch.nn.Module], learning_rate: float
 ) -> Type[torch.optim.Optimizer]:

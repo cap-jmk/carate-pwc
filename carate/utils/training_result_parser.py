@@ -25,18 +25,39 @@ def load_training_from_json_file(file_path: str) -> Dict[Any, Any]:
 
 
 def get_loss_json(json_object: dict) -> List[Any]:
+    """
+    The get_loss_json function takes in a json object and returns the loss value from that json object.
+
+    :param json_object:dict: Used to Specify that the function takes a dictionary as an argument.
+    :return: A list of dictionaries.
+
+    :doc-author: Trelent
+    """
 
     loss = json_object["Loss"]
     return loss
 
 
-def get_accuracy(json_object: dict) -> list:
+def get_accuracy(json_object: dict) -> List[float]:
+    """
+    The get_accuracy function takes in a json object and returns the accuracy of the model.
+        Args:
+            json_object (dict): A dictionary containing all of the information from a single run.
+
+        Returns:
+            List[float]: The accuracy for each epoch during training.
+
+    :param json_object:dict: Used to Specify the type of the parameter.
+    :return: A list of floats.
+
+    :doc-author: Trelent
+    """
 
     acc = json_object["Acc"]
     return acc
 
 
-def get_auc(json_object: dict) -> list:
+def get_auc(json_object: dict) -> List[float]:
 
     auc = json_object["AUC"]
     return auc
