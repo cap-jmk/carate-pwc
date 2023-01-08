@@ -2,12 +2,12 @@ import torch
 import click
 
 from carate.models.cgc_classification import Net
-from carate.load_data import DataLoader
+from carate.load_data import DataLoaderObject
 from carate.evaluation.evaluation import Evaluation
 from carate.default_interface import DefaultObject
 from carate.config import Config
 from carate.optimizer import get_optimizer
-from typing import Type
+from typing import Type, Optional
 
 import logging
 
@@ -35,10 +35,11 @@ class Run(DefaultObject):
         gamma: int,
         result_save_dir: str,
         model_save_freq: float,
+        DataLoader: Type[DataLoaderObject],
         Evaluation: type(Evaluation),
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device) = torch.device(
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
+        device: Type[torch.device] = torch.device(
             "cuda" if torch.cuda.is_available() else "cpu"
         ),
         net_dimension: int = 364,
@@ -47,7 +48,6 @@ class Run(DefaultObject):
         test_ratio: int = 20,
         batch_size: int = 64,
         shuffle: bool = True,
-        DataLoader: type(DataLoader) = None,
         num_cv: int = 5,
         num_epoch=150,
     ):
@@ -91,13 +91,13 @@ class Run(DefaultObject):
 
     def run(
         self,
-        device: type(torch.optim) = None,
+        device: Type[torch.optim.Optimizer] = None,
         dataset_name: str = None,
         test_ratio: int = None,
         dataset_save_path: str = None,
-        model_net: type(torch.nn.Module) = None,
-        optimizer: type(torch.optim) = None,
-        DataLoader: type(DataLoader) = None,
+        model_net: Type[torch.nn.Module] = None,
+        optimizer: Type[torch.optim.Optimizer] = None,
+        DataLoader: Type[DataLoaderObject] = None,
         num_cv: int = None,
         num_epoch: int = None,
         num_classes: int = None,
@@ -201,6 +201,7 @@ class Run(DefaultObject):
             net_dimension=config.net_dimension,
             learning_rate=config.learning_rate,
             # evaulation parameters
+            
             dataset_save_path=config.dataset_save_path,
             test_ratio=config.test_ratio,
             batch_size=config.batch_size,

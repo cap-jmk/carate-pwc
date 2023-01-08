@@ -1,18 +1,30 @@
 """
-Module for parsing training results 
+Module for parsing training results
 
 :author: Julian M. Kleber
 """
-from carate.utils import load_json_file
+from typing import Type, Dict, Any, List
+
+from amarium.utils import load_json_from_file
 
 
-def load_training_from_json_file(file_path: str) -> dict:
+def load_training_from_json_file(file_path: str) -> Dict[Any, Any]:
+    """
+    The load_training_from_json_file function loads a training result from a JSON file.
 
-    training_result = load_json_file(file_path=file_path)
+
+    :param file_path:str: Used to Specify the path to the file that you want to load.
+    :return: A dictionary.
+
+    :doc-author: Trelent
+    """
+
+    training_result = load_json_from_file(file_path=file_path)
+    training_result: Dict[Any, Any]
     return training_result
 
 
-def get_loss_json(json_object: dict) -> list:
+def get_loss_json(json_object: dict) -> List[Any]:
 
     loss = json_object["Loss"]
     return loss

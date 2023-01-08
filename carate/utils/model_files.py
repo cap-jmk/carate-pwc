@@ -7,7 +7,7 @@ import os
 
 import torch
 
-from carate.utils.file_utils import (
+from amarium.utils import (
     prepare_file_name_saving,
     load_json_from_file,
     make_full_filename,
@@ -15,10 +15,12 @@ from carate.utils.file_utils import (
     check_make_dir,
 )
 
-from typing import Tuple
+from typing import Tuple, Type
 
 
-def load_model(model_path: str, model_net: type(torch.nn.Module)):
+def load_model(
+    model_path: str, model_net: Type[torch.nn.Module]
+) -> Type[torch.nn.Module]:
     """
     The load_model function takes in a model_path, model_params_path and the type of network to be loaded.
     It then loads the parameters from the params file into a dictionary and uses that to create an instance of
@@ -26,7 +28,7 @@ def load_model(model_path: str, model_net: type(torch.nn.Module)):
 
     :param model_path:str: Used to specify the path to the model file.
     :param model_params_path:str: Used to load the model parameters from a file.
-    :param model_net:type(torch.nn.Module): Used to specify the type of model that is being loaded.
+    :param model_net:Type[torch.nn.Module]: Used to specify the type of model that is being loaded.
     :return: A model that is loaded with the parameters in the path.
 
     :doc-author: Julian M. Kleber
@@ -40,9 +42,9 @@ def load_model(model_path: str, model_net: type(torch.nn.Module)):
 
 def load_model_training_checkpoint(
     checkpoint_path: str,
-    model_net: type(torch.nn.Module),
-    optimizer: type(torch.optim),
-) -> Tuple[type(torch.nn.Module), type(torch.optim)]:
+    model_net: Type[torch.nn.Module],
+    optimizer: Type[torch.optim.Optimizer],
+) -> Tuple[Type[torch.nn.Module], Type[torch.optim.Optimizer]]:
 
     # For any bug fixing please consult the PyTorch documentation:  https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
 
@@ -62,8 +64,8 @@ def save_model_training_checkpoint(
     dataset_name: str,
     num_cv: int,
     num_epoch: int,
-    model_net: type(torch.nn.Module),
-    optimizer: type(torch.optim),
+    model_net: Type[torch.nn.Module],
+    optimizer: Type[torch.optim.Optimizer],
     loss: float,
 ) -> None:
 
@@ -93,7 +95,7 @@ def save_model(
     dataset_name: str,
     num_cv: int,
     num_epoch,
-    model_net: type(torch.nn.Module),
+    model_net: Type[torch.nn.Module],
 ):
     """
     The save_model function saves the model to a file.
@@ -104,7 +106,7 @@ def save_model(
     :param dataset_name:str: Used to name the file.
     :param num_cv:int: Used to make the filename unique.
     :param num_epoch: Used to save the model after a certain number of epochs.
-    :param model_net:type(torch.nn.Module): Used to save the model.
+    :param model_net:Type[torch.nn.Module]: Used to save the model.
     :param : Used to specify the directory where the model will be saved.
     :return: The path of the saved model.
 
@@ -141,7 +143,7 @@ def load_model_parameters(model_params_file_path: str) -> dict:
     return load_json_from_file(model_params_file_path)
 
 
-def save_model_parameters(model_net: type(torch.nn.Module), save_dir: str) -> None:
+def save_model_parameters(model_net: Type[torch.nn.Module], save_dir: str) -> None:
     """
     The save_model_parameters function saves the model architecture to a csv file.
 
@@ -151,7 +153,7 @@ def save_model_parameters(model_net: type(torch.nn.Module), save_dir: str) -> No
 
         Returns: None
 
-    :param model_net:type(torch.nn.Module): Used to specify the type of model that is being used.
+    :param model_net:Type[torch.nn.Module]: Used to specify the type of model that is being used.
     :param save_path:str: Used to save the model architecture in a json file.
     :return: A dictionary of the model architecture (model_architecture).
 

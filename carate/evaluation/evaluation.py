@@ -1,11 +1,12 @@
 """
-This is the heart of the application and trains / tests a algorithm on a given dataset. 
-The idea is to parametrize as much as possible. 
+This is the heart of the application and trains / tests a algorithm on a given dataset.
+The idea is to parametrize as much as possible.
 
 :author: Julian M. Kleber
 """
 import json
 import numpy as np
+from typing import Type, Optional
 
 from sklearn import metrics
 
@@ -20,10 +21,11 @@ from carate.utils.model_files import (
     load_model_parameters,
     get_latest_checkpoint,
 )
-from carate.utils.file_utils import check_make_dir
-from carate.load_data import DataLoader, StandardDataLoaderMoleculeNet
+
+from amarium.utils import check_make_dir, prepare_file_name_saving
+from carate.load_data import DataLoaderObject, StandardDataLoaderMoleculeNet
 from carate.default_interface import DefaultObject
-from carate.utils.file_utils import prepare_file_name_saving
+
 
 from typing import Type, Tuple
 
@@ -50,10 +52,10 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device),
-        DataLoader: type(DataLoader),
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
+        device: Type[torch.device],
+        DataLoader: Type[DataLoaderObject],
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -69,8 +71,8 @@ class Evaluation(DefaultObject):
         :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
         :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_loader:Type(DataLoader): Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class DataLoader.load_data().
+        :param data_loader:Type[DataLoaderObject]: Used to Specify the type of data loader that is used. Is implemented according to
+                                             the interface given in load_data.py by the class DataLoaderObject.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
@@ -107,12 +109,12 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
-        DataLoader: type(DataLoader),
+        DataLoader: Type[DataLoaderObject],
         shuffle: bool,
         batch_size: int,
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device),
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
+        device: Type[torch.device],
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
@@ -128,14 +130,14 @@ class Evaluation(DefaultObject):
 
                 Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
 
-            DataLoader: An instance of torchvision's DataLoader class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
+            DataLoaderObject: An instance of torchvision's DataLoaderObject class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
 
         :param self: Used to Represent the instance of the class.
         :param num_cv:int: Used to Specify the number of cross-validation folds.
         :param num_epoch:int: Used to Specify the number of epochs to train for.
         :param num_classes:int: Used to Determine the number of classes in the dataset.
         :param dataset_name:str: Used to Specify the name of the dataset to be used.
-        :param DataLoader:type(DataLoader): Used to Load the data.
+        :param DataLoader:Type[DataLoaderObject]: Used to Load the data.
         :param : Used to Specify the number of folds in a (stratified)kfold,.
         :return: A list of dictionaries.
 
@@ -215,7 +217,7 @@ class Evaluation(DefaultObject):
                     y[j] = test_dataset[j].y
 
                 y = torch.as_tensor(y)
-                y = F.one_hot(y.long(), num_classes=num_classes).long()
+                y = F.one_hot(y.long(), num_classes=num_classes)
                 store_auc = []
 
                 for j in range(len(x[0, :])):
@@ -247,10 +249,10 @@ class Evaluation(DefaultObject):
     def train(
         self,
         epoch: int,
-        model_net: type(torch.nn.Module),
-        device: type(torch.device),
+        model_net: Type[torch.nn.Module],
+        device: Type[torch.device],
         train_loader,  # TODO find out type
-        optimizer: type(torch.optim),
+        optimizer: Type[torch.optim.Optimizer],
         num_classes=2,
         gamma=51,
     ):
@@ -295,7 +297,7 @@ class Evaluation(DefaultObject):
         return accuracy
 
     def test(
-        self, test_loader, epoch: int, model_net, device: type(torch.device), test=False
+        self, test_loader, epoch: int, model_net, device: Type[torch.device], test=False
     ):
         """
         The test function is used to test the model on a dataset.
@@ -381,9 +383,9 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         num_cv: int,
         num_epoch: int,
-        model_net: type(torch.nn.Module),
+        model_net: Type[torch.nn.Module],
         data: dict,
-        optimizer: type(torch.optim),
+        optimizer: Type[torch.optim.Optimizer],
         loss: float,
     ) -> None:
 
@@ -414,8 +416,8 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         num_cv: int,
         num_epoch: int,
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
         loss: float,
     ) -> None:
         """
@@ -431,7 +433,7 @@ class Evaluation(DefaultObject):
         :param dataset_name:str: Used to save the model with a name that includes the dataset it was trained on.
         :param num_cv:int: Used to specify which cross validation fold the model is being saved for.
         :param num_epoch:int: Used to save the model at a certain epoch.
-        :param model_net:type(torch.nn.Module): Used to save the model.
+        :param model_net:Type[torch.nn.Module]: Used to save the model.
         :param : Used to save the model at a certain frequency.
         :return: None.
 
@@ -451,8 +453,8 @@ class Evaluation(DefaultObject):
     def load_model_checkpoint(
         self,
         checkpoint_path: str,
-        model_net: type(torch.nn.Module),
-        optimizer=type(torch.optim),
+        model_net: Type[torch.nn.Module],
+        optimizer=Type[torch.optim.Optimizer],
     ) -> torch.nn.Module:
 
         model_net_cp = load_model_training_checkpoint(

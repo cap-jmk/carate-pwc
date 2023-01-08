@@ -1,13 +1,17 @@
 """
 File for data loading from the standard datasets implemented in the pytorch_geometric #
 library. The DataSet loader is implemented as a base class and other subclasses include loaders for standardized benchmarks
-as well as custom datasets. 
+as well as custom datasets.
 
 @author: Julian M. Kleber
 """
+from typing import Type, Optional, List
+from abc import ABC, abstractclassmethod, abstractmethod
 
+import torch_geometric
 from torch_geometric.data import DataLoader
 from torch_geometric.datasets import MoleculeNet, TUDataset
+
 import rdkit as rdkit
 
 from carate.default_interface import DefaultObject
@@ -23,33 +27,49 @@ logging.basicConfig(
 )
 
 
-class DataLoaderObject(DefaultObject):
+
+
+class DataLoaderObject(ABC, DefaultObject):
     """
     Interface for DataLoading objects
     """
 
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(
+        self,
+        dataset_name: str,
+        dataset_save_path: str,
+        test_ratio: int,
+        batch_size: int,
+        shuffle: bool,
+    ) -> None:
+        raise NotImplementedError  # pragma: no cover
 
-    def load_data(self):
-        raise NotImplementedError
-
-
-class StandardPytorchGeometricDataLoader(DataLoaderObject):
-    def __init__(self):
-        self.DataSet = None
-        raise NotImplementedError(
-            "Implement your dataset above or choose one from a standard library like PyTochGeometric"
-        )
-
+    @abstractclassmethod
     def load_data(
         self,
+        dataset_name: str,
+        dataset_save_path: str,
+        test_ratio: int,
+        batch_size: int,
+        shuffle: bool,
+    ) -> None:
+        raise NotImplementedError # pragma: no cover
+
+    @abstractmethod
+    def __repr__(self): 
+        raise NotImplementedError # pragme: no cover
+
+class StandardPytorchGeometricDataLoader(DataLoaderObject):
+    
+    @classmethod
+    def load_data(
+        cls,
         dataset_name: str,
         test_ratio: int,
         dataset_save_path: str,
         batch_size: int = 64,
         shuffle: bool = True,
-    ) -> list:
+    ) -> List[Type[torch_geometric.datasets.molecule_net.MoleculeNet] | Type[torch_geometric.loader.dataloader.DataLoader] | Type[torch_geometric.datasets.tu_dataset.TUDataset]]:
         """
         The load_dataset function loads a standard dataset, splits it into a training and testing set,
         and returns the appropriate dataloaders for each. The test_ratio parameter specifies what percentage of
@@ -64,22 +84,17 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
 
         :doc-author: Julian M. Kleber
         """
-        method_variables = self._get_defaults(locals())
-        (
-            dataset_name,
-            test_ratio,
-            dataset_save_path,
-            batch_size,
-            shuffle,
-        ) = method_variables
+
         if shuffle:
-            dataset = self.DataSet(dataset_save_path, name=dataset_name).shuffle()
+            dataset = cls.DataSet(dataset_save_path, name=dataset_name).shuffle()
         else:
-            dataset = self.DataSet(dataset_save_path, name=dataset_name)
+            dataset = cls.DataSet(dataset_save_path, name=dataset_name)
+        
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
+
         return train_loader, test_loader, dataset, train_dataset, test_dataset
 
 
@@ -88,6 +103,8 @@ class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
     Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
     and provided by the MoleculeNet collection of datasets.
     """
+    DataSet = MoleculeNet
+
 
     def __init__(
         self,
@@ -112,12 +129,16 @@ class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
         :doc-author: Julian M. Kleber
         """
 
-        self.dataset_save_path = dataset_save_path
-        self.dataset_name = dataset_name
-        self.test_ratio = test_ratio
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.DataSet = MoleculeNet
+        self.dataset_save_path=dataset_save_path
+        self.dataset_name=dataset_name
+        self.test_ratio=test_ratio
+        self.batch_size=batch_size
+        self.shuffle=shuffle
+
+        
+
+    def __repr__(self): 
+        return "StandardMoleculeNet"
 
 
 class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
@@ -127,7 +148,7 @@ class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
 
     author: Julian M. Kleber
     """
-
+    DataSet = TUDataset
     def __init__(
         self,
         dataset_save_path: str,
@@ -151,9 +172,14 @@ class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
         :doc-author: Julian M. Kleber
         """
 
-        self.dataset_save_path = dataset_save_path
-        self.dataset_name = dataset_name
-        self.test_ratio = test_ratio
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.DataSet = TUDataset
+        
+        self.dataset_save_path=dataset_save_path
+        self.dataset_name=dataset_name
+        self.test_ratio=test_ratio
+        self.batch_size=batch_size
+        self.shuffle=shuffle
+        
+        
+
+    def __repr__(self): 
+        return "StandardTUD"

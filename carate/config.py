@@ -1,11 +1,13 @@
 """
-Module for serialization and deserialization of inputs. The aim is to 
-keep web-first attitude, even though when using files locally. If there 
+Module for serialization and deserialization of inputs. The aim is to
+keep web-first attitude, even though when using files locally. If there
 is text files then there is a need to convert them.
 
 @author = Julian M. Kleber
 """
 import torch
+
+from typing import Type, Optional
 
 from carate.evaluation import evaluation, classification, regression
 from carate.models import cgc_classification, cgc_regression

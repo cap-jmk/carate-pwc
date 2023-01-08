@@ -1,9 +1,11 @@
 """
 Evaulation object for classification
 """
+from typing import Type
+
 import torch
 from carate.evaluation.evaluation import Evaluation
-from carate.load_data import DataLoader
+from carate.load_data import DataLoaderObject
 
 
 class ClassificationEvaluation(Evaluation):
@@ -12,10 +14,10 @@ class ClassificationEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: type(torch.nn.Module),
-        optimizer: type(torch.optim),
-        device: type(torch.device),
-        DataLoader: type(DataLoader),
+        model_net: Type[torch.nn.Module],
+        optimizer: Type[torch.optim.Optimizer],
+        device: Type[torch.device],
+        DataLoader: Type[DataLoaderObject],
         model_save_freq: int,
         test_ratio: int,
         num_epoch: int = 150,
@@ -31,8 +33,8 @@ class ClassificationEvaluation(Evaluation):
         :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
         :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_loader:Type(DataLoader): Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class DataLoader.load_data().
+        :param data_loader:Type[DataLoaderObject]: Used to Specify the type of data loader that is used. Is implemented according to
+                                             the interface given in load_data.py by the class DataLoaderObject.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
