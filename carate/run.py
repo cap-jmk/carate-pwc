@@ -35,6 +35,7 @@ class Run(DefaultObject):
         gamma: int,
         result_save_dir: str,
         model_save_freq: float,
+        DataLoader: Type[DataLoaderObject],
         Evaluation: type(Evaluation),
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
@@ -47,7 +48,6 @@ class Run(DefaultObject):
         test_ratio: int = 20,
         batch_size: int = 64,
         shuffle: bool = True,
-        DataLoader: Type[DataLoaderObject] = None,
         num_cv: int = 5,
         num_epoch=150,
     ):
@@ -73,7 +73,7 @@ class Run(DefaultObject):
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
 
-        self.DataLoader = DataLoaderObject
+        self.DataLoader = DataLoader
 
     @classmethod
     def from_file(cls, config_filepath: str) -> None:
@@ -201,6 +201,7 @@ class Run(DefaultObject):
             net_dimension=config.net_dimension,
             learning_rate=config.learning_rate,
             # evaulation parameters
+            
             dataset_save_path=config.dataset_save_path,
             test_ratio=config.test_ratio,
             batch_size=config.batch_size,
