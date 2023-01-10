@@ -6,12 +6,12 @@ interface for training models#
 from typing import Type
 import click
 
-from carate.run import RunInitializer
+from carate.run import RunInitializer, Run
 
 
 @click.command()
 @click.option("-c", help="Path to config file")
-def train_algorithm(c: str, o: str) -> None:
+def train_algorithm(c: str) -> None:
     """
     The train_algorithm function takes in a config file and an output directory.
     It then runs the algorithm using the configuration specified in the config file,
@@ -21,11 +21,10 @@ def train_algorithm(c: str, o: str) -> None:
     :param o:str: Used to Specify the output directory.
     :return: None.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     config_filepath = c
-    runner: Run
     runner = RunInitializer.from_file(config_filepath=config_filepath)
 
     runner.run()

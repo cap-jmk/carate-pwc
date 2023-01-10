@@ -6,7 +6,7 @@ from carate.models.cgc_classification import Net
 from carate.load_data import DataLoaderObject
 from carate.evaluation.evaluation import Evaluation
 from carate.default_interface import DefaultObject
-from carate.config import Config
+from carate.config import ConfigInitializer, Config
 from carate.optimizer import get_optimizer
 from typing import Type, Optional
 
@@ -35,7 +35,7 @@ class Run(DefaultObject):
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
-        DataLoader: DataLoaderObject,
+        data_loader: DataLoaderObject,
         Evaluation: Evaluation,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
@@ -74,22 +74,10 @@ class Run(DefaultObject):
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
 
-        self.DataLoader = DataLoader
+        self.data_loader = data_loader
 
     def run(self) -> None:
 
-        self.Evaluation = self.Evaluation(
-            dataset_name=self.dataset_name,
-            dataset_save_path=self.dataset_save_path,
-            test_ratio=self.test_ratio,
-            model_net=self.model_net,
-            optimizer=self.optimizer,
-            DataLoader=self.DataLoader,
-            device=self.device,
-            gamma=self.gamma,
-            result_save_dir=self.result_save_dir,
-            model_save_freq=self.model_save_freq,
-        )
         self.Evaluation.cv(
             dataset_name=self.dataset_name,
             dataset_save_path=self.dataset_save_path,
@@ -97,7 +85,7 @@ class Run(DefaultObject):
             num_cv=self.num_cv,
             num_epoch=self.num_epoch,
             num_classes=self.num_classes,
-            DataLoader=self.DataLoader,
+            DataLoader=self.data_loader,
             shuffle=self.shuffle,
             batch_size=self.batch_size,
             model_net=self.model_net,
@@ -110,17 +98,18 @@ class Run(DefaultObject):
 
 
 class RunInitializer:
+
     @classmethod
     def from_file(cls, config_filepath: str) -> Run:
 
-        config = Config.from_file(file_name=config_filepath)
+        config = ConfigInitializer.from_file(file_name=config_filepath)
         run_object = RunInitializer.__init_config(config)
         return run_object
 
     @classmethod
     def from_json(cls, json_object: Dict[Any, Any]) -> Run:
 
-        config = Config.from_json(json_object=json_object)
+        config = ConfigInitializer.from_json(json_object=json_object)
         run_object = RunInitializer.__init_config(config)
         return run_object
 
@@ -148,13 +137,6 @@ class RunInitializer:
             model_net=model_net,
             learning_rate=config.learning_rate,
         )
-
-        DataLoader = config.DataLoader(
-            dataset_save_path=config.dataset_save_path,
-            dataset_name=config.dataset_name,
-            test_ratio=config.test_ratio,
-            batch_size=config.batch_size,
-        )
         return Run(
             dataset_name=config.dataset_name,
             device=device,
@@ -174,6 +156,6 @@ class RunInitializer:
             num_cv=config.num_cv,
             num_epoch=config.num_epoch,
             result_save_dir=config.result_save_dir,
-            DataLoader=DataLoader,
+            data_loader=config.data_loader,
             model_save_freq=int(config.model_save_freq),
         )

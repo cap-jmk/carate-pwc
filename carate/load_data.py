@@ -68,9 +68,9 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
         batch_size: int = 64,
         shuffle: bool = True,
     ) -> List[
-        Type[torch_geometric.datasets.molecule_net.MoleculeNet]
-        | Type[torch_geometric.loader.dataloader.DataLoader]
-        | Type[torch_geometric.datasets.tu_dataset.TUDataset]
+        torch_geometric.datasets.molecule_net.MoleculeNet
+        | torch_geometric.loader.dataloader.DataLoader
+        | torch_geometric.datasets.tu_dataset.TUDataset
     ]:
         """
         The load_dataset function loads a standard dataset, splits it into a training and testing set,

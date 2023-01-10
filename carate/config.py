@@ -19,7 +19,7 @@ from carate.load_data import (
 from carate.utils.convert_to_json import convert_py_to_json
 
 
-EvaluationMap: Dict[str, Type[evaluation.Evaluation]]
+EvaluationMap: Dict[str, evaluation.Evaluation]
 EVALUATION_MAP = {
     "regression": regression.RegressionEvaluation,
     "classification": classification.ClassificationEvaluation,
@@ -28,7 +28,7 @@ EVALUATION_MAP = {
 
 MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
-DATA_LOADER_MAP: Dict[str, DataLoaderObject]
+DATA_LOADER_MAP: Dict[str, Type[StandardDataLoaderMoleculeNet] | Type[StandardPytorchGeometricDataLoader] | Type[StandardPytorchGeometricDataLoader]]
 DATA_LOADER_MAP = {
     "StandardPyG": StandardPytorchGeometricDataLoader,
     "StandardTUD": StandardDataLoaderTUDataset,
@@ -36,10 +36,7 @@ DATA_LOADER_MAP = {
 }
 
 
-Config = TypeVar("C")
-
-
-class Config(Generic[Config]):
+class Config:
     """
     The Config class is an object representation of the configuration of the model. It aims to provide a middle layer between
     some user input and the run interface. It is also possible to use it via the web because of the method overload of the constructor.
@@ -73,7 +70,7 @@ class Config(Generic[Config]):
         self.model = model
         self.optimizer = optimizer
         self.Evaluation = Evaluation
-        self.DataLoader = data_loader
+        self.data_loader = data_loader
 
         # model parameters
         self.dataset_name = dataset_name
@@ -94,6 +91,10 @@ class Config(Generic[Config]):
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 
+
+
+class ConfigInitializer:
+    
     @classmethod
     def from_file(cls, file_name: str) -> Config:
         """
@@ -109,7 +110,7 @@ class Config(Generic[Config]):
         """
 
         json_object = convert_py_to_json(file_name)
-        config_object = Config.from_json(json_object)
+        config_object = ConfigInitializer.from_json(json_object)
         return config_object
 
     @classmethod
@@ -126,11 +127,29 @@ class Config(Generic[Config]):
         :doc-author: Julian M. Kleber
         """
 
-        return cls(
+        data_loader = DATA_LOADER_MAP[json_object["data_loader"]](
+            dataset_save_path=json_object["dataset_save_path"],
+            dataset_name=json_object["dataset_name"],
+            test_ratio=json_object["test_ratio"],
+            batch_size=json_object["batch_size"])
+        
+        evaluation = EVALUATION_MAP[json_object["evaluation"]](
+            dataset_name=json_object["dataset_name"],
+            dataset_save_path=json_object["dataset_save_path"],
+            test_ratio=json_object["test_ratio"],
+            model_net=json_object["model"],
+            optimizer=json_object["optimizer"],
+            DataLoader=data_loader,
+            gamma=json_object["gamma"],
+            result_save_dir=json_object["result_save_dir"],
+            model_save_freq=json_object["model_save_freq"],
+        )
+
+        return Config(
             model=MODEL_MAP[json_object["model"]],
             optimizer=json_object["optimizer"],
-            Evaluation=EVALUATION_MAP[json_object["evaluation"]],
-            data_loader=DATA_LOADER_MAP[json_object["data_loader"]],
+            Evaluation=evaluation,
+            data_loader=data_loader,
             # model parameters
             dataset_name=str(json_object["dataset_name"]),
             num_classes=int(json_object["num_classes"]),

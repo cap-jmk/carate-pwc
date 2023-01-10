@@ -16,7 +16,6 @@ class ClassificationEvaluation(Evaluation):
         result_save_dir: str,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
-        device: Type[torch.device],
         DataLoader: Type[DataLoaderObject],
         model_save_freq: int,
         test_ratio: int,
@@ -59,6 +58,6 @@ class ClassificationEvaluation(Evaluation):
         self.DataLoader = DataLoader
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = device
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq

@@ -54,7 +54,6 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
-        device: torch.device,
         DataLoader: DataLoaderObject,
         test_ratio: int,
         num_epoch: int = 150,
@@ -97,7 +96,7 @@ class Evaluation(DefaultObject):
         self.DataLoader = DataLoader
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = device
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 

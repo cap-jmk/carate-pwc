@@ -14,8 +14,9 @@ def test_cli_func():
         shutil.rmtree("tests/results")
     subprocess.run(["bash", "install.sh"])
     config_filepath = "tests/config/regression_test_config.py"
-    subprocess.run(["carate", "-c", config_filepath])
-
+    result = subprocess.run(["carate", "-c", config_filepath],  stdout=subprocess.PIPE, stderr= subprocess.PIPE)
+    errs = result.stderr.decode()
+    print(errs)
     # check result files
     result_files, result_dirs = search_subdirs(dir_name="tests/results/ZINC_test/data")
     reference_dirs = [

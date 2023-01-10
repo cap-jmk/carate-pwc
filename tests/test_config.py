@@ -6,7 +6,7 @@ Test to verify if the initialization of the config file is correct.
 
 from carate.load_data import StandardDataLoaderTUDataset
 
-from carate.config import Config
+from carate.config import Config, ConfigInitializer
 from carate.models import cgc_classification
 from carate.evaluation import classification
 from typing import Type
@@ -14,7 +14,7 @@ from typing import Type
 
 def test_config():
     config_filepath = "tests/config/classification_test_config.py"
-    config = Config.from_file(file_name=config_filepath)
+    config = ConfigInitializer.from_file(file_name=config_filepath)
     assert config.dataset_name == "ENZYMES"
     assert config.num_classes == 6
     assert config.num_features == 3

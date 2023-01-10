@@ -26,10 +26,8 @@ class RegressionEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        # TODO type should be the correct model
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
-        device: Type[torch.device],
         DataLoader: Type[DataLoaderObject],
         test_ratio: int,
         gamma: int,
@@ -70,7 +68,7 @@ class RegressionEvaluation(Evaluation):
         self.DataLoader = DataLoader
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = device
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 
