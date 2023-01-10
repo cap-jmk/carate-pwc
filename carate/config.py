@@ -6,7 +6,7 @@ is text files then there is a need to convert them.
 @author = Julian M. Kleber
 """
 import torch
-from typing import Type, Optional, Dict, TypeVar, Any
+from typing import Type, Optional, Dict, TypeVar, Any, Generic
 
 from carate.evaluation import evaluation, classification, regression
 from carate.models import cgc_classification, cgc_regression
@@ -28,7 +28,7 @@ EVALUATION_MAP = {
 
 MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
-DATA_LOADER_MAP : Dict[str, DataLoaderObject]
+DATA_LOADER_MAP: Dict[str, DataLoaderObject]
 DATA_LOADER_MAP = {
     "StandardPyG": StandardPytorchGeometricDataLoader,
     "StandardTUD": StandardDataLoaderTUDataset,
@@ -36,8 +36,10 @@ DATA_LOADER_MAP = {
 }
 
 
-Config = TypeVar('Config')
-class Config:
+Config = TypeVar("C")
+
+
+class Config(Generic[Config]):
     """
     The Config class is an object representation of the configuration of the model. It aims to provide a middle layer between
     some user input and the run interface. It is also possible to use it via the web because of the method overload of the constructor.
@@ -53,8 +55,8 @@ class Config:
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
-        Evaluation: Type[evaluation.Evaluation],
-        data_loader: Type[DataLoaderObject],
+        Evaluation: evaluation.Evaluation,
+        data_loader: DataLoaderObject,
         model,
         optimizer: str = None,
         net_dimension: int = 364,
@@ -63,7 +65,6 @@ class Config:
         test_ratio: int = 20,
         batch_size: int = 64,
         shuffle: bool = True,
-        
         num_cv: int = 5,
         num_epoch: int = 150,
     ):

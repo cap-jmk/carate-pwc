@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import subprocess
 
@@ -7,6 +8,10 @@ from amarium.utils import search_subdirs
 
 def test_cli_func():
 
+    if os.path.isdir("tests/data"):
+        shutil.rmtree("tests/data")
+    if os.path.isdir("tests/results"):
+        shutil.rmtree("tests/results")
     subprocess.run(["bash", "install.sh"])
     config_filepath = "tests/config/regression_test_config.py"
     subprocess.run(["carate", "-c", config_filepath])

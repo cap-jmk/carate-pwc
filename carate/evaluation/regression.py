@@ -156,7 +156,7 @@ class RegressionEvaluation(Evaluation):
                     device=device,
                     norm_factor=norm_factor,
                     epoch=epoch,
-                )  # TODO might be unneccessary
+                )
                 test_mae_val, test_mse_val = self.test(
                     model_net=model_net,
                     test_loader=test_loader,
@@ -265,4 +265,3 @@ class RegressionEvaluation(Evaluation):
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
         return norm_factor
-

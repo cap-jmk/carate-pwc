@@ -1,4 +1,4 @@
-from typing import Type, Dict, Any, TypeVar
+from typing import Type, Dict, Any, TypeVar, Generic
 import torch
 
 
@@ -20,7 +20,7 @@ logging.basicConfig(
 )
 
 # TODO add options for the other parameters to omit config file if wanted
-Run = TypeVar("Run")
+
 
 class Run(DefaultObject):
     """
@@ -34,12 +34,12 @@ class Run(DefaultObject):
         num_classes: int,
         gamma: int,
         result_save_dir: str,
-        model_save_freq: float,
-        DataLoader: Type[DataLoaderObject],
-        Evaluation: Type[Evaluation],
+        model_save_freq: int,
+        DataLoader: DataLoaderObject,
+        Evaluation: Evaluation,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
-        device: Type[torch.device],
+        device: torch.device,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -76,23 +76,7 @@ class Run(DefaultObject):
 
         self.DataLoader = DataLoader
 
-    @classmethod
-    def from_file(cls, config_filepath: str) -> Run:
-
-        config = Config.from_file(file_name=config_filepath)
-        run_object = Run.__init_config(config)
-        return run_object
-
-    @classmethod
-    def from_json(cls, json_object: Dict[Any, Any]) -> Run:
-
-        config = Config.from_json(json_object=json_object)
-        run_object = Run.__init_config(config)
-        return run_object
-
-    def run(
-        self
-    ) -> None:
+    def run(self) -> None:
 
         self.Evaluation = self.Evaluation(
             dataset_name=self.dataset_name,
@@ -121,11 +105,27 @@ class Run(DefaultObject):
             device=self.device,
             gamma=self.gamma,
             result_save_dir=self.result_save_dir,
-            model_save_freq=self.model_save_freq,
+            model_save_freq=int(self.model_save_freq),
         )
 
+
+class RunInitializer:
     @classmethod
-    def __init_config(cls, config: Type[Config]) -> Run:
+    def from_file(cls, config_filepath: str) -> Run:
+
+        config = Config.from_file(file_name=config_filepath)
+        run_object = RunInitializer.__init_config(config)
+        return run_object
+
+    @classmethod
+    def from_json(cls, json_object: Dict[Any, Any]) -> Run:
+
+        config = Config.from_json(json_object=json_object)
+        run_object = RunInitializer.__init_config(config)
+        return run_object
+
+    @classmethod
+    def __init_config(cls, config: Config) -> Run:
         """
         The __init_config function initializes the configuration of the model.
 
@@ -148,13 +148,14 @@ class Run(DefaultObject):
             model_net=model_net,
             learning_rate=config.learning_rate,
         )
+
         DataLoader = config.DataLoader(
             dataset_save_path=config.dataset_save_path,
             dataset_name=config.dataset_name,
             test_ratio=config.test_ratio,
             batch_size=config.batch_size,
         )
-        return cls(
+        return Run(
             dataset_name=config.dataset_name,
             device=device,
             num_classes=config.num_classes,

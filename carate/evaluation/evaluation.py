@@ -54,8 +54,8 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
-        device: Type[torch.device],
-        DataLoader: Type[DataLoaderObject],
+        device: torch.device,
+        DataLoader: DataLoaderObject,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -109,12 +109,12 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
-        DataLoader: Type[DataLoaderObject],
+        DataLoader: DataLoaderObject,
         shuffle: bool,
         batch_size: int,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
-        device: Type[torch.device],
+        device: torch.device,
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
@@ -283,7 +283,9 @@ class Evaluation(DefaultObject):
         correct = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = F.one_hot(data.y.long(), num_classes=num_classes).type(torch.FloatTensor)
+            data.y = F.one_hot(data.y.long(), num_classes=num_classes).type(
+                torch.FloatTensor
+            )
             data = data.to(device)
             optimizer.zero_grad()
             output_probs = model_net(data.x, data.edge_index, data.batch)
@@ -468,5 +470,5 @@ class Evaluation(DefaultObject):
     def __str__(self):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name
 
-    def __repr__(self): 
+    def __repr__(self):
         return "Standard evaluation object"

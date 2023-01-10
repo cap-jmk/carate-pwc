@@ -5,6 +5,7 @@ a regression dataset
 :author: Julian M. Kleber
 """
 import os
+import shutil
 import torch
 
 from typing import Type
@@ -12,7 +13,7 @@ import logging
 
 from amarium.utils import search_subdirs
 
-from carate.run import Run
+from carate.run import RunInitializer
 import carate.models.cgc_regression as CGCR
 from carate.evaluation.regression import RegressionEvaluation
 from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
@@ -27,9 +28,12 @@ logging.basicConfig(
 
 
 def test_regression():
-
+    if os.path.isdir("tests/data"):
+        shutil.rmtree("tests/data")
+    if os.path.isdir("tests/results"):
+        shutil.rmtree("tests/results")
     config_filepath = "tests/config/regression_test_config.py"
-    runner = Run.from_file(config_filepath=config_filepath)
+    runner = RunInitializer.from_file(config_filepath=config_filepath)
     assert "StandardTUD" == str(runner.DataLoader)
     runner.run()  # takes instance attributes as parameters for the run() function
 

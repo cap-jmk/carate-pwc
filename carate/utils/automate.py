@@ -3,9 +3,10 @@ interface for training models#
 
 :author: Julian  M. Kleber
 """
+from typing import Type
 import click
 
-from carate.run import Run
+from carate.run import RunInitializer
 
 
 @click.command()
@@ -24,7 +25,9 @@ def train_algorithm(c: str, o: str) -> None:
     """
 
     config_filepath = c
-    runner = Run.from_file(config_filepath=config_filepath)
+    runner: Run
+    runner = RunInitializer.from_file(config_filepath=config_filepath)
+
     runner.run()
 
 
