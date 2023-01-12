@@ -3,7 +3,7 @@ import torch
 
 
 from carate.models.cgc_classification import Net
-from carate.load_data import DataLoaderObject
+from carate.load_data import DatasetObject
 from carate.evaluation.evaluation import Evaluation
 from carate.default_interface import DefaultObject
 from carate.config import ConfigInitializer, Config
@@ -35,7 +35,7 @@ class Run(DefaultObject):
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
-        data_loader: DataLoaderObject,
+        data_set: DatasetObject,
         Evaluation: Evaluation,
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
@@ -74,7 +74,7 @@ class Run(DefaultObject):
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
 
-        self.data_loader = data_loader
+        self.data_set = data_set
 
     def run(self) -> None:
 
@@ -85,7 +85,7 @@ class Run(DefaultObject):
             num_cv=self.num_cv,
             num_epoch=self.num_epoch,
             num_classes=self.num_classes,
-            DataLoader=self.data_loader,
+            data_set=self.data_set,
             shuffle=self.shuffle,
             batch_size=self.batch_size,
             model_net=self.model_net,
@@ -156,6 +156,6 @@ class RunInitializer:
             num_cv=config.num_cv,
             num_epoch=config.num_epoch,
             result_save_dir=config.result_save_dir,
-            data_loader=config.data_loader,
+            data_set=config.data_set,
             model_save_freq=int(config.model_save_freq),
         )

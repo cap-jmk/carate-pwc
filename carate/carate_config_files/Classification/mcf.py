@@ -19,8 +19,8 @@ model_save_freq = 30
 
 if __name__ == "__main__":
 
-    from carate.run import Run
+    from carate.run import RunInitializer
 
     config_filepath = "./mcf.py"
-    runner = Run.from_file(config_filepath=config_filepath)
+    runner = RunInitializer.from_file(config_filepath=config_filepath)
     runner.run()

@@ -5,7 +5,7 @@ from typing import Type
 
 import torch
 from carate.evaluation.evaluation import Evaluation
-from carate.load_data import DataLoaderObject
+from carate.load_data import DatasetObject
 
 
 class ClassificationEvaluation(Evaluation):
@@ -16,7 +16,7 @@ class ClassificationEvaluation(Evaluation):
         result_save_dir: str,
         model_net: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
-        DataLoader: DataLoaderObject,
+        data_set : DatasetObject,
         model_save_freq: int,
         test_ratio: int,
         num_epoch: int = 150,
@@ -32,8 +32,8 @@ class ClassificationEvaluation(Evaluation):
         :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
         :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_loader:Type[DataLoaderObject]: Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class DataLoaderObject.load_data().
+        :param data_set:Type[DatasetObject]: Used to Specify the type of data loader that is used. Is implemented according to
+                                             the interface given in load_data.py by the class DatasetObject.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
@@ -55,9 +55,12 @@ class ClassificationEvaluation(Evaluation):
         self.num_cv = num_cv
         self.out_dir = out_dir
         self.gamma = gamma
-        self.DataLoader = DataLoader
+        self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
+
+    def __repr__(self):
+        return "Classification Evaluation Object"

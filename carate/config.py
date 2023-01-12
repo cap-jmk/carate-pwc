@@ -11,10 +11,10 @@ from typing import Type, Optional, Dict, TypeVar, Any, Generic
 from carate.evaluation import evaluation, classification, regression
 from carate.models import cgc_classification, cgc_regression
 from carate.load_data import (
-    DataLoaderObject,
-    StandardPytorchGeometricDataLoader,
-    StandardDataLoaderTUDataset,
-    StandardDataLoaderMoleculeNet,
+    DatasetObject,
+    StandardPytorchGeometricDataset,
+    StandardDatasetTUDataset,
+    StandardDatasetMoleculeNet,
 )
 from carate.utils.convert_to_json import convert_py_to_json
 
@@ -29,11 +29,11 @@ EVALUATION_MAP = {
 ModelMap: Dict[str, Any]
 MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
-DATA_LOADER_MAP: Dict[str, Type[StandardDataLoaderMoleculeNet] | Type[StandardPytorchGeometricDataLoader] | Type[StandardPytorchGeometricDataLoader]]
-DATA_LOADER_MAP = {
-    "StandardPyG": StandardPytorchGeometricDataLoader,
-    "StandardTUD": StandardDataLoaderTUDataset,
-    "StandardMolNet": StandardDataLoaderMoleculeNet,
+DATA_SET_MAP: Dict[str, Type[StandardDatasetMoleculeNet] | Type[StandardPytorchGeometricDataset] | Type[StandardPytorchGeometricDataset]]
+DATA_SET_MAP = {
+    "StandardPyG": StandardPytorchGeometricDataset,
+    "StandardTUD": StandardDatasetTUDataset,
+    "StandardMolNet": StandardDatasetMoleculeNet,
 }
 
 
@@ -54,7 +54,7 @@ class Config:
         result_save_dir: str,
         model_save_freq: int,
         Evaluation: evaluation.Evaluation,
-        data_loader: DataLoaderObject,
+        data_set: DatasetObject,
         model:Any,
         optimizer: str,
         net_dimension: int = 364,
@@ -71,7 +71,7 @@ class Config:
         self.model = model
         self.optimizer = optimizer
         self.Evaluation = Evaluation
-        self.data_loader = data_loader
+        self.data_set = data_set
 
         # model parameters
         self.dataset_name = dataset_name
@@ -128,7 +128,7 @@ class ConfigInitializer:
         :doc-author: Julian M. Kleber
         """
 
-        data_loader = DATA_LOADER_MAP[json_object["data_loader"]](
+        data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
             dataset_name=json_object["dataset_name"],
             test_ratio=json_object["test_ratio"],
@@ -141,7 +141,7 @@ class ConfigInitializer:
             test_ratio=json_object["test_ratio"],
             model_net=json_object["model"],
             optimizer=json_object["optimizer"],
-            DataLoader=data_loader,
+            data_set=data_set,
             gamma=json_object["gamma"],
             result_save_dir=json_object["result_save_dir"],
             model_save_freq=json_object["model_save_freq"],
@@ -151,7 +151,7 @@ class ConfigInitializer:
             model=MODEL_MAP[json_object["model"]],
             optimizer=json_object["optimizer"],
             Evaluation=evaluation,
-            data_loader=data_loader,
+            data_set=data_set,
             # model parameters
             dataset_name=str(json_object["dataset_name"]),
             num_classes=int(json_object["num_classes"]),

@@ -6,13 +6,12 @@ The idea is to parametrize as much as possible.
 """
 import json
 import numpy as np
-from typing import Type, Optional, Tuple
+from typing import Type, Optional, Tuple, Any
 import logging
 
 from sklearn import metrics
 import torch
-import torch.nn.functional as F#
-
+import torch.nn.functional as F
 from amarium.utils import check_make_dir, prepare_file_name_saving
 
 import carate.models.cgc_classification
@@ -24,7 +23,7 @@ from carate.utils.model_files import (
     get_latest_checkpoint,
 )
 
-from carate.load_data import DataLoaderObject, StandardDataLoaderMoleculeNet, StandardPytorchGeometricDataLoader
+from carate.load_data import DatasetObject, StandardDatasetMoleculeNet, StandardPytorchGeometricDataset
 from carate.default_interface import DefaultObject
 from carate.models.base_model import Model
 
@@ -53,7 +52,7 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_net: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
-        DataLoader: DataLoaderObject,
+        data_set : DatasetObject,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -69,8 +68,8 @@ class Evaluation(DefaultObject):
         :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
         :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_loader:Type[DataLoaderObject]: Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class DataLoaderObject.load_data().
+        :param data_set:Type[DatasetObject]: Used to Specify the type of data loader that is used. Is implemented according to
+                                             the interface given in load_data.py by the class DatasetObject.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
@@ -92,7 +91,7 @@ class Evaluation(DefaultObject):
         self.num_cv = num_cv
         self.out_dir = out_dir
         self.gamma = gamma
-        self.DataLoader = DataLoader
+        self.data_set= data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -107,11 +106,11 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
-        DataLoader: DataLoaderObject,
+        data_set : DatasetObject,
         shuffle: bool,
         batch_size: int,
-        model_net: Type[torch.nn.Module],
-        optimizer: Type[torch.optim.Optimizer],
+        model_net: torch.nn.Module,
+        optimizer: torch.optim.Optimizer,
         device: torch.device,
         gamma: int,
         result_save_dir: str,
@@ -128,14 +127,14 @@ class Evaluation(DefaultObject):
 
                 Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
 
-            DataLoaderObject: An instance of torchvision's DataLoaderObject class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
+            DatasetObject: An instance of torchvision's DatasetObject class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
 
         :param self: Used to Represent the instance of the class.
         :param num_cv:int: Used to Specify the number of cross-validation folds.
         :param num_epoch:int: Used to Specify the number of epochs to train for.
         :param num_classes:int: Used to Determine the number of classes in the dataset.
         :param dataset_name:str: Used to Specify the name of the dataset to be used.
-        :param DataLoader:Type[DataLoaderObject]: Used to Load the data.
+        :param DataSetType[DatasetObject]: Used to Load the data.
         :param : Used to Specify the number of folds in a (stratified)kfold,.
         :return: A list of dictionaries.
 
@@ -149,7 +148,7 @@ class Evaluation(DefaultObject):
             dataset_name,
             dataset_save_path,
             test_ratio,
-            DataLoader,
+            data_set,
             shuffle,
             batch_size,
             model_net,
@@ -169,10 +168,10 @@ class Evaluation(DefaultObject):
             (
                 train_loader,
                 test_loader,
-                dataset,
+                loaded_dataset,
                 train_dataset,
                 test_dataset,
-            ) = DataLoader.load_data(
+            ) = data_set.load_data(
                 dataset_name=dataset_name,
                 dataset_save_path=dataset_save_path,
                 test_ratio=test_ratio,
@@ -193,9 +192,9 @@ class Evaluation(DefaultObject):
                 )
                 loss_store.append(train_loss.cpu().tolist())
                 train_acc = self.test(
-                    train_loader, device=device, model_net=model_net, epoch=epoch
-                )
-                test_acc = self.test(
+                    train_loader, device=device, model_net=model_net, epoch=epoch, test = False
+                ) # test False for storing the results 
+                test_acc, self.train_store = self.test(
                     test_loader,
                     device=device,
                     model_net=model_net,
@@ -247,12 +246,12 @@ class Evaluation(DefaultObject):
     def train(
         self,
         epoch: int,
-        model_net: Type[torch.nn.Module],
-        device: Type[torch.device],
-        train_loader,  # TODO find out type
-        optimizer: Type[torch.optim.Optimizer],
-        num_classes=2,
-        gamma=51,
+        model_net: Model,
+        device: torch.device,
+        train_loader: torch.utils.data.Dataset ,  
+        optimizer: torch.optim.Optimizer,
+        num_classes:int,
+        gamma:int
     ):
         """
         The train function is used to train the model.
@@ -297,12 +296,12 @@ class Evaluation(DefaultObject):
         return accuracy
 
     def test(
-        self, test_loader: StandardPytorchGeometricDataLoader, epoch: int, model_net: Model, device: Type[torch.device], test=False
-    ):
+        self, test_loader: DatasetObject, epoch: int, model_net: Model, device: torch.device, **kwargs: Any
+    ) -> Any:
         """
         The test function is used to test the model on a dataset.
         It returns the accuracy of the model on that dataset calculated as
-        the average of the atomic accuracy for each batch in the dataloader
+        the average of the atomic accuracy for each batch in the Dataset
 
         :param test_loader: Used to pass the test data loader.
         :param epoch: Used to keep track of the current epoch.
@@ -313,9 +312,8 @@ class Evaluation(DefaultObject):
 
         :doc-author: Julian M. Kleber
         """
-
+        test = bool(kwargs["test"])
         model_net.eval()
-
         correct = 0
         if test:
             outs = []
@@ -329,7 +327,7 @@ class Evaluation(DefaultObject):
                 outs.append(output.cpu().detach().numpy())
         if test:
             outputs = np.concatenate(outs, axis=0).astype(float)
-            self.train_store = outputs
+            return correct / len(test_loader.dataset), outputs
         return correct / len(test_loader.dataset)
 
     def save_result(
@@ -469,4 +467,4 @@ class Evaluation(DefaultObject):
         return "Evaluation for " + str(self.model_net) + " with the " + self.name
 
     def __repr__(self):
-        return "Standard evaluation object"
+        return "Standard Evaluation Object"

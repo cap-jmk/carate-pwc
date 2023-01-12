@@ -16,7 +16,7 @@ from amarium.utils import search_subdirs
 from carate.run import RunInitializer
 import carate.models.cgc_regression as CGCR
 from carate.evaluation.regression import RegressionEvaluation
-from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
+from carate.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
 
 
 logging.basicConfig(
@@ -34,7 +34,7 @@ def test_regression():
         shutil.rmtree("tests/results")
     config_filepath = "tests/config/regression_test_config.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
-    assert "StandardTUD" == str(runner.DataLoader)
+    assert  str(runner.data_set) == "StandardTUDataset" 
     runner.run()  # takes instance attributes as parameters for the run() function
 
     # check result files

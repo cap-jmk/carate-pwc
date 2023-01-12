@@ -14,5 +14,5 @@ gamma = 51
 num_epoch = 2
 num_cv = 2
 result_save_dir = "tests/results/ZINC_test"
-data_loader = "StandardTUD"
+data_set = "StandardTUD"
 model_save_freq = 1

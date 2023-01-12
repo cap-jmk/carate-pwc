@@ -14,7 +14,7 @@ gamma = 51
 num_epoch = 5000
 num_cv = 5
 result_save_dir = "./ENZYMES_20"
-data_loader = "StandardTUD"
+data_set = "StandardTUD"
 model_save_freq = 30
 
 if __name__ == "__main__":

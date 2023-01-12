@@ -14,5 +14,5 @@ def test_runner():
     assert runner.dataset_name == "ZINC_test"
     assert (
         str(runner.Evaluation)
-        == "<class 'carate.evaluation.regression.RegressionEvaluation'>"
+        == "Evaluation for cgc_regression with the Default evaluation"
     )

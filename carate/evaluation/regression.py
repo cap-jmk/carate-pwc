@@ -4,10 +4,10 @@ Evaulation object for classification
 import torch
 import numpy as np
 import numpy.typing as npt
-from typing import Type, Optional, Any
+from typing import Type, Optional, Any, Tuple
 
 from carate.evaluation.evaluation import Evaluation
-from carate.load_data import DataLoaderObject, StandardPytorchGeometricDataLoader
+from carate.load_data import DatasetObject, StandardPytorchGeometricDataset
 from carate.utils.model_files import save_model_parameters, get_latest_checkpoint
 from carate.models.base_model import Model
 # TODO Logging done right
@@ -27,9 +27,9 @@ class RegressionEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: Type[torch.nn.Module],
-        optimizer: Type[torch.optim.Optimizer],
-        DataLoader: Type[DataLoaderObject],
+        model_net: torch.nn.Module,
+        optimizer: torch.optim.Optimizer,
+        data_set: DatasetObject,
         test_ratio: int,
         gamma: int,
         num_epoch: int = 150,
@@ -45,8 +45,8 @@ class RegressionEvaluation(Evaluation):
         :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
         :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_loader:Type[DataLoaderObject]: Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class DataLoader.load_data().
+        :param data_set:Type[DatasetObject]: Used to Specify the type of data loader that is used. Is implemented according to
+                                             the interface given in load_data.py by the class Dataset.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
@@ -66,7 +66,7 @@ class RegressionEvaluation(Evaluation):
         self.num_classes = num_classes
         self.num_cv = num_cv
         self.out_dir = out_dir
-        self.DataLoader = DataLoader
+        self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -81,12 +81,12 @@ class RegressionEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
-        DataLoader: Type[DataLoaderObject],
+        data_set: DatasetObject,
         shuffle: bool,
         batch_size: int,
-        model_net: Type[torch.nn.Module],
-        optimizer: Type[torch.optim.Optimizer],
-        device: Type[torch.device],
+        model_net: torch.nn.Module,
+        optimizer: torch.optim.Optimizer,
+        device: torch.device,
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
@@ -100,7 +100,7 @@ class RegressionEvaluation(Evaluation):
             dataset_name,
             dataset_save_path,
             test_ratio,
-            DataLoader,
+            data_set,
             shuffle,
             batch_size,
             model_net,
@@ -125,10 +125,10 @@ class RegressionEvaluation(Evaluation):
             (
                 train_loader,
                 test_loader,
-                dataset,
+                loaded_data_set,
                 train_dataset,
                 test_dataset,
-            ) = DataLoader.load_data(
+            ) = data_set.load_data(
                 dataset_name=dataset_name,
                 dataset_save_path=dataset_save_path,
                 test_ratio=test_ratio,
@@ -137,7 +137,7 @@ class RegressionEvaluation(Evaluation):
             )
 
             norm_factor = self.__normalization_factor(
-                dataset=dataset, num_classes=num_classes
+                data_set=loaded_data_set, num_classes=num_classes
             )
             for epoch in range(1, num_epoch + 1):
                 train_mae_loss = self.train(
@@ -194,15 +194,14 @@ class RegressionEvaluation(Evaluation):
             result[str(i)] = tmp
         return result
 
-    # TODO the functions actually need default initialization
     def train(
         self,
         epoch: int,
-        model_net: Type[torch.nn.Module],
+        model_net: Model,
         norm_factor: float,
-        device: Type[torch.device],
-        train_loader,
-        optimizer: Type[torch.optim.Optimizer],
+        device: torch.device,
+        train_loader: torch.utils.data.Dataset,
+        optimizer: torch.optim.Optimizer,
         num_classes: int,
     ) -> float:
 
@@ -229,13 +228,13 @@ class RegressionEvaluation(Evaluation):
 
     def test(
         self,
-        test_loader: StandardPytorchGeometricDataLoader,
+        test_loader: torch.utils.data.Dataset,
         epoch: int,
-        norm_factor: float,
-        model_net: Type[Model],
-        device: Type[torch.device],
-    ):
-
+        model_net: Model,
+        device: torch.device,
+        **kwargs: Any
+    ) -> Tuple[float, float]:
+        norm_factor = float(kwargs["norm_factor"])
         model_net.eval()
         mae = 0
         mse = 0
@@ -254,13 +253,16 @@ class RegressionEvaluation(Evaluation):
             test_loader
         )  # TODO verify if necessary
 
-    def __normalization_factor(self, dataset:Any, num_classes: int) -> npt.NDArray[np.float64]:
+    def __normalization_factor(self, data_set:Any, num_classes: int) -> npt.NDArray[np.float64]:
 
-        y = np.zeros((len(dataset), 1, num_classes))
-        for i in range(len(dataset)):
-            y[i, :, :] = dataset[i].y
+        y = np.zeros((len(data_set), 1, num_classes))
+        for i in range(len(data_set)):
+            y[i, :, :] = data_set[i].y
         norm_factor = np.zeros((num_classes))
         for i in range(num_classes):
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
         return norm_factor
+
+    def __repr__(self):
+        return "Regression Evaluation Object"

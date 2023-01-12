@@ -13,7 +13,7 @@ from amarium.utils import search_subdirs
 from carate.run import RunInitializer
 import carate.models.cgc_classification as CGCC
 from carate.evaluation.classification import ClassificationEvaluation
-from carate.load_data import StandardDataLoaderMoleculeNet, StandardDataLoaderTUDataset
+from carate.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
 from carate.config import Config
 
 

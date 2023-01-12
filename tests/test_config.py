@@ -4,7 +4,7 @@ Test to verify if the initialization of the config file is correct.
 :author: Julian M. Kleber
 """
 
-from carate.load_data import StandardDataLoaderTUDataset
+from carate.load_data import StandardDatasetTUDataset
 
 from carate.config import Config, ConfigInitializer
 from carate.models import cgc_classification
@@ -19,7 +19,7 @@ def test_config():
     assert config.num_classes == 6
     assert config.num_features == 3
     assert config.model == cgc_classification
-    assert config.Evaluation == classification.ClassificationEvaluation
+    assert config.Evaluation.__repr__() == "Classification Evaluation Object"
     assert config.optimizer == "adams"
     assert config.net_dimension == 364
     assert config.learning_rate == 0.0005
@@ -31,4 +31,4 @@ def test_config():
     assert config.num_epoch == 2
     assert config.num_cv == 2
     assert config.result_save_dir == "tests/results/ENZYMES"
-    assert config.DataLoader == StandardDataLoaderTUDataset
+    assert config.data_set.__repr__() == "StandardTUDataset"

@@ -8,6 +8,7 @@ as well as custom datasets.
 from typing import Type, Optional, List
 from abc import ABC, abstractclassmethod, abstractmethod
 
+import torch 
 import torch_geometric
 from torch_geometric.data import DataLoader
 from torch_geometric.datasets import MoleculeNet, TUDataset
@@ -27,7 +28,7 @@ logging.basicConfig(
 )
 
 
-class DataLoaderObject(ABC, DefaultObject):
+class DatasetObject(ABC, DefaultObject, torch.utils.data.Dataset):
     """
     Interface for DataLoading objects
     """
@@ -58,7 +59,10 @@ class DataLoaderObject(ABC, DefaultObject):
         raise NotImplementedError  # pragme: no cover
 
 
-class StandardPytorchGeometricDataLoader(DataLoaderObject):
+class StandardPytorchGeometricDataset(DatasetObject):
+
+    DataSet = None
+
     @classmethod
     def load_data(
         cls,
@@ -68,9 +72,8 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
         batch_size: int = 64,
         shuffle: bool = True,
     ) -> List[
-        torch_geometric.datasets.molecule_net.MoleculeNet
-        | torch_geometric.loader.dataloader.DataLoader
-        | torch_geometric.datasets.tu_dataset.TUDataset
+        torch.utils.data.DataLoader
+        | torch.utils.data.Dataset
     ]:
         """
         The load_dataset function loads a standard dataset, splits it into a training and testing set,
@@ -100,9 +103,9 @@ class StandardPytorchGeometricDataLoader(DataLoaderObject):
         return train_loader, test_loader, dataset, train_dataset, test_dataset
 
 
-class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
+class StandardDatasetMoleculeNet(StandardPytorchGeometricDataset):
     """
-    Implementation of the DataLoader interaface with focus on the models implemented in pytorch_geometric
+    Implementation of the Dataset interaface with focus on the models implemented in pytorch_geometric
     and provided by the MoleculeNet collection of datasets.
     """
 
@@ -141,7 +144,7 @@ class StandardDataLoaderMoleculeNet(StandardPytorchGeometricDataLoader):
         return "StandardMoleculeNet"
 
 
-class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
+class StandardDatasetTUDataset(StandardPytorchGeometricDataset):
     """
     class for loading standard datasates from the TU Dataset collection implemented
     by PyTorch Geometric.
@@ -181,4 +184,4 @@ class StandardDataLoaderTUDataset(StandardPytorchGeometricDataLoader):
         self.shuffle = shuffle
 
     def __repr__(self):
-        return "StandardTUD"
+        return "StandardTUDataset"
