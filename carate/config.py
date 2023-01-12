@@ -26,6 +26,7 @@ EVALUATION_MAP = {
     "evaluation": evaluation.Evaluation,
 }
 
+ModelMap: Dict[str, Any]
 MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
 DATA_LOADER_MAP: Dict[str, Type[StandardDataLoaderMoleculeNet] | Type[StandardPytorchGeometricDataLoader] | Type[StandardPytorchGeometricDataLoader]]
@@ -54,8 +55,8 @@ class Config:
         model_save_freq: int,
         Evaluation: evaluation.Evaluation,
         data_loader: DataLoaderObject,
-        model,
-        optimizer: str = None,
+        model:Any,
+        optimizer: str,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -131,7 +132,8 @@ class ConfigInitializer:
             dataset_save_path=json_object["dataset_save_path"],
             dataset_name=json_object["dataset_name"],
             test_ratio=json_object["test_ratio"],
-            batch_size=json_object["batch_size"])
+            batch_size=json_object["batch_size"], 
+            shuffle=json_object["shuffle"])
         
         evaluation = EVALUATION_MAP[json_object["evaluation"]](
             dataset_name=json_object["dataset_name"],

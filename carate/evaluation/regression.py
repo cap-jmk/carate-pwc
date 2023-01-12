@@ -3,12 +3,13 @@ Evaulation object for classification
 """
 import torch
 import numpy as np
-from typing import Type, Optional
+import numpy.typing as npt
+from typing import Type, Optional, Any
 
 from carate.evaluation.evaluation import Evaluation
-from carate.load_data import DataLoaderObject
+from carate.load_data import DataLoaderObject, StandardPytorchGeometricDataLoader
 from carate.utils.model_files import save_model_parameters, get_latest_checkpoint
-
+from carate.models.base_model import Model
 # TODO Logging done right
 import logging
 
@@ -228,10 +229,10 @@ class RegressionEvaluation(Evaluation):
 
     def test(
         self,
-        test_loader,
+        test_loader: StandardPytorchGeometricDataLoader,
         epoch: int,
         norm_factor: float,
-        model_net: Type[torch.nn.Module],
+        model_net: Type[Model],
         device: Type[torch.device],
     ):
 
@@ -240,7 +241,7 @@ class RegressionEvaluation(Evaluation):
         mse = 0
         for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = data.y / norm_factor[0]
+            data.y = data.y / norm_factor
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
             output_probs = model_net(data.x, data.edge_index, data.batch)
@@ -253,7 +254,7 @@ class RegressionEvaluation(Evaluation):
             test_loader
         )  # TODO verify if necessary
 
-    def __normalization_factor(self, dataset, num_classes: int) -> float:
+    def __normalization_factor(self, dataset:Any, num_classes: int) -> npt.NDArray[np.float64]:
 
         y = np.zeros((len(dataset), 1, num_classes))
         for i in range(len(dataset)):

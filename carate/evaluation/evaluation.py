@@ -6,12 +6,14 @@ The idea is to parametrize as much as possible.
 """
 import json
 import numpy as np
-from typing import Type, Optional
+from typing import Type, Optional, Tuple
+import logging
 
 from sklearn import metrics
-
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as F#
+
+from amarium.utils import check_make_dir, prepare_file_name_saving
 
 import carate.models.cgc_classification
 from carate.utils.model_files import (
@@ -22,14 +24,11 @@ from carate.utils.model_files import (
     get_latest_checkpoint,
 )
 
-from amarium.utils import check_make_dir, prepare_file_name_saving
-from carate.load_data import DataLoaderObject, StandardDataLoaderMoleculeNet
+from carate.load_data import DataLoaderObject, StandardDataLoaderMoleculeNet, StandardPytorchGeometricDataLoader
 from carate.default_interface import DefaultObject
+from carate.models.base_model import Model
 
 
-from typing import Type, Tuple
-
-import logging
 
 logging.basicConfig(
     filename="train.log",
@@ -52,15 +51,15 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: Type[torch.nn.Module],
-        optimizer: Type[torch.optim.Optimizer],
+        model_net: torch.nn.Module,
+        optimizer: torch.optim.Optimizer,
         DataLoader: DataLoaderObject,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
-        gamma: int = 0.5,
+        gamma: float = 0.5,
         batch_size: int = 64,
         shuffle: bool = True,
         model_save_freq: int = 100,
@@ -298,7 +297,7 @@ class Evaluation(DefaultObject):
         return accuracy
 
     def test(
-        self, test_loader, epoch: int, model_net, device: Type[torch.device], test=False
+        self, test_loader: StandardPytorchGeometricDataLoader, epoch: int, model_net: Model, device: Type[torch.device], test=False
     ):
         """
         The test function is used to test the model on a dataset.
