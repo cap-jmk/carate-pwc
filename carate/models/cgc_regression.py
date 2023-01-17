@@ -13,7 +13,7 @@ import sklearn.metrics as metrics
 
 import logging
 
-from carate.models.base_model import Model 
+from carate.models.base_model import Model
 
 
 logger = logging.getLogger(__name__)
@@ -28,8 +28,9 @@ logging.basicConfig(
 class Net(Model):
     def __init__(self, dim: int, num_classes: int, num_features: int) -> None:
 
-        super(Net, self).__init__(dim = dim, num_classes=num_classes, num_features=num_features)
-
+        super(Net, self).__init__(
+            dim=dim, num_classes=num_classes, num_features=num_features
+        )
 
         self.conv1 = GraphConv(self.num_features, self.dim)
         self.conv3 = GATConv(self.dim, self.dim, dropout=0.6)

@@ -2,6 +2,7 @@ from typing import Type, Dict, Any, TypeVar, Generic
 import torch
 
 
+from carate.models.base_model import Model
 from carate.models.cgc_classification import Net
 from carate.load_data import DatasetObject
 from carate.evaluation.evaluation import Evaluation
@@ -37,8 +38,8 @@ class Run(DefaultObject):
         model_save_freq: int,
         data_set: DatasetObject,
         Evaluation: Evaluation,
-        model_net: Type[torch.nn.Module],
-        optimizer: Type[torch.optim.Optimizer],
+        model_net: Model,
+        optimizer: torch.optim.Optimizer,
         device: torch.device,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
@@ -98,7 +99,6 @@ class Run(DefaultObject):
 
 
 class RunInitializer:
-
     @classmethod
     def from_file(cls, config_filepath: str) -> Run:
 

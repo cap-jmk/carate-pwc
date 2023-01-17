@@ -38,8 +38,9 @@ class Net(Model):
     """
 
     def __init__(self, dim: int, num_features: int, num_classes: int) -> None:
-        super(Net, self).__init__(dim = dim, num_features=num_features, num_classes=num_classes)
-
+        super(Net, self).__init__(
+            dim=dim, num_features=num_features, num_classes=num_classes
+        )
 
         self.conv1 = GraphConv(self.num_features, self.dim)
         self.conv3 = GATConv(self.dim, self.dim, dropout=0.6, heads=16)

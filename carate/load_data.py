@@ -8,7 +8,7 @@ as well as custom datasets.
 from typing import Type, Optional, List
 from abc import ABC, abstractclassmethod, abstractmethod
 
-import torch 
+import torch
 import torch_geometric
 from torch_geometric.data import DataLoader
 from torch_geometric.datasets import MoleculeNet, TUDataset
@@ -61,7 +61,7 @@ class DatasetObject(ABC, DefaultObject, torch.utils.data.Dataset):
 
 class StandardPytorchGeometricDataset(DatasetObject):
 
-    DataSet = None
+    DataSet: torch.utils.data.Dataset
 
     @classmethod
     def load_data(
@@ -71,10 +71,7 @@ class StandardPytorchGeometricDataset(DatasetObject):
         dataset_save_path: str,
         batch_size: int = 64,
         shuffle: bool = True,
-    ) -> List[
-        torch.utils.data.DataLoader
-        | torch.utils.data.Dataset
-    ]:
+    ) -> List[torch.utils.data.DataLoader | torch.utils.data.Dataset]:
         """
         The load_dataset function loads a standard dataset, splits it into a training and testing set,
         and returns the appropriate dataloaders for each. The test_ratio parameter specifies what percentage of
@@ -91,12 +88,13 @@ class StandardPytorchGeometricDataset(DatasetObject):
         """
 
         if shuffle:
-            dataset = cls.DataSet(dataset_save_path, name=dataset_name).shuffle()
+            dataset = cls.DataSet(
+                dataset_save_path, name=dataset_name).shuffle()
         else:
             dataset = cls.DataSet(dataset_save_path, name=dataset_name)
 
         test_dataset = dataset[: len(dataset) // test_ratio]
-        train_dataset = dataset[len(dataset) // test_ratio :]
+        train_dataset = dataset[len(dataset) // test_ratio:]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
 

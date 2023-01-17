@@ -1,8 +1,8 @@
 import torch
 from abc import ABC, abstractmethod
 
-class Model(torch.nn.Module):
 
+class Model(torch.nn.Module):
     @abstractmethod
     def __init__(self, dim: int, num_classes: int, num_features: int) -> None:
         super(Model, self).__init__()
@@ -11,6 +11,5 @@ class Model(torch.nn.Module):
         self.dim = dim
 
     @abstractmethod
-    def forward(self, x, edge_index, batch, edge_weight=None)->torch.Tensor:
-        pass # pragma: no cover 
-        
+    def forward(self, x, edge_index, batch, edge_weight=None) -> torch.Tensor:
+        pass  # pragma: no cover

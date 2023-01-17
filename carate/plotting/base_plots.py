@@ -12,7 +12,7 @@ import seaborn as sns
 import seaborn.timeseries
 
 
-def plot_min_max_shadow(data_dir: str):
+def plot_min_max_shadow(data_dir: str) -> None:
 
     seaborn.timeseries._plot_range_band = _plot_range_band
     cluster_overload = pd.read_csv("TSplot.csv", delim_whitespace=True)
@@ -26,7 +26,7 @@ def plot_min_max_shadow(data_dir: str):
     plt.show()
 
 
-def _plot_range_band(*args, central_data=None, ci=None, data=None, **kwargs):
+def _plot_range_band(*args, central_data=None, ci=None, data=None, **kwargs) -> None:
 
     upper = data.max(axis=0)
     lower = data.min(axis=0)
@@ -35,7 +35,7 @@ def _plot_range_band(*args, central_data=None, ci=None, data=None, **kwargs):
     seaborn.timeseries._plot_ci_band(*args, **kwargs)
 
 
-def custom_plot(*args, **kwargs):
+def custom_plot(*args, **kwargs) -> None:
 
     df = kwargs.pop("data")
     pivoted = df.pivot(index="subindex", columns="Week", values="Overload")

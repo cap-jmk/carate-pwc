@@ -7,10 +7,12 @@ Module to handle optimizer initalization
 import torch
 from typing import Type
 
+from carate.models.base_model import Model
+
 
 def get_optimizer(
-    optimizer_str: str, model_net: Type[torch.nn.Module], learning_rate: float
-) -> Type[torch.optim.Optimizer]:
+    optimizer_str: str, model_net: Model, learning_rate: float
+) -> torch.optim.Optimizer:
     """
     The get_optimizer function takes in a string and returns the corresponding optimizer.
         Args:

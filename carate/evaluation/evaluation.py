@@ -23,10 +23,13 @@ from carate.utils.model_files import (
     get_latest_checkpoint,
 )
 
-from carate.load_data import DatasetObject, StandardDatasetMoleculeNet, StandardPytorchGeometricDataset
+from carate.load_data import (
+    DatasetObject,
+    StandardDatasetMoleculeNet,
+    StandardPytorchGeometricDataset,
+)
 from carate.default_interface import DefaultObject
 from carate.models.base_model import Model
-
 
 
 logging.basicConfig(
@@ -50,9 +53,9 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         result_save_dir: str,
-        model_net: torch.nn.Module,
+        model_net: Model,
         optimizer: torch.optim.Optimizer,
-        data_set : DatasetObject,
+        data_set: DatasetObject,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -91,10 +94,11 @@ class Evaluation(DefaultObject):
         self.num_cv = num_cv
         self.out_dir = out_dir
         self.gamma = gamma
-        self.data_set= data_set
+        self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 
@@ -106,10 +110,10 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
-        data_set : DatasetObject,
+        data_set: DatasetObject,
         shuffle: bool,
         batch_size: int,
-        model_net: torch.nn.Module,
+        model_net: Model,
         optimizer: torch.optim.Optimizer,
         device: torch.device,
         gamma: int,
@@ -192,8 +196,12 @@ class Evaluation(DefaultObject):
                 )
                 loss_store.append(train_loss.cpu().tolist())
                 train_acc = self.test(
-                    train_loader, device=device, model_net=model_net, epoch=epoch, test = False
-                ) # test False for storing the results 
+                    train_loader,
+                    device=device,
+                    model_net=model_net,
+                    epoch=epoch,
+                    test=False,
+                )  # test False for storing the results
                 test_acc, self.train_store = self.test(
                     test_loader,
                     device=device,
@@ -201,7 +209,8 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store.append(
+                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc
@@ -248,10 +257,10 @@ class Evaluation(DefaultObject):
         epoch: int,
         model_net: Model,
         device: torch.device,
-        train_loader: torch.utils.data.Dataset ,  
+        train_loader: torch.utils.data.Dataset,
         optimizer: torch.optim.Optimizer,
-        num_classes:int,
-        gamma:int
+        num_classes: int,
+        gamma: int,
     ):
         """
         The train function is used to train the model.
@@ -296,7 +305,12 @@ class Evaluation(DefaultObject):
         return accuracy
 
     def test(
-        self, test_loader: DatasetObject, epoch: int, model_net: Model, device: torch.device, **kwargs: Any
+        self,
+        test_loader: torch.utils.data.DataLoader,
+        epoch: int,
+        model_net: Model,
+        device: torch.device,
+        **kwargs: Any,
     ) -> Any:
         """
         The test function is used to test the model on a dataset.
@@ -327,7 +341,10 @@ class Evaluation(DefaultObject):
                 outs.append(output.cpu().detach().numpy())
         if test:
             outputs = np.concatenate(outs, axis=0).astype(float)
-            return correct / len(test_loader.dataset), outputs
+            return (
+                correct / len(test_loader.dataset),
+                outputs,
+            )  # TODO this is from some "quick experiment" not sure if the line and functionality is useful
         return correct / len(test_loader.dataset)
 
     def save_result(
@@ -451,9 +468,9 @@ class Evaluation(DefaultObject):
     def load_model_checkpoint(
         self,
         checkpoint_path: str,
-        model_net: Type[torch.nn.Module],
-        optimizer=Type[torch.optim.Optimizer],
-    ) -> torch.nn.Module:
+        model_net: Model,
+        optimizer=torch.optim.Optimizer,
+    ) -> Model:
 
         model_net_cp = load_model_training_checkpoint(
             checkpoint_path=checkpoint_path, model_net=model_net, optimizer=optimizer

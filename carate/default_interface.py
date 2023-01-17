@@ -3,7 +3,7 @@ Especially the __get_default_method is provided for all base objects.
 
 :author: Julian M. Kleber
 """
-from typing import Type, Optional
+from typing import Type, Optional, List, Dict, Any
 
 import logging
 
@@ -23,7 +23,7 @@ class DefaultObject:
     Python functionality.
     """
 
-    def _get_defaults(self, method_arguments: dict) -> list:
+    def _get_defaults(self, method_arguments: Dict[Any, Any]) -> List[Any]:
         """
         The _get_defaults function takes a dictionary of arguments and returns a list of values.
         The function checks if the value is None, if it is none then it checks to see if that key exists in the instance variables.

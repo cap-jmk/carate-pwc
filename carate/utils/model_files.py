@@ -17,6 +17,8 @@ from amarium.utils import (
 
 from typing import Tuple, Type
 
+from carate.models.base_model import Model
+
 
 def load_model(
     model_path: str, model_net: Type[torch.nn.Module]
@@ -44,7 +46,7 @@ def load_model_training_checkpoint(
     checkpoint_path: str,
     model_net: Type[torch.nn.Module],
     optimizer: Type[torch.optim.Optimizer],
-) -> Tuple[Type[torch.nn.Module], Type[torch.optim.Optimizer]]:
+) -> Tuple[Model, torch.optim.Optimizer]:
 
     # For any bug fixing please consult the PyTorch documentation:  https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
 
@@ -174,7 +176,8 @@ def get_latest_checkpoint(search_dir: str, num_cv: int, epoch: int) -> str:
 
     search_dir += "checkpoints"
     checkpoint_dirs = os.listdir(search_dir)
-    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index("CV_" + str(num_cv))]
+    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index(
+        "CV_" + str(num_cv))]
     search_dir += "/" + correct_sub_dir
     checkpoints = os.listdir(search_dir)
     checkpoints = sorted(checkpoints)
