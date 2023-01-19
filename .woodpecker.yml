@@ -1,0 +1,22 @@
+pipeline:
+  build:
+    image: python:${TAG}-buster
+    when:
+      event: pull_request
+      branch: main
+
+    commands:
+      - ls
+      - python -m venv venv 
+      - /bin/bash -c "source venv/bin/activate"
+      - python -m pip install --upgrade pip
+      - pip install -r requirements.txt
+      - pytest tests/
+
+matrix:
+  TAG:
+    - 3.7
+    - 3.9
+    - 3.8
+    - 3.10
+
