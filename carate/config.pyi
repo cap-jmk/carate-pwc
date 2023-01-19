@@ -1,21 +1,11 @@
-from _typeshed import Incomplete
-from carate.evaluation import (
-    classification as classification,
-    evaluation as evaluation,
-    regression as regression,
-)
+from _typeshed import Incomplete as Incomplete
+from carate.evaluation import evaluation as evaluation
 from carate.load_data import (
     DatasetObject as DatasetObject,
     StandardDatasetMoleculeNet as StandardDatasetMoleculeNet,
-    StandardDatasetTUDataset as StandardDatasetTUDataset,
     StandardPytorchGeometricDataset as StandardPytorchGeometricDataset,
 )
-from carate.models import (
-    cgc_classification as cgc_classification,
-    cgc_regression as cgc_regression,
-)
-from carate.utils.convert_to_json import convert_py_to_json as convert_py_to_json
-from typing import Any, Dict, Type
+from typing import Any, Dict, Type, Union
 
 EvaluationMap: Dict[str, evaluation.Evaluation]
 EVALUATION_MAP: Incomplete

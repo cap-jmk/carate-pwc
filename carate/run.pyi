@@ -1,12 +1,9 @@
 import torch
-from _typeshed import Incomplete
-from carate.config import Config as Config, ConfigInitializer as ConfigInitializer
+from _typeshed import Incomplete as Incomplete
 from carate.default_interface import DefaultObject as DefaultObject
 from carate.evaluation.evaluation import Evaluation as Evaluation
 from carate.load_data import DatasetObject as DatasetObject
 from carate.models.base_model import Model as Model
-from carate.models.cgc_classification import Net as Net
-from carate.optimizer import get_optimizer as get_optimizer
 from typing import Any, Dict
 
 class Run(DefaultObject):

@@ -14,7 +14,11 @@ def test_cli_func():
         shutil.rmtree("tests/results")
     subprocess.run(["bash", "install.sh"])
     config_filepath = "tests/config/regression_test_config.py"
-    result = subprocess.run(["carate", "-c", config_filepath],  stdout=subprocess.PIPE, stderr= subprocess.PIPE)
+    result = subprocess.run(
+        ["carate", "-c", config_filepath],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
     errs = result.stderr.decode()
     print(errs)
     # check result files

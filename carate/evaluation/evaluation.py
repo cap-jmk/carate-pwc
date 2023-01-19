@@ -6,7 +6,7 @@ The idea is to parametrize as much as possible.
 """
 import json
 import numpy as np
-from typing import Type, Optional, Tuple, Any
+from typing import Type, Optional, Tuple, Any, Dict
 import logging
 
 from sklearn import metrics
@@ -97,8 +97,7 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 
@@ -119,7 +118,7 @@ class Evaluation(DefaultObject):
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
-    ):
+    ) -> Dict[str, Any]:
         """
         The cv function takes in the following parameters:
             num_cv (int): The number of cross-validation folds to perform.
@@ -209,8 +208,7 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append(
-                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc
@@ -257,7 +255,7 @@ class Evaluation(DefaultObject):
         epoch: int,
         model_net: Model,
         device: torch.device,
-        train_loader: torch.utils.data.Dataset,
+        train_loader: Type[torch.utils.data.DataLoader],
         optimizer: torch.optim.Optimizer,
         num_classes: int,
         gamma: int,
@@ -344,7 +342,7 @@ class Evaluation(DefaultObject):
             return (
                 correct / len(test_loader.dataset),
                 outputs,
-            )  # TODO this is from some "quick experiment" not sure if the line and functionality is useful
+            )  # TODO this is from some "quick experiment" not sure if the line and functionality is
         return correct / len(test_loader.dataset)
 
     def save_result(

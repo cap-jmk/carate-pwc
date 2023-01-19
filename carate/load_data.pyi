@@ -1,14 +1,14 @@
 import abc
 import torch
-from _typeshed import Incomplete
+from _typeshed import Incomplete as Incomplete
 from abc import ABC
 from carate.default_interface import DefaultObject as DefaultObject
-from typing import List
+from typing import List, Union
 
 logger: Incomplete
 
 class DatasetObject(
-    ABC, DefaultObject, torch.utils.data.Dataset, metaclass=abc.ABCMeta
+    ABC, DefaultObject, Type[torch.utils.data.Dataset], metaclass=abc.ABCMeta
 ):
     def __init__(
         self,

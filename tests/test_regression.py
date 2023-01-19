@@ -34,7 +34,7 @@ def test_regression():
         shutil.rmtree("tests/results")
     config_filepath = "tests/config/regression_test_config.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
-    assert  str(runner.data_set) == "StandardTUDataset" 
+    assert str(runner.data_set) == "StandardTUDataset"
     runner.run()  # takes instance attributes as parameters for the run() function
 
     # check result files

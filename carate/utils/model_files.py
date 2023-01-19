@@ -15,7 +15,7 @@ from amarium.utils import (
     check_make_dir,
 )
 
-from typing import Tuple, Type
+from typing import Tuple, Type, Dict, Any
 
 from carate.models.base_model import Model
 
@@ -96,9 +96,9 @@ def save_model(
     result_save_dir: str,
     dataset_name: str,
     num_cv: int,
-    num_epoch,
+    num_epoch: int,
     model_net: Type[torch.nn.Module],
-):
+) -> None:
     """
     The save_model function saves the model to a file.
 
@@ -124,7 +124,7 @@ def save_model(
     torch.save(model_net.state_dict(), save_path)
 
 
-def load_model_parameters(model_params_file_path: str) -> dict:
+def load_model_parameters(model_params_file_path: str) -> Dict[Any, Any]:
     """
     The load_model_parameters function loads the model parameters from a JSON file.
 
@@ -145,7 +145,7 @@ def load_model_parameters(model_params_file_path: str) -> dict:
     return load_json_from_file(model_params_file_path)
 
 
-def save_model_parameters(model_net: Type[torch.nn.Module], save_dir: str) -> None:
+def save_model_parameters(model_net: Model, save_dir: str) -> None:
     """
     The save_model_parameters function saves the model architecture to a csv file.
 
@@ -176,8 +176,7 @@ def get_latest_checkpoint(search_dir: str, num_cv: int, epoch: int) -> str:
 
     search_dir += "checkpoints"
     checkpoint_dirs = os.listdir(search_dir)
-    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index(
-        "CV_" + str(num_cv))]
+    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index("CV_" + str(num_cv))]
     search_dir += "/" + correct_sub_dir
     checkpoints = os.listdir(search_dir)
     checkpoints = sorted(checkpoints)

@@ -4,7 +4,7 @@ Evaulation object for classification
 import torch
 import numpy as np
 import numpy.typing as npt
-from typing import Type, Optional, Any, Tuple
+from typing import Type, Optional, Any, Tuple, Dict
 
 from carate.evaluation.evaluation import Evaluation
 from carate.load_data import DatasetObject, StandardPytorchGeometricDataset
@@ -70,8 +70,7 @@ class RegressionEvaluation(Evaluation):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 
@@ -92,7 +91,7 @@ class RegressionEvaluation(Evaluation):
         gamma: int,
         result_save_dir: str,
         model_save_freq: int,
-    ):
+    ) -> Dict[str, Any]:
 
         # initialize
         (
@@ -200,13 +199,13 @@ class RegressionEvaluation(Evaluation):
         self,
         epoch: int,
         model_net: Model,
-        norm_factor: float,
         device: torch.device,
         train_loader: torch.utils.data.DataLoader,
         optimizer: torch.optim.Optimizer,
         num_classes: int,
+        **kwargs: Any,
     ) -> float:
-
+        norm_factor = float(kwargs["norm_factor"])
         model_net.train()  # TODO deleted gamma block due to minor influence
         mse = 0
         for data in train_loader:
@@ -234,7 +233,7 @@ class RegressionEvaluation(Evaluation):
         epoch: int,
         model_net: Model,
         device: torch.device,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Tuple[float, float]:
         norm_factor = float(kwargs["norm_factor"])
         model_net.eval()

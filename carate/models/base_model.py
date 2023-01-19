@@ -11,5 +11,7 @@ class Model(torch.nn.Module):
         self.dim = dim
 
     @abstractmethod
-    def forward(self, x, edge_index, batch, edge_weight=None) -> torch.Tensor:
+    def forward(
+        self, x: int, edge_index: int, batch: int, edge_weight=None
+    ) -> torch.Tensor:
         pass  # pragma: no cover

@@ -1,15 +1,8 @@
 import torch
-from _typeshed import Incomplete
+from _typeshed import Incomplete as Incomplete
 from carate.evaluation.evaluation import Evaluation as Evaluation
-from carate.load_data import (
-    DatasetObject as DatasetObject,
-    StandardPytorchGeometricDataset as StandardPytorchGeometricDataset,
-)
+from carate.load_data import DatasetObject as DatasetObject
 from carate.models.base_model import Model as Model
-from carate.utils.model_files import (
-    get_latest_checkpoint as get_latest_checkpoint,
-    save_model_parameters as save_model_parameters,
-)
 from typing import Any, Tuple, Type
 
 class RegressionEvaluation(Evaluation):
@@ -69,15 +62,15 @@ class RegressionEvaluation(Evaluation):
         self,
         epoch: int,
         model_net: Model,
-        norm_factor: float,
         device: torch.device,
-        train_loader: torch.utils.data.DataLoader,
+        train_loader: Type[torch.utils.data.DataLoader],
         optimizer: torch.optim.Optimizer,
         num_classes: int,
+        **kwargs: Any
     ) -> float: ...
     def test(
         self,
-        test_loader: Type[torch.utils.data.DataLoader],
+        test_loader: torch.utils.data.DataLoader,
         epoch: int,
         model_net: Model,
         device: torch.device,

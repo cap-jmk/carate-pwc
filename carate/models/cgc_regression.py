@@ -39,7 +39,7 @@ class Net(Model):
         self.fc1 = Linear(self.dim, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
 
-    def forward(self, x, edge_index, batch, edge_weight=None):
+    def forward(self, x: float, edge_index: int, batch: int, edge_weight=None) -> float:
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu(self.conv3(x, edge_index, edge_weight))

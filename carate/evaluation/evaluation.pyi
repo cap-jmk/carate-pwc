@@ -1,21 +1,9 @@
 import torch
-from _typeshed import Incomplete
-from amarium.utils import check_make_dir as check_make_dir
+from _typeshed import Incomplete as Incomplete
 from carate.default_interface import DefaultObject as DefaultObject
-from carate.load_data import (
-    DatasetObject as DatasetObject,
-    StandardDatasetMoleculeNet as StandardDatasetMoleculeNet,
-    StandardPytorchGeometricDataset as StandardPytorchGeometricDataset,
-)
+from carate.load_data import DatasetObject as DatasetObject
 from carate.models.base_model import Model as Model
-from carate.utils.model_files import (
-    get_latest_checkpoint as get_latest_checkpoint,
-    load_model_parameters as load_model_parameters,
-    load_model_training_checkpoint as load_model_training_checkpoint,
-    save_model_parameters as save_model_parameters,
-    save_model_training_checkpoint as save_model_training_checkpoint,
-)
-from typing import Any, Type
+from typing import Any, Dict, Type
 
 class Evaluation(DefaultObject):
     name: str
@@ -80,10 +68,11 @@ class Evaluation(DefaultObject):
         optimizer: torch.optim.Optimizer,
         num_classes: int,
         gamma: int,
-    ): ...
+        **kwargs: Any
+    ) -> float: ...
     def test(
         self,
-        test_loader: torch.utils.data.DataLoader,
+        test_loader: Type[torch.utils.data.DataLoader],
         epoch: int,
         model_net: Model,
         device: torch.device,
@@ -95,7 +84,7 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         num_cv: int,
         num_epoch: int,
-        data: dict,
+        data: Dict[Any, Any],
     ) -> None: ...
     def save_whole_checkpoint(
         self,
@@ -104,7 +93,7 @@ class Evaluation(DefaultObject):
         num_cv: int,
         num_epoch: int,
         model_net: Type[torch.nn.Module],
-        data: dict,
+        data: Dict[Any, Any],
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
     ) -> None: ...
