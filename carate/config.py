@@ -55,7 +55,6 @@ class Config:
         dataset_name: str,
         num_features: int,
         num_classes: int,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
         Evaluation: evaluation.Evaluation,
@@ -82,7 +81,6 @@ class Config:
         self.dataset_name = dataset_name
         self.num_classes = num_classes
         self.num_features = num_features
-        self.gamma = gamma
         self.net_dimension = net_dimension
         self.learning_rate = learning_rate
 
@@ -146,7 +144,6 @@ class ConfigInitializer:
             model_net=json_object["model"],
             optimizer=json_object["optimizer"],
             data_set=data_set,
-            gamma=json_object["gamma"],
             result_save_dir=json_object["result_save_dir"],
             model_save_freq=json_object["model_save_freq"],
         )
@@ -160,7 +157,6 @@ class ConfigInitializer:
             dataset_name=str(json_object["dataset_name"]),
             num_classes=int(json_object["num_classes"]),
             num_features=int(json_object["num_features"]),
-            gamma=int(json_object["gamma"]),
             net_dimension=int(json_object["net_dimension"]),
             learning_rate=float(json_object["learning_rate"]),
             # evaluation parameters

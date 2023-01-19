@@ -11,7 +11,6 @@ class Run(DefaultObject):
     device: Incomplete
     num_classes: Incomplete
     num_features: Incomplete
-    gamma: Incomplete
     Evaluation: Incomplete
     model_net: Incomplete
     net_dimension: Incomplete
@@ -31,7 +30,6 @@ class Run(DefaultObject):
         dataset_name: str,
         num_features: int,
         num_classes: int,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
         data_set: DatasetObject,

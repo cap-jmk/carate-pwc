@@ -10,7 +10,6 @@ class Evaluation(DefaultObject):
     dataset_name: Incomplete
     dataset_save_path: Incomplete
     test_ratio: Incomplete
-    gamma: Incomplete
     num_epoch: Incomplete
     model_net: Incomplete
     optimizer: Incomplete
@@ -36,7 +35,6 @@ class Evaluation(DefaultObject):
         num_cv: int = ...,
         num_classes: int = ...,
         out_dir: str = ...,
-        gamma: float = ...,
         batch_size: int = ...,
         shuffle: bool = ...,
         model_save_freq: int = ...,
@@ -55,7 +53,6 @@ class Evaluation(DefaultObject):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         device: torch.device,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
     ): ...
@@ -67,7 +64,6 @@ class Evaluation(DefaultObject):
         train_loader: torch.utils.data.Dataset,
         optimizer: torch.optim.Optimizer,
         num_classes: int,
-        gamma: int,
         **kwargs: Any
     ) -> float: ...
     def test(

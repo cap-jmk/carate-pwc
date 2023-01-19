@@ -9,7 +9,6 @@ class RegressionEvaluation(Evaluation):
     dataset_name: Incomplete
     dataset_save_path: Incomplete
     test_ratio: Incomplete
-    gamma: Incomplete
     num_epoch: Incomplete
     model_net: Incomplete
     optimizer: Incomplete
@@ -31,7 +30,6 @@ class RegressionEvaluation(Evaluation):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         test_ratio: int,
-        gamma: int,
         num_epoch: int = ...,
         num_cv: int = ...,
         num_classes: int = ...,
@@ -54,7 +52,6 @@ class RegressionEvaluation(Evaluation):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         device: torch.device,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
     ): ...

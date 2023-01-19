@@ -7,7 +7,6 @@ class ClassificationEvaluation(Evaluation):
     dataset_name: Incomplete
     dataset_save_path: Incomplete
     test_ratio: Incomplete
-    gamma: Incomplete
     num_epoch: Incomplete
     model_net: Incomplete
     optimizer: Incomplete
@@ -34,7 +33,6 @@ class ClassificationEvaluation(Evaluation):
         num_cv: int = ...,
         num_classes: int = ...,
         out_dir: str = ...,
-        gamma: float = ...,
         batch_size: int = ...,
         shuffle: bool = ...,
     ) -> None: ...

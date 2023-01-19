@@ -10,7 +10,6 @@ dataset_save_path = "./data"
 test_ratio = 20
 batch_size = 64
 shuffle = True
-gamma = 51
 num_epoch = 300
 num_cv = 5
 result_save_dir = "./MCF-7"

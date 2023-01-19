@@ -33,7 +33,6 @@ class Run(DefaultObject):
         dataset_name: str,
         num_features: int,
         num_classes: int,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
         data_set: DatasetObject,
@@ -58,7 +57,6 @@ class Run(DefaultObject):
         self.device = device
         self.num_classes = num_classes
         self.num_features = num_features
-        self.gamma = gamma
         self.Evaluation = Evaluation
         self.model_net = model_net
         self.net_dimension = net_dimension
@@ -92,7 +90,6 @@ class Run(DefaultObject):
             model_net=self.model_net,
             optimizer=self.optimizer,
             device=self.device,
-            gamma=self.gamma,
             result_save_dir=self.result_save_dir,
             model_save_freq=int(self.model_save_freq),
         )
@@ -142,7 +139,6 @@ class RunInitializer:
             device=device,
             num_classes=config.num_classes,
             num_features=config.num_features,
-            gamma=config.gamma,
             Evaluation=config.Evaluation,
             model_net=model_net,
             optimizer=optimizer,

@@ -10,7 +10,6 @@ dataset_save_path = "tests/data/"
 test_ratio = 10
 batch_size = 64
 shuffle = True
-gamma = 51
 num_epoch = 2
 num_cv = 2
 result_save_dir = "tests/results/ENZYMES"

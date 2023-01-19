@@ -28,7 +28,6 @@ class Config:
     dataset_name: Incomplete
     num_classes: Incomplete
     num_features: Incomplete
-    gamma: Incomplete
     net_dimension: Incomplete
     learning_rate: Incomplete
     dataset_save_path: Incomplete
@@ -44,7 +43,6 @@ class Config:
         dataset_name: str,
         num_features: int,
         num_classes: int,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
         Evaluation: evaluation.Evaluation,

@@ -32,7 +32,6 @@ class RegressionEvaluation(Evaluation):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         test_ratio: int,
-        gamma: int,
         num_epoch: int = 150,
         num_cv: int = 5,
         num_classes: int = 2,
@@ -60,7 +59,6 @@ class RegressionEvaluation(Evaluation):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
-        self.gamma = gamma
         self.num_epoch = num_epoch
         self.model_net = model_net
         self.optimizer = optimizer
@@ -88,7 +86,6 @@ class RegressionEvaluation(Evaluation):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         device: torch.device,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
     ) -> Dict[str, Any]:
@@ -107,7 +104,6 @@ class RegressionEvaluation(Evaluation):
             model_net,
             optimizer,
             device,
-            gamma,
             result_save_dir,
             model_save_freq,
         ) = self._get_defaults(locals())
@@ -206,7 +202,7 @@ class RegressionEvaluation(Evaluation):
         **kwargs: Any,
     ) -> float:
         norm_factor = float(kwargs["norm_factor"])
-        model_net.train()  # TODO deleted gamma block due to minor influence
+        model_net.train()
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)

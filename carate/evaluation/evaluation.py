@@ -61,7 +61,6 @@ class Evaluation(DefaultObject):
         num_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
-        gamma: float = 0.5,
         batch_size: int = 64,
         shuffle: bool = True,
         model_save_freq: int = 100,
@@ -78,7 +77,6 @@ class Evaluation(DefaultObject):
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
         :param num_classes:int=2: Used to Define the number of classes in the dataset.
         :param out_dir:str="out": Used to Specify the directory where the output of your training will be stored.
-        :param gamma=0.5: Used to Set the decay rate of the loss function.
         :return: The following:.
 
         :doc-author: Julian M. Kleber
@@ -86,14 +84,12 @@ class Evaluation(DefaultObject):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
-        self.gamma = gamma
         self.num_epoch = num_epoch
         self.model_net = model_net
         self.optimizer = optimizer
         self.num_classes = num_classes
         self.num_cv = num_cv
         self.out_dir = out_dir
-        self.gamma = gamma
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -115,7 +111,6 @@ class Evaluation(DefaultObject):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         device: torch.device,
-        gamma: int,
         result_save_dir: str,
         model_save_freq: int,
     ) -> Dict[str, Any]:
@@ -157,7 +152,6 @@ class Evaluation(DefaultObject):
             model_net,
             optimizer,
             device,
-            gamma,
             result_save_dir,
             model_save_freq,
         ) = self._get_defaults(locals())
@@ -191,7 +185,6 @@ class Evaluation(DefaultObject):
                     optimizer=optimizer,
                     train_loader=train_loader,
                     num_classes=num_classes,
-                    gamma=gamma,
                 )
                 loss_store.append(train_loss.cpu().tolist())
                 train_acc = self.test(
@@ -258,7 +251,6 @@ class Evaluation(DefaultObject):
         train_loader: Type[torch.utils.data.DataLoader],
         optimizer: torch.optim.Optimizer,
         num_classes: int,
-        gamma: int,
     ):
         """
         The train function is used to train the model.
@@ -277,12 +269,6 @@ class Evaluation(DefaultObject):
         :doc-author: Trelent
         """
         model_net.train()
-
-        if epoch == gamma:
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = (
-                    gamma * param_group["lr"]
-                )  # setting the learning rate behaviour over time
 
         correct = 0
         for data in train_loader:

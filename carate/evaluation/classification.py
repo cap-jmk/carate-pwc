@@ -23,7 +23,6 @@ class ClassificationEvaluation(Evaluation):
         num_cv: int = 5,
         num_classes: int = 2,
         out_dir: str = r"./out",
-        gamma: float = 0.5,
         batch_size: int = 64,
         shuffle: bool = True,
     ):
@@ -39,7 +38,6 @@ class ClassificationEvaluation(Evaluation):
         :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
         :param num_classes:int=2: Used to Define the number of classes in the dataset.
         :param out_dir:str="out": Used to Specify the directory where the output of your training will be stored.
-        :param gamma=0.5: Used to Set the decay rate of the loss function.
         :return: The following:.
 
         :doc-author: Julian M. Kleber
@@ -47,14 +45,12 @@ class ClassificationEvaluation(Evaluation):
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
-        self.gamma = gamma
         self.num_epoch = num_epoch
         self.model_net = model_net
         self.optimizer = optimizer
         self.num_classes = num_classes
         self.num_cv = num_cv
         self.out_dir = out_dir
-        self.gamma = gamma
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
