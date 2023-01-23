@@ -48,10 +48,11 @@ bash install.sh
 ```bash
 carate -c path_to_config_file.py
 ```
-Example when CLI is not working
-```bash
- python mcf.py
-```
+
+Examples for `config.py` files are given in `config_files`
+
+
+Or you can check the the `tutorial.ipynb` in `notebooks` how to use the package with a `.json` file 
 
 ## Training results 
 
