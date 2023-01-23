@@ -1,6 +1,6 @@
 import torch
 from _typeshed import Incomplete as Incomplete
-from carate.evaluation.evaluation import Evaluation as Evaluation
+from carate.evaluation.base import Evaluation as Evaluation
 from carate.load_data import DatasetObject as DatasetObject
 from carate.models.base_model import Model as Model
 from typing import Any, Tuple, Type

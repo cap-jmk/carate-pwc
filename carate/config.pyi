@@ -7,7 +7,7 @@ from carate.load_data import (
 )
 from typing import Any, Dict, Type, Union
 
-EvaluationMap: Dict[str, evaluation.Evaluation]
+EvaluationMap: Dict[str, ebase.evaluation]
 EVALUATION_MAP: Incomplete
 ModelMap: Dict[str, Any]
 MODEL_MAP: Incomplete
@@ -45,7 +45,7 @@ class Config:
         num_classes: int,
         result_save_dir: str,
         model_save_freq: int,
-        Evaluation: evaluation.Evaluation,
+        Evaluation: ebase.evaluation,
         data_set: DatasetObject,
         model: Any,
         optimizer: str,

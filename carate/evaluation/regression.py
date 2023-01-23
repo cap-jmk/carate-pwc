@@ -6,7 +6,7 @@ import numpy as np
 import numpy.typing as npt
 from typing import Type, Optional, Any, Tuple, Dict
 
-from carate.evaluation.evaluation import Evaluation
+from carate.evaluation.base import Evaluation
 from carate.load_data import DatasetObject, StandardPytorchGeometricDataset
 from carate.utils.model_files import save_model_parameters, get_latest_checkpoint
 from carate.models.base_model import Model
@@ -68,7 +68,8 @@ class RegressionEvaluation(Evaluation):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 

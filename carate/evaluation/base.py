@@ -93,7 +93,8 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
 
@@ -201,7 +202,8 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append([train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store.append(
+                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc

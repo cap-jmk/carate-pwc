@@ -6,7 +6,7 @@
 
 # Why 
 
-Molecular representation is wrecked. Seriously! We chemists talk with an ancient language about something we can't comprehend with that language for decades. It has to stop. 
+Molecular representation is wrecked. Seriously! We chemists talked  for decades with an ancient language about something we can't comprehend with that language. It has to stop. Now!
 
 # What 
 
@@ -18,7 +18,7 @@ For a chemist it is quite intuitive but seldomly modelled as such: A molecule ex
 
 * Mathematical equivalence of the variational principle and neural networks was given in the thesis [Markov-chain modelling of dynmaic interation patterns in supramolecular complexes](https://www.researchgate.net/publication/360107521_Markov-chain_modelling_of_dynamic_interaction_patterns_in_supramolecular_complexes). 
 
-* The failure of the BOA is described in the case of diatomic tranistion metal fluorides is described in a [Can Fluorine form triple bonds?](https://chemrxiv.org/engage/chemrxiv/article-details/620f745121686706d17ac316)
+* The failure of the BOA is described in the case of diatomic tranistion metal fluorides is described in the preprint: [Can Fluorine form triple bonds?](https://chemrxiv.org/engage/chemrxiv/article-details/620f745121686706d17ac316)
 
 * Evidence of quantum-mechanical simulations via molecular dynamics is given in a seminal work [Direct Simulation of Bose-Einstein-Condensates using molecular dynmaics and the Lennard-Jones potential](https://www.researchgate.net/publication/360560870_Direct_simulation_of_Bose-Einstein_condesates_using_molecular_dynamics_and_the_Lennard-Jones_potential)
 # Scope
@@ -48,10 +48,11 @@ bash install.sh
 ```bash
 carate -c path_to_config_file.py
 ```
-Example when CLI is not working
-```bash
- python mcf.py
-```
+
+Examples for `config.py` files are given in `config_files`
+
+
+Or you can check the the `tutorial.ipynb` in `notebooks` how to use the package with a `.json` file 
 
 ## Training results 
 
