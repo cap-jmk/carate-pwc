@@ -8,7 +8,7 @@ is text files then there is a need to convert them.
 import torch
 from typing import Type, Optional, Dict, TypeVar, Any, Generic
 
-from carate.evaluation import evaluation, classification, regression
+from carate.evaluation import base, classification, regression
 from carate.models import cgc_classification, cgc_regression
 from carate.load_data import (
     DatasetObject,
@@ -19,15 +19,16 @@ from carate.load_data import (
 from carate.utils.convert_to_json import convert_py_to_json
 
 
-EvaluationMap: Dict[str, evaluation.Evaluation]
+EvaluationMap: Dict[str, base.Evaluation]
 EVALUATION_MAP = {
     "regression": regression.RegressionEvaluation,
     "classification": classification.ClassificationEvaluation,
-    "evaluation": evaluation.Evaluation,
+    "evaluation": base.Evaluation,
 }
 
 ModelMap: Dict[str, Any]
-MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
+MODEL_MAP = {"cgc_classification": cgc_classification,
+             "cgc_regression": cgc_regression}
 
 DATA_SET_MAP: Dict[
     str,
@@ -57,7 +58,7 @@ class Config:
         num_classes: int,
         result_save_dir: str,
         model_save_freq: int,
-        Evaluation: evaluation.Evaluation,
+        Evaluation: base.Evaluation,
         data_set: DatasetObject,
         model: Any,
         optimizer: str,

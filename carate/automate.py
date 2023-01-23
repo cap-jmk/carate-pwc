@@ -23,7 +23,8 @@ def train_algorithm(c: str) -> None:
 
     :doc-author: Julian M. Kleber
     """
-
+    if c is None:
+        raise RuntimeError("Please provide the path to a config file.")
     config_filepath = c
     runner = RunInitializer.from_file(config_filepath=config_filepath)
 

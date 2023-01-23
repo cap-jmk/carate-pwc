@@ -176,7 +176,8 @@ def get_latest_checkpoint(search_dir: str, num_cv: int, epoch: int) -> str:
 
     search_dir += "checkpoints"
     checkpoint_dirs = os.listdir(search_dir)
-    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index("CV_" + str(num_cv))]
+    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index(
+        "CV_" + str(num_cv))]
     search_dir += "/" + correct_sub_dir
     checkpoints = os.listdir(search_dir)
     checkpoints = sorted(checkpoints)

@@ -7,12 +7,12 @@ optimizer = "adams"  # defaults to adams optimizer
 net_dimension = 364
 learning_rate = 0.0005
 dataset_save_path = "./data"
-test_ratio = 10
+test_ratio = 20
 batch_size = 64
 shuffle = True
 num_epoch = 5000
 num_cv = 5
-result_save_dir = "./PROTEINS_10"
+result_save_dir = "./PROTEINS_20"
 data_set = "StandardTUD"
 model_save_freq = 30
 

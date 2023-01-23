@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="carate",
-    version="0.1.3",
+    version="0.1.4",
     author="Julian M. Kleber",
     author_email="julian.kleber@sail.black",
     description="Graph-based encoder algorithm",
@@ -19,11 +19,20 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    install_requires=["black", "Click"],
+    install_requires=["torch", 
+                      "torchvision",
+                      "torchaudio", 
+                      "torch-scatter",
+                       "torch-sparse", 
+                       "torch-geometric", 
+                       "rdkit-pypi", 
+                       "networkx[default]", 
+                       "matplotlib",
+                      "Click"],
     entry_points={
         "console_scripts": [
             "carate = carate.automate:train_algorithm",
         ],
     },
-    python_requires=">=3.9",
+    python_requires=">=3.8",
 )

@@ -5,7 +5,7 @@ import torch
 from carate.models.base_model import Model
 from carate.models.cgc_classification import Net
 from carate.load_data import DatasetObject
-from carate.evaluation.evaluation import Evaluation
+from carate.evaluation.base import Evaluation
 from carate.default_interface import DefaultObject
 from carate.config import ConfigInitializer, Config
 from carate.optimizer import get_optimizer
