@@ -40,6 +40,7 @@ class Run(DefaultObject):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         device: torch.device,
+        override: bool,
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -48,7 +49,6 @@ class Run(DefaultObject):
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
-        override: bool = True
     ) -> None:
         """
         Constructor
@@ -94,7 +94,7 @@ class Run(DefaultObject):
             device=self.device,
             result_save_dir=self.result_save_dir,
             model_save_freq=int(self.model_save_freq),
-            override = bool(self.override)
+            override=self.override,
         )
 
 
@@ -157,5 +157,5 @@ class RunInitializer:
             result_save_dir=config.result_save_dir,
             data_set=config.data_set,
             model_save_freq=int(config.model_save_freq),
-            override = bool(config.override)
+            override=config.override,
         )

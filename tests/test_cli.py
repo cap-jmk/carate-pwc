@@ -13,7 +13,7 @@ def test_cli_func():
     if os.path.isdir("tests/results"):
         shutil.rmtree("tests/results")
     subprocess.run(["bash", "install.sh"])
-    config_filepath = "tests/config/regression_test_config.py"
+    config_filepath = "tests/config/regression_test_config_override.py"
     result = subprocess.run(
         ["carate", "-c", config_filepath],
         stdout=subprocess.PIPE,

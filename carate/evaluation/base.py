@@ -94,11 +94,11 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
+
     def cv(
         self,
         num_cv: int,
@@ -118,7 +118,7 @@ class Evaluation(DefaultObject):
         override: bool = True,
     ) -> Dict[str, Any]:
         """
-        The function is the core of the evaluation. The results are saved on disk during 
+        The function is the core of the evaluation. The results are saved on disk during
         the run and returned as json at the end of the run.
 
         :param self: Used to Represent the instance of the class.
@@ -148,7 +148,7 @@ class Evaluation(DefaultObject):
             device,
             result_save_dir,
             model_save_freq,
-            override
+            override,
         ) = self._get_defaults(locals())
         result = []
         acc_store_train = []
@@ -197,8 +197,7 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store_train.append(
-                    train_acc.cpu().tolist())
+                acc_store_train.append(train_acc.cpu().tolist())
                 acc_store_test.append(test_acc.cpu().tolist())
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
@@ -238,7 +237,7 @@ class Evaluation(DefaultObject):
                         data=tmp,
                         optimizer=optimizer,
                         loss=train_loss,
-                        override = override
+                        override=override,
                     )
             result.append(tmp)
         return result
@@ -386,7 +385,7 @@ class Evaluation(DefaultObject):
         data: dict,
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
-        override: bool = True, 
+        override: bool = True,
     ) -> None:
 
         self.save_model_checkpoint(
@@ -397,7 +396,7 @@ class Evaluation(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             loss=loss,
-            override=override
+            override=override,
         )
 
         self.save_result(
@@ -420,7 +419,7 @@ class Evaluation(DefaultObject):
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
-        override: bool=True
+        override: bool = True,
     ) -> None:
         """
         The save_model function saves the model to a file.
@@ -450,7 +449,7 @@ class Evaluation(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             loss=loss,
-            override=override
+            override=override,
         )
 
     def load_model_checkpoint(

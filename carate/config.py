@@ -8,6 +8,8 @@ is text files then there is a need to convert them.
 import torch
 from typing import Type, Optional, Dict, TypeVar, Any, Generic
 
+from amarium.utils import convert_str_to_bool
+
 from carate.evaluation import base, classification, regression
 from carate.models import cgc_classification, cgc_regression
 from carate.load_data import (
@@ -27,8 +29,7 @@ EVALUATION_MAP = {
 }
 
 ModelMap: Dict[str, Any]
-MODEL_MAP = {"cgc_classification": cgc_classification,
-             "cgc_regression": cgc_regression}
+MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
 DATA_SET_MAP: Dict[
     str,
@@ -70,7 +71,7 @@ class Config:
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
-        override:bool = True
+        override: bool = True,
     ):
 
         # fill with maps
@@ -150,6 +151,7 @@ class ConfigInitializer:
             result_save_dir=json_object["result_save_dir"],
             model_save_freq=json_object["model_save_freq"],
         )
+        json_object["override"] = convert_str_to_bool(json_object["override"])
 
         return Config(
             model=MODEL_MAP[json_object["model"]],
@@ -171,5 +173,5 @@ class ConfigInitializer:
             num_epoch=int(json_object["num_epoch"]),
             result_save_dir=str(json_object["result_save_dir"]),
             model_save_freq=int(json_object["model_save_freq"]),
-            override = bool(json_object["override"])
+            override=json_object["override"],
         )

@@ -19,17 +19,17 @@ setuptools.setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
     ],
-    install_requires=["torch", 
-                      "torchvision",
-                      "torchaudio", 
-                      "torch-scatter",
-                       
-                       "torch-geometric", 
-                       "rdkit-pypi", 
-                       "networkx[default]", 
-                       "matplotlib"
-                       "torch-sparse",
-                      "Click"],
+    install_requires=[
+        "torch",
+        "torchvision",
+        "torchaudio",
+        "torch-scatter",
+        "torch-geometric",
+        "rdkit-pypi",
+        "networkx[default]",
+        "matplotlib" "torch-sparse",
+        "Click",
+    ],
     entry_points={
         "console_scripts": [
             "carate = carate.automate:train_algorithm",
