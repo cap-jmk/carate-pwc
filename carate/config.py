@@ -70,6 +70,7 @@ class Config:
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
+        override:bool = True
     ):
 
         # fill with maps
@@ -95,6 +96,7 @@ class Config:
         self.num_epoch = num_epoch
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
+        self.override = override
 
 
 class ConfigInitializer:
@@ -169,4 +171,5 @@ class ConfigInitializer:
             num_epoch=int(json_object["num_epoch"]),
             result_save_dir=str(json_object["result_save_dir"]),
             model_save_freq=int(json_object["model_save_freq"]),
+            override = bool(json_object["override"])
         )

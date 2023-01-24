@@ -64,6 +64,7 @@ class Evaluation(DefaultObject):
         batch_size: int = 64,
         shuffle: bool = True,
         model_save_freq: int = 100,
+        override: bool = True,
     ) -> None:
         """
 
@@ -97,7 +98,7 @@ class Evaluation(DefaultObject):
             "cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
-
+        self.override = override
     def cv(
         self,
         num_cv: int,
@@ -114,19 +115,11 @@ class Evaluation(DefaultObject):
         device: torch.device,
         result_save_dir: str,
         model_save_freq: int,
+        override: bool = True,
     ) -> Dict[str, Any]:
         """
-        The cv function takes in the following parameters:
-            num_cv (int): The number of cross-validation folds to perform.
-            num_epoch (int): The number of epochs to train for each fold.
-            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.
-                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.
-
-                For example, if you have a binary classification problem with two classes {0, 1}, then this parameter should be set to 2 because there are two possible classifications; however if your data has already been one hot encoded into {[0], [0]}, then it would only make sense for this parameter to be set as 1 since there is only one possible classification per sample point now ({[0], [0]} -> 0).
-
-                Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
-
-            DatasetObject: An instance of torchvision's DatasetObject class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
+        The function is the core of the evaluation. The results are saved on disk during 
+        the run and returned as json at the end of the run.
 
         :param self: Used to Represent the instance of the class.
         :param num_cv:int: Used to Specify the number of cross-validation folds.
@@ -155,9 +148,11 @@ class Evaluation(DefaultObject):
             device,
             result_save_dir,
             model_save_freq,
+            override
         ) = self._get_defaults(locals())
         result = []
-        acc_store = []
+        acc_store_train = []
+        acc_store_test = []
         auc_store = []
         loss_store = []
         tmp = {}
@@ -202,8 +197,9 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append(
-                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store_train.append(
+                    train_acc.cpu().tolist())
+                acc_store_test.append(test_acc.cpu().tolist())
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc
@@ -227,7 +223,8 @@ class Evaluation(DefaultObject):
                 auc_store.append(store_auc)
 
                 tmp["Loss"] = list(loss_store)
-                tmp["Acc"] = list(acc_store)
+                tmp["Acc_train"] = list(acc_store_train)
+                tmp["Acc_test"] = list(acc_store_test)
                 tmp["AUC"] = list(auc_store)
 
                 if epoch % model_save_freq == 0:
@@ -241,6 +238,7 @@ class Evaluation(DefaultObject):
                         data=tmp,
                         optimizer=optimizer,
                         loss=train_loss,
+                        override = override
                     )
             result.append(tmp)
         return result
@@ -360,7 +358,7 @@ class Evaluation(DefaultObject):
         prefix = result_save_dir + "/data/" + "CV_" + str(num_cv)
         file_name = prepare_file_name_saving(
             prefix=prefix,
-            file_name=dataset_name + "_Epoch_" + str(num_epoch),
+            file_name=dataset_name,
             suffix=".json",
         )
         with open(file_name, "w") as f:
@@ -388,6 +386,7 @@ class Evaluation(DefaultObject):
         data: dict,
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
+        override: bool = True, 
     ) -> None:
 
         self.save_model_checkpoint(
@@ -398,6 +397,7 @@ class Evaluation(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             loss=loss,
+            override=override
         )
 
         self.save_result(
@@ -420,6 +420,7 @@ class Evaluation(DefaultObject):
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
+        override: bool=True
     ) -> None:
         """
         The save_model function saves the model to a file.
@@ -449,6 +450,7 @@ class Evaluation(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             loss=loss,
+            override=override
         )
 
     def load_model_checkpoint(

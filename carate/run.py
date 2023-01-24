@@ -48,6 +48,7 @@ class Run(DefaultObject):
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
+        override: bool = True
     ) -> None:
         """
         Constructor
@@ -74,6 +75,7 @@ class Run(DefaultObject):
         self.result_save_dir = result_save_dir
 
         self.data_set = data_set
+        self.override = override
 
     def run(self) -> None:
 
@@ -92,6 +94,7 @@ class Run(DefaultObject):
             device=self.device,
             result_save_dir=self.result_save_dir,
             model_save_freq=int(self.model_save_freq),
+            override = bool(self.override)
         )
 
 
@@ -154,4 +157,5 @@ class RunInitializer:
             result_save_dir=config.result_save_dir,
             data_set=config.data_set,
             model_save_freq=int(config.model_save_freq),
+            override = bool(config.override)
         )

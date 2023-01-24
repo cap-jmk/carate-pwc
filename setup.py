@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="carate",
-    version="0.1.4",
+    version="0.1.5",
     author="Julian M. Kleber",
     author_email="julian.kleber@sail.black",
     description="Graph-based encoder algorithm",
@@ -23,11 +23,12 @@ setuptools.setup(
                       "torchvision",
                       "torchaudio", 
                       "torch-scatter",
-                       "torch-sparse", 
+                       
                        "torch-geometric", 
                        "rdkit-pypi", 
                        "networkx[default]", 
-                       "matplotlib",
+                       "matplotlib"
+                       "torch-sparse",
                       "Click"],
     entry_points={
         "console_scripts": [

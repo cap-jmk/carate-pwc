@@ -49,12 +49,10 @@ def test_classification():
     for dir_name in result_dirs:
         assert dir_name in reference_dirs
 
-    assert len(result_files) == 4
+    assert len(result_files) == 2
     reference_files = [
-        "tests/results/ENZYMES/data/CV_0/ENZYMES_Epoch_1.json",
-        "tests/results/ENZYMES/data/CV_0/ENZYMES_Epoch_2.json",
-        "tests/results/ENZYMES/data/CV_1/ENZYMES_Epoch_1.json",
-        "tests/results/ENZYMES/data/CV_1/ENZYMES_Epoch_2.json",
+        "tests/results/ENZYMES/data/CV_0/ENZYMES.json",
+        "tests/results/ENZYMES/data/CV_1/ENZYMES.json",
     ]
     for name in result_files:
         assert name in reference_files
@@ -72,12 +70,10 @@ def test_classification():
     for dir_name in result_dirs:
         assert dir_name in reference_dirs
 
-    assert len(result_files) == 4
+    assert len(result_files) == 2
     reference_files = [
-        "tests/results/ENZYMES/checkpoints/CV_0/ENZYMES_Epoch-1.tar",
-        "tests/results/ENZYMES/checkpoints/CV_0/ENZYMES_Epoch-2.tar",
-        "tests/results/ENZYMES/checkpoints/CV_1/ENZYMES_Epoch-1.tar",
-        "tests/results/ENZYMES/checkpoints/CV_1/ENZYMES_Epoch-2.tar",
+        "tests/results/ENZYMES/checkpoints/CV_0/ENZYMES.tar",
+        "tests/results/ENZYMES/checkpoints/CV_1/ENZYMES.tar",
     ]
     for name in result_files:
         assert name in reference_files

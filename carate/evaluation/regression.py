@@ -39,6 +39,7 @@ class RegressionEvaluation(Evaluation):
         batch_size: int = 64,
         shuffle: bool = True,
         model_save_freq: int = 100,
+        override: bool = True
     ):
         """
 
@@ -72,6 +73,7 @@ class RegressionEvaluation(Evaluation):
             "cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
+        self.override = override
 
     def cv(
         self,
@@ -89,6 +91,7 @@ class RegressionEvaluation(Evaluation):
         device: torch.device,
         result_save_dir: str,
         model_save_freq: int,
+        override: bool = True
     ) -> Dict[str, Any]:
 
         # initialize
@@ -107,6 +110,7 @@ class RegressionEvaluation(Evaluation):
             device,
             result_save_dir,
             model_save_freq,
+            override
         ) = self._get_defaults(locals())
 
         # data container
@@ -187,6 +191,7 @@ class RegressionEvaluation(Evaluation):
                         data=tmp,
                         optimizer=optimizer,
                         loss=train_mae_loss,
+                        override = override
                     )
 
             result[str(i)] = tmp

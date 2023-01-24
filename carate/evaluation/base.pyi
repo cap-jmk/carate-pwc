@@ -92,6 +92,7 @@ class Evaluation(DefaultObject):
         data: Dict[Any, Any],
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
+        override: bool,
     ) -> None: ...
     def save_model_checkpoint(
         self,
