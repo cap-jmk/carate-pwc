@@ -29,7 +29,8 @@ EVALUATION_MAP = {
 }
 
 ModelMap: Dict[str, Any]
-MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
+MODEL_MAP = {"cgc_classification": cgc_classification,
+             "cgc_regression": cgc_regression}
 
 DATA_SET_MAP: Dict[
     str,

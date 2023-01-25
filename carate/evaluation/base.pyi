@@ -55,7 +55,7 @@ class Evaluation(DefaultObject):
         device: torch.device,
         result_save_dir: str,
         model_save_freq: int,
-    ): ...
+    ) -> Dict[str, Any]: ...
     def train(
         self,
         epoch: int,

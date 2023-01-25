@@ -7,7 +7,7 @@ from carate.load_data import (
 )
 from typing import Any, Dict, Type, Union
 
-EvaluationMap: Dict[str, ebase.evaluation]
+EvaluationMap: Dict[str, evaluation]
 EVALUATION_MAP: Incomplete
 ModelMap: Dict[str, Any]
 MODEL_MAP: Incomplete

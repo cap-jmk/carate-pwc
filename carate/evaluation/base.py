@@ -4,9 +4,10 @@ The idea is to parametrize as much as possible.
 
 :author: Julian M. Kleber
 """
+from typing import Type, Any, Dict
 import json
 import numpy as np
-from typing import Type, Optional, Tuple, Any, Dict
+
 import logging
 
 from sklearn import metrics
@@ -14,19 +15,14 @@ import torch
 import torch.nn.functional as F
 from amarium.utils import check_make_dir, prepare_file_name_saving
 
-import carate.models.cgc_classification
 from carate.utils.model_files import (
     save_model_training_checkpoint,
     save_model_parameters,
     load_model_training_checkpoint,
-    load_model_parameters,
-    get_latest_checkpoint,
 )
 
 from carate.load_data import (
     DatasetObject,
-    StandardDatasetMoleculeNet,
-    StandardPytorchGeometricDataset,
 )
 from carate.default_interface import DefaultObject
 from carate.models.base_model import Model
@@ -94,10 +90,12 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
+        self.train_store = None
 
     def cv(
         self,
@@ -304,7 +302,8 @@ class Evaluation(DefaultObject):
         :param epoch: Used to keep track of the current epoch.
         :param model_net: Used to pass the model to the test function.
         :param device: Used to tell torch which device to use.
-        :param test=False: Used to distinguish between training and testing.
+        :param test=False: Used to distinguish between training 
+        and testing.
         :return: The accuracy of the model on the test data.
 
         :doc-author: Julian M. Kleber
@@ -387,6 +386,26 @@ class Evaluation(DefaultObject):
         loss: float,
         override: bool = True,
     ) -> None:
+        """
+        The save_whole_checkpoint function saves the model checkpoint and results for a given epoch.
+
+        The save_whole_checkpoint function saves the model checkpoint and results for a given epoch. It is called by the train function in order to save checkpoints at regular intervals during training, as well as after each cross-validation fold has been trained on. The saved files are used to resume training if it is interrupted, or to evaluate performance of different models on test data without having to retrain them from scratch.
+
+        :param self: Used to Represent the instance of the class.
+        :param result_save_dir:str: Used to Specify the directory where the checkpoint will be saved.
+        :param dataset_name:str: Used to Name the dataset.
+        :param num_cv:int: Used to Specify the cross validation number.
+        :param num_epoch:int: Used to Specify the number of epochs that have been completed.
+        :param model_net:Type[torch.nn.Module]: Used to Save the model.
+        :param data:dict: Used to Save the data, which is a dictionary containing the training and validation data.
+        :param optimizer:Type[torch.optim.Optimizer]: Used to Save the optimizer state.
+        :param loss:float: Used to Save the loss value.
+        :param override:bool=True: Used to Override the previous checkpoint.
+        :param : Used to Save the model.
+        :return: None.
+
+        :doc-author: Julian M. Kleber
+        """
 
         self.save_model_checkpoint(
             result_save_dir=result_save_dir,
@@ -458,6 +477,22 @@ class Evaluation(DefaultObject):
         model_net: Model,
         optimizer=torch.optim.Optimizer,
     ) -> Model:
+        """
+        The load_model_checkpoint function loads a model checkpoint from the specified path.
+
+        The function loads a model checkpoint from the specified path, and sets it as the
+        model of this evaluation object. The function also returns that loaded model.
+
+        :param self: Used to Refer to the object itself.
+        :param checkpoint_path:str: Used to Specify the path to the checkpoint file.
+        :param model_net:Model: Used to Specify the model that is being loaded.
+        :param optimizer=torch.optim.Optimizer: Used to Load the optimizer state
+        from a checkpoint.
+        :param : Used to Load the model checkpoint.
+        :return: The model.
+
+        :doc-author: Julian M. Kleber
+        """
 
         model_net_cp = load_model_training_checkpoint(
             checkpoint_path=checkpoint_path, model_net=model_net, optimizer=optimizer

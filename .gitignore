@@ -164,3 +164,4 @@ carate/utils/config.json
 carate/carate_config_files*
 *carate_config_files/
 out/
+oldsetup/
