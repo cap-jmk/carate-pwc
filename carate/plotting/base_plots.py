@@ -9,6 +9,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+from collections import ChainMap
+
+
 
 def plot_range_band(result:List[Dict[str, Any]])->None:
     """
@@ -23,18 +26,25 @@ def plot_range_band(result:List[Dict[str, Any]])->None:
     :doc-author: Julian M. Kleber
     """
 
-def get_stacked_list(path_to_directory:str, column_name:str): 
+def get_stacked_list(path_to_directory:str, column_name:str, num_cv:int, json_name:str): 
     results = []
-    for i in range(5):
-        result = parse_acc_list_json(
-            path_to_json=f"/home/dev/carate/carate/carate_config_files/Classification/PROTEINS_20/data/CV_0/PROTEINS_Epoch_4980.json"
-        )
-        results.append(result) # TODO use a collections advanced container. the one that stores conatiners, forgot the name 
+    for i in range(num_cv):
+        try:
+            result = parse_acc_list_json(
+                path_to_json=path_to_directory + f"CV_{i}/"+json_name
+            )
+            results.append(result)
+        except Exception as exc: 
+            print(exc)
+            continue 
+    
+    map = ChainMap(*results)
+    print(map)
     results = np.array(results)
 
 
 
-def parse_old_file_format_for_plot(stacked_list:List[float])->None: 
+def parse_old_file_format_for_plot(stacked_list:List[float])->List[List[float]]: 
     """
     The parse_old_file_format_for_plot function takes in a path to a json file and returns the following:
     
@@ -44,12 +54,10 @@ def parse_old_file_format_for_plot(stacked_list:List[float])->None:
     :doc-author: Julian M. Kleber
     """
     
-
     result_acc = parse_acc_list_json(path_to_json=path_to_json)
     train_frames_acc = parse_min_max_avg(result_acc["Train_acc"])
     test_frames_acc = parse_min_max_avg(result_acc["Test_acc"])
-    print(train_frames_acc)
-    print(test_frames_acc)
+    return train_frames_acc, test_frames_acc
 
 
 def parse_acc_list_json(path_to_json: str) -> Dict[str, Any]:
@@ -108,7 +116,7 @@ def parse_min_max_avg(result_list:List[List[float]])->List[float]:
         minima.append(minimum)
         maxima.append(maximum)
         averages.append(average)
-    return minima, maxima, averages
+    return [minima, maxima, averages]
 
 def get_avg(step_list:List[float])->float: 
     """
@@ -153,5 +161,6 @@ def get_min(step_list:List[float])->float:
 if __name__ == "__main__":
     from amarium.utils import load_json_from_file
     import pandas as pd
-
+    path_to_directory = "/home/dev/carate/carate/carate_config_files/Classification/PROTEINS_20/data/"
+    get_stacked_list(path_to_directory=path_to_directory, column_name = "Acc", num_cv = 5, json_name = "PROTEINS_Epoch_4980.json")
 
