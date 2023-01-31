@@ -55,7 +55,7 @@ class Evaluation(DefaultObject):
         device: torch.device,
         result_save_dir: str,
         model_save_freq: int,
-    ): ...
+    ) -> Dict[str, Any]: ...
     def train(
         self,
         epoch: int,
@@ -92,6 +92,7 @@ class Evaluation(DefaultObject):
         data: Dict[Any, Any],
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
+        override: bool,
     ) -> None: ...
     def save_model_checkpoint(
         self,

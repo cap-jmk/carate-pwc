@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools","torch"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "carate"
+version = "0.1.7"
+authors = [
+  { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
+]
+description = "Filesystem handling utilities"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        "Operating System :: OS Independent",
+]
+dependencies = [
+    "torchvision",
+    "torchaudio",
+    "torch-scatter",
+    "torch-geometric",
+    "rdkit-pypi",
+    "networkx[default]",
+    "matplotlib",  
+    "torch-sparse",
+    "Click"]
+
+[project.urls]
+"Homepage" = "https://www.codeberg.org/sail.black/carate.git"
+"Bug Tracker" = "https://www.codeberg.org/sail.black/carate.git/issues"
+[tool.setuptools]
+
+packages = ["carate", "carate.evaluation", "carate.models", "carate.plotting", "carate.utils"]

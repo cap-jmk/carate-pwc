@@ -25,6 +25,7 @@ class ClassificationEvaluation(Evaluation):
         out_dir: str = r"./out",
         batch_size: int = 64,
         shuffle: bool = True,
+        override: bool = True,
     ):
         """
 
@@ -54,10 +55,10 @@ class ClassificationEvaluation(Evaluation):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
+        self.override = override
 
     def __repr__(self) -> str:
         return "Classification Evaluation Object"

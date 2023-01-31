@@ -4,9 +4,10 @@ The idea is to parametrize as much as possible.
 
 :author: Julian M. Kleber
 """
+from typing import Type, Any, Dict
 import json
 import numpy as np
-from typing import Type, Optional, Tuple, Any, Dict
+
 import logging
 
 from sklearn import metrics
@@ -14,19 +15,14 @@ import torch
 import torch.nn.functional as F
 from amarium.utils import check_make_dir, prepare_file_name_saving
 
-import carate.models.cgc_classification
 from carate.utils.model_files import (
     save_model_training_checkpoint,
     save_model_parameters,
     load_model_training_checkpoint,
-    load_model_parameters,
-    get_latest_checkpoint,
 )
 
 from carate.load_data import (
     DatasetObject,
-    StandardDatasetMoleculeNet,
-    StandardPytorchGeometricDataset,
 )
 from carate.default_interface import DefaultObject
 from carate.models.base_model import Model
@@ -64,6 +60,7 @@ class Evaluation(DefaultObject):
         batch_size: int = 64,
         shuffle: bool = True,
         model_save_freq: int = 100,
+        override: bool = True,
     ) -> None:
         """
 
@@ -93,10 +90,11 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
+        self.override = override
+        self.train_store = None
 
     def cv(
         self,
@@ -114,19 +112,11 @@ class Evaluation(DefaultObject):
         device: torch.device,
         result_save_dir: str,
         model_save_freq: int,
+        override: bool = True,
     ) -> Dict[str, Any]:
         """
-        The cv function takes in the following parameters:
-            num_cv (int): The number of cross-validation folds to perform.
-            num_epoch (int): The number of epochs to train for each fold.
-            num_classes (int): The number of classes in the dataset.  This is used for one-hot encoding labels and calculating AUC scores.
-                If you are using a dataset that has already been one-hot encoded, then this should be set to None or 1, depending on whether your data is binary or not respectively.
-
-                For example, if you have a binary classification problem with two classes {0, 1}, then this parameter should be set to 2 because there are two possible classifications; however if your data has already been one hot encoded into {[0], [0]}, then it would only make sense for this parameter to be set as 1 since there is only one possible classification per sample point now ({[0], [0]} -> 0).
-
-                Note that setting this value incorrectly will result in incorrect AUC scores being calculated!  It's up to you as an engineer/data scientist/machine learning practitioner/etc...to know what kind of data you're working with and how best it can be represented by PyTorch tensors!
-
-            DatasetObject: An instance of torchvision's DatasetObject class which loads training and testing datasets from disk into memory so they can easily accessed during training time without having I/O overhead every time we want access our training samples!  You may need some additional arguments passed into the constructor such as batch size etc...but these details are left up to implementation specific details which will vary based on what kind of model architecture we're using etc...so I've left them out here intentionally.
+        The function is the core of the evaluation. The results are saved on disk during
+        the run and returned as json at the end of the run.
 
         :param self: Used to Represent the instance of the class.
         :param num_cv:int: Used to Specify the number of cross-validation folds.
@@ -155,11 +145,10 @@ class Evaluation(DefaultObject):
             device,
             result_save_dir,
             model_save_freq,
+            override,
         ) = self._get_defaults(locals())
         result = []
-        acc_store = []
-        auc_store = []
-        loss_store = []
+
         tmp = {}
         save_model_parameters(model_net, save_dir=result_save_dir)
         for i in range(num_cv):
@@ -176,6 +165,12 @@ class Evaluation(DefaultObject):
                 batch_size=batch_size,
                 shuffle=shuffle,
             )
+            # storage containers
+
+            acc_store_train = []
+            acc_store_test = []
+            auc_store = []
+            loss_store = []
 
             for epoch in range(1, num_epoch + 1):
 
@@ -202,8 +197,8 @@ class Evaluation(DefaultObject):
                     epoch=epoch,
                     test=True,
                 )
-                acc_store.append(
-                    [train_acc.cpu().tolist(), test_acc.cpu().tolist()])
+                acc_store_train.append(train_acc.cpu().tolist())
+                acc_store_test.append(test_acc.cpu().tolist())
                 logging.info(
                     "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
                         epoch, train_loss, train_acc, test_acc
@@ -227,7 +222,8 @@ class Evaluation(DefaultObject):
                 auc_store.append(store_auc)
 
                 tmp["Loss"] = list(loss_store)
-                tmp["Acc"] = list(acc_store)
+                tmp["Acc_train"] = list(acc_store_train)
+                tmp["Acc_test"] = list(acc_store_test)
                 tmp["AUC"] = list(auc_store)
 
                 if epoch % model_save_freq == 0:
@@ -241,6 +237,7 @@ class Evaluation(DefaultObject):
                         data=tmp,
                         optimizer=optimizer,
                         loss=train_loss,
+                        override=override,
                     )
             result.append(tmp)
         return result
@@ -307,7 +304,8 @@ class Evaluation(DefaultObject):
         :param epoch: Used to keep track of the current epoch.
         :param model_net: Used to pass the model to the test function.
         :param device: Used to tell torch which device to use.
-        :param test=False: Used to distinguish between training and testing.
+        :param test=False: Used to distinguish between training
+        and testing.
         :return: The accuracy of the model on the test data.
 
         :doc-author: Julian M. Kleber
@@ -360,7 +358,7 @@ class Evaluation(DefaultObject):
         prefix = result_save_dir + "/data/" + "CV_" + str(num_cv)
         file_name = prepare_file_name_saving(
             prefix=prefix,
-            file_name=dataset_name + "_Epoch_" + str(num_epoch),
+            file_name=dataset_name,
             suffix=".json",
         )
         with open(file_name, "w") as f:
@@ -388,7 +386,28 @@ class Evaluation(DefaultObject):
         data: dict,
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
+        override: bool = True,
     ) -> None:
+        """
+        The save_whole_checkpoint function saves the model checkpoint and results for a given epoch.
+
+        The save_whole_checkpoint function saves the model checkpoint and results for a given epoch. It is called by the train function in order to save checkpoints at regular intervals during training, as well as after each cross-validation fold has been trained on. The saved files are used to resume training if it is interrupted, or to evaluate performance of different models on test data without having to retrain them from scratch.
+
+        :param self: Used to Represent the instance of the class.
+        :param result_save_dir:str: Used to Specify the directory where the checkpoint will be saved.
+        :param dataset_name:str: Used to Name the dataset.
+        :param num_cv:int: Used to Specify the cross validation number.
+        :param num_epoch:int: Used to Specify the number of epochs that have been completed.
+        :param model_net:Type[torch.nn.Module]: Used to Save the model.
+        :param data:dict: Used to Save the data, which is a dictionary containing the training and validation data.
+        :param optimizer:Type[torch.optim.Optimizer]: Used to Save the optimizer state.
+        :param loss:float: Used to Save the loss value.
+        :param override:bool=True: Used to Override the previous checkpoint.
+        :param : Used to Save the model.
+        :return: None.
+
+        :doc-author: Julian M. Kleber
+        """
 
         self.save_model_checkpoint(
             result_save_dir=result_save_dir,
@@ -398,6 +417,7 @@ class Evaluation(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             loss=loss,
+            override=override,
         )
 
         self.save_result(
@@ -420,6 +440,7 @@ class Evaluation(DefaultObject):
         model_net: Type[torch.nn.Module],
         optimizer: Type[torch.optim.Optimizer],
         loss: float,
+        override: bool = True,
     ) -> None:
         """
         The save_model function saves the model to a file.
@@ -449,6 +470,7 @@ class Evaluation(DefaultObject):
             model_net=model_net,
             optimizer=optimizer,
             loss=loss,
+            override=override,
         )
 
     def load_model_checkpoint(
@@ -457,6 +479,22 @@ class Evaluation(DefaultObject):
         model_net: Model,
         optimizer=torch.optim.Optimizer,
     ) -> Model:
+        """
+        The load_model_checkpoint function loads a model checkpoint from the specified path.
+
+        The function loads a model checkpoint from the specified path, and sets it as the
+        model of this evaluation object. The function also returns that loaded model.
+
+        :param self: Used to Refer to the object itself.
+        :param checkpoint_path:str: Used to Specify the path to the checkpoint file.
+        :param model_net:Model: Used to Specify the model that is being loaded.
+        :param optimizer=torch.optim.Optimizer: Used to Load the optimizer state
+        from a checkpoint.
+        :param : Used to Load the model checkpoint.
+        :return: The model.
+
+        :doc-author: Julian M. Kleber
+        """
 
         model_net_cp = load_model_training_checkpoint(
             checkpoint_path=checkpoint_path, model_net=model_net, optimizer=optimizer

@@ -13,7 +13,7 @@ def test_cli_func():
     if os.path.isdir("tests/results"):
         shutil.rmtree("tests/results")
     subprocess.run(["bash", "install.sh"])
-    config_filepath = "tests/config/regression_test_config.py"
+    config_filepath = "tests/config/regression_test_config_override.py"
     result = subprocess.run(
         ["carate", "-c", config_filepath],
         stdout=subprocess.PIPE,
@@ -31,12 +31,10 @@ def test_cli_func():
     for dir_name in result_dirs:
         assert dir_name in reference_dirs
 
-    assert len(result_files) == 4
+    assert len(result_files) == 2
     reference_files = [
-        "tests/results/ZINC_test/data/CV_0/ZINC_test_Epoch_1.json",
-        "tests/results/ZINC_test/data/CV_0/ZINC_test_Epoch_2.json",
-        "tests/results/ZINC_test/data/CV_1/ZINC_test_Epoch_1.json",
-        "tests/results/ZINC_test/data/CV_1/ZINC_test_Epoch_2.json",
+        "tests/results/ZINC_test/data/CV_0/ZINC_test.json",
+        "tests/results/ZINC_test/data/CV_1/ZINC_test.json",
     ]
     for name in result_files:
         assert name in reference_files
@@ -54,12 +52,10 @@ def test_cli_func():
     for dir_name in result_dirs:
         assert dir_name in reference_dirs
 
-    assert len(result_files) == 4
+    assert len(result_files) == 2
     reference_files = [
-        "tests/results/ZINC_test/checkpoints/CV_0/ZINC_test_Epoch-1.tar",
-        "tests/results/ZINC_test/checkpoints/CV_0/ZINC_test_Epoch-2.tar",
-        "tests/results/ZINC_test/checkpoints/CV_1/ZINC_test_Epoch-1.tar",
-        "tests/results/ZINC_test/checkpoints/CV_1/ZINC_test_Epoch-2.tar",
+        "tests/results/ZINC_test/checkpoints/CV_0/ZINC_test.tar",
+        "tests/results/ZINC_test/checkpoints/CV_1/ZINC_test.tar",
     ]
     for name in result_files:
         assert name in reference_files

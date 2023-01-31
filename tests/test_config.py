@@ -13,7 +13,7 @@ from typing import Type
 
 
 def test_config():
-    config_filepath = "tests/config/classification_test_config.py"
+    config_filepath = "tests/config/classification_test_config_override.py"
     config = ConfigInitializer.from_file(file_name=config_filepath)
     assert config.dataset_name == "ENZYMES"
     assert config.num_classes == 6

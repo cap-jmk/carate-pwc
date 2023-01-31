@@ -23,6 +23,10 @@ logging.basicConfig(
 
 
 class RegressionEvaluation(Evaluation):
+    """
+    Module that implements the Regression evaluation
+    """
+
     def __init__(
         self,
         dataset_name: str,
@@ -39,20 +43,42 @@ class RegressionEvaluation(Evaluation):
         batch_size: int = 64,
         shuffle: bool = True,
         model_save_freq: int = 100,
+        override: bool = True,
     ):
         """
+        The __init__ function is called when the class is instantiated.
+        It sets up all the parameters needed for training and testing.
 
-        :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
-        :param model: Used to Specify the model that will be trained.
-        :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_set:Type[DatasetObject]: Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class Dataset.load_data().
+        :param self: Used to Refer to the current object.
+        :param dataset_name:str: Used to Name the dataset.
+        :param dataset_save_path:str: Used to Save the dataset object
+         to a file.
+        :param result_save_dir:str: Used to Save the results of the
+        cross validation.
+        :param model_net:Model: Used to Specify the model architecture.
+        :param optimizer:torch.optim.Optimizer: Used to Define the optimizer
+        used for training.
+        :param data_set:DatasetObject: Used to Pass the dataset object
+        to the class.
+        :param test_ratio:int: Used to Determine the ratio of test data to
+        training data.
+        :param num_epoch:int=150: Used to Set the number of epochs to train for.
+        :param num_cv:int=5: Used to Set the number of cross-validation folds.
+        :param num_classes:int=2: Used to Set the number of classes in the dataset.
+        :param out_dir:str=r"./out": Used to Define the directory where
+        all results are saved.
+        :param batch_size:int=64: Used to Set the batch size of the training data.
+        :param shuffle:bool=True: Used to Shuffle the data set before splitting
+        it into training and test sets.
+        :param model_save_freq:int=100: Used to Save the model every 100 epochs.
+        :param override:bool=True: Used to Override the results if they already exist.
+        :param : Used to Set the number of epochs for training.
+        :return: The object itself, which is then assigned to the variable "model_trainer".
 
-        :param epoch:int=150: Used to Set the number of epochs to train for.
-        :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
-        :param num_classes:int=2: Used to Define the number of classes in the dataset.
-        :param out_dir:str="out": Used to Specify the directory where the output of your training will be stored.
-        :return: The following:.
+        :doc-author: Trelent
+        """
+        """
+
 
         :doc-author: Julian M. Kleber
         """
@@ -68,10 +94,10 @@ class RegressionEvaluation(Evaluation):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
+        self.override = override
 
     def cv(
         self,
@@ -89,6 +115,7 @@ class RegressionEvaluation(Evaluation):
         device: torch.device,
         result_save_dir: str,
         model_save_freq: int,
+        override: bool = True,
     ) -> Dict[str, Any]:
 
         # initialize
@@ -107,11 +134,11 @@ class RegressionEvaluation(Evaluation):
             device,
             result_save_dir,
             model_save_freq,
+            override,
         ) = self._get_defaults(locals())
 
         # data container
         result = {}
-        test_mae = []
         test_mse = []
         train_mae = []
         train_mse = []
@@ -133,7 +160,7 @@ class RegressionEvaluation(Evaluation):
                 batch_size=batch_size,
                 shuffle=shuffle,
             )
-
+            del train_dataset, test_dataset
             norm_factor = self.__normalization_factor(
                 data_set=loaded_data_set, num_classes=num_classes
             )
@@ -166,7 +193,8 @@ class RegressionEvaluation(Evaluation):
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
                 logging.info(
-                    "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
+                    "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), "
+                    "Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
                         epoch, train_mae_val, train_mse_val, test_mae_val, test_mse_val
                     )
                 )
@@ -187,6 +215,7 @@ class RegressionEvaluation(Evaluation):
                         data=tmp,
                         optimizer=optimizer,
                         loss=train_mae_loss,
+                        override=override,
                     )
 
             result[str(i)] = tmp

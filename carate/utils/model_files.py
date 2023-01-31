@@ -69,17 +69,26 @@ def save_model_training_checkpoint(
     model_net: Type[torch.nn.Module],
     optimizer: Type[torch.optim.Optimizer],
     loss: float,
+    override: bool,
 ) -> None:
 
     # For any bug fixing please refer to https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
 
     prefix = result_save_dir + "/checkpoints/CV_" + str(num_cv)
     check_make_dir(prefix)
-    save_path = prepare_file_name_saving(
-        prefix=prefix,
-        file_name=dataset_name + "_Epoch-" + str(num_epoch),
-        suffix=".tar",
-    )
+
+    if override is True:
+        save_path = prepare_file_name_saving(
+            prefix=prefix,
+            file_name=dataset_name,
+            suffix=".tar",
+        )
+    if override is False:
+        save_path = prepare_file_name_saving(
+            prefix=prefix,
+            file_name=dataset_name + "_Epoch-" + str(num_epoch),
+            suffix=".tar",
+        )
     torch.save(
         {
             "epoch": num_epoch,
