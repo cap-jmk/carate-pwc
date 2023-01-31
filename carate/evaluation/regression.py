@@ -94,8 +94,7 @@ class RegressionEvaluation(Evaluation):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
@@ -140,7 +139,6 @@ class RegressionEvaluation(Evaluation):
 
         # data container
         result = {}
-        test_mae = []
         test_mse = []
         train_mae = []
         train_mse = []
@@ -162,7 +160,7 @@ class RegressionEvaluation(Evaluation):
                 batch_size=batch_size,
                 shuffle=shuffle,
             )
-
+            del train_dataset, test_dataset
             norm_factor = self.__normalization_factor(
                 data_set=loaded_data_set, num_classes=num_classes
             )

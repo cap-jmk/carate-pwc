@@ -90,8 +90,7 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
@@ -149,10 +148,7 @@ class Evaluation(DefaultObject):
             override,
         ) = self._get_defaults(locals())
         result = []
-        acc_store_train = []
-        acc_store_test = []
-        auc_store = []
-        loss_store = []
+
         tmp = {}
         save_model_parameters(model_net, save_dir=result_save_dir)
         for i in range(num_cv):
@@ -169,6 +165,12 @@ class Evaluation(DefaultObject):
                 batch_size=batch_size,
                 shuffle=shuffle,
             )
+            # storage containers
+
+            acc_store_train = []
+            acc_store_test = []
+            auc_store = []
+            loss_store = []
 
             for epoch in range(1, num_epoch + 1):
 
@@ -302,7 +304,7 @@ class Evaluation(DefaultObject):
         :param epoch: Used to keep track of the current epoch.
         :param model_net: Used to pass the model to the test function.
         :param device: Used to tell torch which device to use.
-        :param test=False: Used to distinguish between training 
+        :param test=False: Used to distinguish between training
         and testing.
         :return: The accuracy of the model on the test data.
 

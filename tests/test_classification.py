@@ -8,7 +8,7 @@ import shutil
 
 import torch
 
-from amarium.utils import search_subdirs
+from amarium.utils import search_subdirs, load_json_from_file
 
 from carate.run import RunInitializer
 import carate.models.cgc_classification as CGCC
@@ -103,6 +103,8 @@ def test_classification_no_override():
         "tests/results/ENZYMES/data/CV_0/ENZYMES.json",
         "tests/results/ENZYMES/data/CV_1/ENZYMES.json",
     ]
+    result_cv1 = load_json_from_file("tests/results/ENZYMES/data/CV_1/ENZYMES.json")
+    assert len(result_cv1["Loss"]) == 2
     for name in result_files:
         assert name in reference_files
 
@@ -115,6 +117,8 @@ def test_classification_no_override():
         "tests/results/ENZYMES/checkpoints/CV_0",
         "tests/results/ENZYMES/checkpoints/CV_1",
     ]
+
+
     assert len(result_dirs) == 2
     for dir_name in result_dirs:
         assert dir_name in reference_dirs
