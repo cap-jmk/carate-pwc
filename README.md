@@ -4,6 +4,9 @@
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%20-blue) 
 ![Style Black](https://warehouse-camo.ingress.cmh1.psfhosted.org/fbfdc7754183ecf079bc71ddeabaf88f6cbc5c00/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f64652532307374796c652d626c61636b2d3030303030302e737667) 
 
+![Bert goes into the karate club](bert_goes_into_the_karate_club.png)
+
+
 # Why 
 
 Molecular representation is wrecked. Seriously! We chemists talked  for decades with an ancient language about something we can't comprehend with that language. It has to stop. Now!
@@ -41,6 +44,8 @@ pip install torch-spline-conv
 
 # Usage 
 
+The program is meant to be run as a simple CLI. You can specify the configuration either via a `JSON` and use the program as a microservice, or you may run it locally from the command line. It is up to you. 
+
 ```bash 
 bash install.sh
 ```
@@ -61,9 +66,13 @@ given network.
 
 Therefore any ETL or data processing might not be affected by any interruption on the training machine.
 
-# Outlook 
+# Results
 
-The program is meant to be run as a simple CLI. Not quite there yet. 
+In case you can't wait for the picky scientist in me, you can still build on my intermediate results. You can find them in the following locations 
+
+* [Google Drive](https://drive.google.com/drive/folders/1ikY_EW-Uadkybb--TvxXFgoZtCQtniyH?usp=sharing)
+
+
 
 # Cite 
 

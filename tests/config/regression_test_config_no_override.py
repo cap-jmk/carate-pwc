@@ -16,3 +16,4 @@ result_save_dir = "tests/results/ZINC_test"
 data_set = "StandardTUD"
 model_save_freq = 1
 override = False
+device = "auto"

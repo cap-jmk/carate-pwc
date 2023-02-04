@@ -52,6 +52,7 @@ class Evaluation(DefaultObject):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
+        device: torch.device,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -64,14 +65,18 @@ class Evaluation(DefaultObject):
     ) -> None:
         """
 
-        :param self: Used to Refer to the object instance itself, and is used to access variables that belongs to the class.
+        :param self: Used to Refer to the object instance itself, and is used to
+        access variables that belongs to the class.
         :param model: Used to Specify the model that will be trained.
-        :param optimizer: Used to Define the optimizer that will be used to train the model.
-        :param data_set:Type[DatasetObject]: Used to Specify the type of data loader that is used. Is implemented according to
-                                             the interface given in load_data.py by the class DatasetObject.load_data().
+        :param optimizer: Used to Define the optimizer that will be used
+        to train the model.
+        :param data_set:Type[DatasetObject]: Used to Specify the type of data loader
+        that is used. Is implemented according to the interface given in load_data.py
+        by the class DatasetObject.load_data().
 
         :param epoch:int=150: Used to Set the number of epochs to train for.
-        :param num_cv:int=5: Used to Specify the number of cross validations that will be used in the training process.
+        :param num_cv:int=5: Used to Specify the number of cross validations
+        that will be used in the training process.
         :param num_classes:int=2: Used to Define the number of classes in the dataset.
         :param out_dir:str="out": Used to Specify the directory where the output of your training will be stored.
         :return: The following:.
@@ -90,7 +95,7 @@ class Evaluation(DefaultObject):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
@@ -187,7 +192,6 @@ class Evaluation(DefaultObject):
                     train_loader,
                     device=device,
                     model_net=model_net,
-                    epoch=epoch,
                     test=False,
                 )  # test False for storing the results
                 test_acc, self.train_store = self.test(
@@ -204,18 +208,18 @@ class Evaluation(DefaultObject):
                         epoch, train_loss, train_acc, test_acc
                     )
                 )
-                y = np.zeros((len(test_dataset)))
-                x = self.train_store
+                preds = np.zeros((len(test_dataset)))
+                features = self.train_store
 
                 for j in range(len(test_dataset)):
-                    y[j] = test_dataset[j].y
+                    preds[j] = test_dataset[j].y
 
-                y = torch.as_tensor(y)
-                y = F.one_hot(y.long(), num_classes=num_classes)
+                preds = torch.as_tensor(preds)
+                preds = F.one_hot(preds.long(), num_classes=num_classes)
                 store_auc = []
 
-                for j in range(len(x[0, :])):
-                    auc = metrics.roc_auc_score(y[:, j], x[:, j])
+                for j in range(len(features[0, :])):
+                    auc = metrics.roc_auc_score(preds[:, j], features[:, j])
                     logging.info("AUC of " + str(j) + "is:" + str(auc))
                     store_auc.append(auc)
 
@@ -253,7 +257,8 @@ class Evaluation(DefaultObject):
     ):
         """
         The train function is used to train the model.
-           The function takes in a number of epochs and a model, and returns the accuracy on the test set.
+        The function takes in a number of epochs and a model, 
+        and returns the accuracy on the test set.
 
         :param epoch: Used to Determine when to stop training.
         :param model: Used to Pass the model to the function.
@@ -290,7 +295,6 @@ class Evaluation(DefaultObject):
     def test(
         self,
         test_loader: torch.utils.data.DataLoader,
-        epoch: int,
         model_net: Model,
         device: torch.device,
         **kwargs: Any,
@@ -389,18 +393,29 @@ class Evaluation(DefaultObject):
         override: bool = True,
     ) -> None:
         """
-        The save_whole_checkpoint function saves the model checkpoint and results for a given epoch.
+        The save_whole_checkpoint function saves the model checkpoint and
+        results for a given epoch.
 
-        The save_whole_checkpoint function saves the model checkpoint and results for a given epoch. It is called by the train function in order to save checkpoints at regular intervals during training, as well as after each cross-validation fold has been trained on. The saved files are used to resume training if it is interrupted, or to evaluate performance of different models on test data without having to retrain them from scratch.
+        The save_whole_checkpoint function saves the model checkpoint
+        and results for a given epoch. It is called by the train function
+        in order to save checkpoints at regular intervals during training,
+        as well as after each cross-validation fold has been trained on.
+        The saved files are used to resume training if it is interrupted,
+        or to evaluate performance of different models on test data without
+        having to retrain them from scratch.
 
         :param self: Used to Represent the instance of the class.
-        :param result_save_dir:str: Used to Specify the directory where the checkpoint will be saved.
+        :param result_save_dir:str: Used to Specify the directory where
+        the checkpoint will be saved.
         :param dataset_name:str: Used to Name the dataset.
         :param num_cv:int: Used to Specify the cross validation number.
-        :param num_epoch:int: Used to Specify the number of epochs that have been completed.
+        :param num_epoch:int: Used to Specify the number of epochs that have
+        been completed.
         :param model_net:Type[torch.nn.Module]: Used to Save the model.
-        :param data:dict: Used to Save the data, which is a dictionary containing the training and validation data.
-        :param optimizer:Type[torch.optim.Optimizer]: Used to Save the optimizer state.
+        :param data:dict: Used to Save the data, which is a dictionary containing
+        the training and validation data.
+        :param optimizer:Type[torch.optim.Optimizer]: Used to Save the optimizer
+        state.
         :param loss:float: Used to Save the loss value.
         :param override:bool=True: Used to Override the previous checkpoint.
         :param : Used to Save the model.

@@ -7,7 +7,7 @@ backcall==0.2.0
 black==22.12.0
 bleach==5.0.1
 build==0.9.0
--e git+http://raspberrytea/cap_jmk/carate-new.git@2fdf556bf225e02d6de79a1b95da7178e726d03a#egg=carate
+-e git+http://raspberrytea/cap_jmk/carate-new.git@d76db0e58b2d7517d653dcfeb2116e18c2e5a579#egg=carate
 certifi==2022.9.24
 cffi==1.15.1
 charset-normalizer==2.1.1
@@ -54,6 +54,10 @@ mypy-extensions==0.4.3
 nest-asyncio==1.5.6
 networkx==2.8.8
 numpy==1.23.4
+nvidia-cublas-cu11==11.10.3.66
+nvidia-cuda-nvrtc-cu11==11.7.99
+nvidia-cuda-runtime-cu11==11.7.99
+nvidia-cudnn-cu11==8.5.0.96
 packaging==21.3
 pandas==1.5.2
 parso==0.8.3
@@ -96,7 +100,7 @@ stack-data==0.6.1
 threadpoolctl==3.1.0
 tomli==2.0.1
 tomlkit==0.11.6
-torch==1.13.1+cpu
+torch==1.13.1
 torch-cluster==1.6.0
 torch-geometric==2.2.0
 torch-scatter==2.1.0

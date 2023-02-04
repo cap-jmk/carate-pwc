@@ -20,8 +20,6 @@ logging.basicConfig(
     format="%(asctime)s %(message)s",
 )
 
-# TODO add options for the other parameters to omit config file if wanted
-
 
 class Run(DefaultObject):
     """
@@ -125,13 +123,12 @@ class RunInitializer:
 
         :doc-author: Julian M. Kleber
         """
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+       
         model_net = config.model.Net(
             dim=int(config.net_dimension),
             num_classes=int(config.num_classes),
             num_features=int(config.num_features),
-        ).to(device)
+        ).to(config.device)
         optimizer = get_optimizer(
             optimizer_str=config.optimizer,
             model_net=model_net,
@@ -139,7 +136,7 @@ class RunInitializer:
         )
         return Run(
             dataset_name=config.dataset_name,
-            device=device,
+            device=config.device,
             num_classes=config.num_classes,
             num_features=config.num_features,
             Evaluation=config.Evaluation,

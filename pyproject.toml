@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.1.7"
+version = "0.2.4"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
@@ -19,13 +19,15 @@ classifiers = [
 dependencies = [
     "torchvision",
     "torchaudio",
-    "torch-scatter",
     "torch-geometric",
     "rdkit-pypi",
     "networkx[default]",
     "matplotlib",  
+    "Click", 
     "torch-sparse",
-    "Click"]
+    "torch-scatter", 
+    "amarium", 
+    "black"]
 
 [project.urls]
 "Homepage" = "https://www.codeberg.org/sail.black/carate.git"

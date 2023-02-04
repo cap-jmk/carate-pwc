@@ -64,6 +64,7 @@ class Config:
         data_set: DatasetObject,
         model: Any,
         optimizer: str,
+        device:str="auto",
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -75,9 +76,10 @@ class Config:
         override: bool = True,
     ):
 
-        # fill with maps
+        # modelling
         self.model = model
         self.optimizer = optimizer
+        self.device = device
         self.Evaluation = Evaluation
         self.data_set = data_set
 
@@ -100,6 +102,7 @@ class Config:
         self.model_save_freq = model_save_freq
         self.override = override
 
+        
 
 class ConfigInitializer:
     @classmethod
@@ -133,6 +136,14 @@ class ConfigInitializer:
 
         :doc-author: Julian M. Kleber
         """
+        if json_object["device"] == "cpu":
+            device = torch.device("cpu")
+        elif json_object["device"] == "cuda": 
+            device = torch.device("cuda")
+        elif json_object["device"] == "auto": 
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        else: 
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
@@ -151,12 +162,14 @@ class ConfigInitializer:
             data_set=data_set,
             result_save_dir=json_object["result_save_dir"],
             model_save_freq=json_object["model_save_freq"],
+            device = device
         )
         json_object["override"] = convert_str_to_bool(json_object["override"])
 
         return Config(
             model=MODEL_MAP[json_object["model"]],
             optimizer=json_object["optimizer"],
+            device=device, 
             Evaluation=evaluation,
             data_set=data_set,
             # model parameters
