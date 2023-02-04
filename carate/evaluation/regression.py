@@ -4,11 +4,11 @@ Evaulation object for classification
 import torch
 import numpy as np
 import numpy.typing as npt
-from typing import Type, Optional, Any, Tuple, Dict
+from typing import Type, Any, Tuple, Dict
 
 from carate.evaluation.base import Evaluation
-from carate.load_data import DatasetObject, StandardPytorchGeometricDataset
-from carate.utils.model_files import save_model_parameters, get_latest_checkpoint
+from carate.load_data import DatasetObject
+from carate.utils.model_files import save_model_parameters
 from carate.models.base_model import Model
 
 # TODO Logging done right
@@ -35,6 +35,7 @@ class RegressionEvaluation(Evaluation):
         model_net: Model,
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
+        device: torch.device,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -94,7 +95,7 @@ class RegressionEvaluation(Evaluation):
         self.data_set = data_set
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
@@ -278,7 +279,7 @@ class RegressionEvaluation(Evaluation):
             torch.cuda.empty_cache()
         return mae / len(test_loader), mse / len(
             test_loader
-        )  # TODO verify if necessary
+        )
 
     def __normalization_factor(
         self, data_set: Any, num_classes: int

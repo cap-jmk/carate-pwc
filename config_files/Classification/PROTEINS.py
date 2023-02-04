@@ -14,12 +14,6 @@ num_epoch = 5000
 num_cv = 3
 result_save_dir = "./PROTEINS_20"
 data_set = "StandardTUD"
-model_save_freq = 30
-
-if __name__ == "__main__":
-
-    from carate.run import RunInitializer
-
-    config_filepath = "./PROTEINS.py"
-    runner = RunInitializer.from_file(config_filepath=config_filepath)
-    runner.run()
+model_save_freq = 500
+override = False
+device = "cpu"
