@@ -9,7 +9,7 @@
 
 # Why 
 
-Molecular representation is wrecked. Seriously! We chemists talked  for decades with an ancient language about something we can't comprehend with that language. It has to stop. Now!
+Molecular representation is wrecked. Seriously! We chemists talked for decades with an ancient language about something we can't comprehend with that language. We have to stop it, now!
 
 # What 
 
@@ -27,6 +27,8 @@ For a chemist it is quite intuitive but seldomly modelled as such: A molecule ex
 # Scope
 
 The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](https://codeberg.org/sail.black/chembee.git) pattern. Actually, the chembee pattern is mimicked in this project to provide a stand alone tool. The overall structure of the program is reusable for other deep-learning projects and will be transferred to an own project that should work similar to opinionated frameworks. 
+
+
 
 # Installation on CPU 
 
@@ -71,6 +73,12 @@ Therefore any ETL or data processing might not be affected by any interruption o
 In case you can't wait for the picky scientist in me, you can still build on my intermediate results. You can find them in the following locations 
 
 * [Google Drive](https://drive.google.com/drive/folders/1ikY_EW-Uadkybb--TvxXFgoZtCQtniyH?usp=sharing)
+
+# Support the development
+
+If you are happy about substantial progress in chemistry and life sciences that is not commercial first but cititzen first, well then just
+
+<a href="https://www.buymeacoffee.com/capjmk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
 
 
