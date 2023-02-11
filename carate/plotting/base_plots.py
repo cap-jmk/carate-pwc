@@ -18,7 +18,7 @@ def plot_range_band(result: List[Dict[str, float]], key_val: str) -> None:
     print(arr_res.shape)
     for i, res in enumerate(result):
         print((len(res[key_val])))
-        arr_res[i, :] = res[key_val] #TOOD fix the shapes
+        arr_res[i, :] = res[key_val]  # TOOD fix the shapes
 
 
 def get_stacked_list(

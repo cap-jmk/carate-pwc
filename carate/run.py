@@ -123,7 +123,7 @@ class RunInitializer:
 
         :doc-author: Julian M. Kleber
         """
-       
+
         model_net = config.model.Net(
             dim=int(config.net_dimension),
             num_classes=int(config.num_classes),
