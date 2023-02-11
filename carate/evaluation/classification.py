@@ -9,7 +9,5 @@ from carate.load_data import DatasetObject
 
 
 class ClassificationEvaluation(Evaluation):
-
-
     def __repr__(self) -> str:
         return "Classification Evaluation Object"

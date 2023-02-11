@@ -257,7 +257,7 @@ class Evaluation(DefaultObject):
     ):
         """
         The train function is used to train the model.
-        The function takes in a number of epochs and a model, 
+        The function takes in a number of epochs and a model,
         and returns the accuracy on the test set.
 
         :param epoch: Used to Determine when to stop training.

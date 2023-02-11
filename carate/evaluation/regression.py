@@ -277,9 +277,7 @@ class RegressionEvaluation(Evaluation):
             loss = torch.nn.MSELoss()
             mse += loss_mae(output_probs, data.y).item()
             torch.cuda.empty_cache()
-        return mae / len(test_loader), mse / len(
-            test_loader
-        )
+        return mae / len(test_loader), mse / len(test_loader)
 
     def __normalization_factor(
         self, data_set: Any, num_classes: int
