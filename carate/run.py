@@ -33,6 +33,7 @@ class Run(DefaultObject):
         num_classes: int,
         result_save_dir: str,
         model_save_freq: int,
+        resume:bool,
         data_set: DatasetObject,
         Evaluation: Evaluation,
         model_net: Model,
@@ -74,6 +75,7 @@ class Run(DefaultObject):
 
         self.data_set = data_set
         self.override = override
+        self.resume = resume
 
     def run(self) -> None:
 
@@ -93,6 +95,7 @@ class Run(DefaultObject):
             result_save_dir=self.result_save_dir,
             model_save_freq=int(self.model_save_freq),
             override=self.override,
+            resume=self.resume
         )
 
 
@@ -155,4 +158,5 @@ class RunInitializer:
             data_set=config.data_set,
             model_save_freq=int(config.model_save_freq),
             override=config.override,
+            resume = config.resume
         )

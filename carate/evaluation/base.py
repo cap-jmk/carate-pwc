@@ -53,6 +53,7 @@ class Evaluation(DefaultObject):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         device: torch.device,
+        resume: bool,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -100,6 +101,7 @@ class Evaluation(DefaultObject):
         self.model_save_freq = model_save_freq
         self.override = override
         self.train_store = None
+        self.resume = resume
 
     def cv(
         self,
@@ -109,6 +111,7 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
+        resume: bool,
         data_set: DatasetObject,
         shuffle: bool,
         batch_size: int,
@@ -124,7 +127,7 @@ class Evaluation(DefaultObject):
         the run and returned as json at the end of the run.
 
         :param self: Used to Represent the instance of the class.
-        :param num_cv:int: Used to Specify the number of cross-validation folds.
+        :param num_cv:int: Used to specify the number of cross-validation folds.
         :param num_epoch:int: Used to Specify the number of epochs to train for.
         :param num_classes:int: Used to Determine the number of classes in the dataset.
         :param dataset_name:str: Used to Specify the name of the dataset to be used.
@@ -142,6 +145,7 @@ class Evaluation(DefaultObject):
             dataset_name,
             dataset_save_path,
             test_ratio,
+            resume,
             data_set,
             shuffle,
             batch_size,

@@ -36,6 +36,7 @@ class RegressionEvaluation(Evaluation):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         device: torch.device,
+        resume:bool,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -99,6 +100,7 @@ class RegressionEvaluation(Evaluation):
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
+        self.resume = resume
 
     def cv(
         self,
@@ -108,6 +110,7 @@ class RegressionEvaluation(Evaluation):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
+        resume: bool,
         data_set: DatasetObject,
         shuffle: bool,
         batch_size: int,
@@ -127,6 +130,7 @@ class RegressionEvaluation(Evaluation):
             dataset_name,
             dataset_save_path,
             test_ratio,
+            resume,
             data_set,
             shuffle,
             batch_size,
