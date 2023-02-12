@@ -48,27 +48,37 @@ pip install torch-spline-conv
 
 The program is meant to be run as a simple CLI. You can specify the configuration either via a `JSON` and use the program as a microservice, or you may run it locally from the command line. It is up to you. 
 
+Finally, with the new `pyproject.toml` it is possible to 
 ```bash 
-bash install.sh
+pip install carate
 ```
+The installation will install torch with CUDA, so the decision of the library what hardware to use goes JIT (just-in-time). At the moment only CPU/GPU is implemented and FPGA/TPU and others are ignored. Further development of the package will then focus on avoiding special library APIs but make the pattern adaptable to an arbitrary algorithmic/numerical backend.
 
 ```bash
 carate -c path_to_config_file.py
 ```
 
-Examples for `config.py` files are given in `config_files`
+## Start a run
 
+To start a run you need to define the configuration. You can do so by defining a `.json` or a `config.py` file
+
+Examples for `config.py` files are given in `config_files`
 
 Or you can check the the `tutorial.ipynb` in `notebooks` how to use the package with a `.json` file 
 
 ## Training results 
 
-Most of the training results are saved in pairs. The reason for this data structure is simply that the training can be interrupted for any reason. However the current result may still be saved or sent across a 
-given network. 
+Most of the training results are saved in a accumulative json on the disk. The reason is to have enough redundancy in case of data failure. 
 
-Therefore any ETL or data processing might not be affected by any interruption on the training machine.
+Previous experiments suggest to harden the machine for training to avoid unwanted side-effects as shutdowns, data loss, or data diffusion. You may still send intermediate results through the network, but store the large chunks on the hardened device.
 
-# Results
+Therefore, any ETL or data processing might not be affected by any interruption on the training machine.
+
+# Build on the project
+
+Building on the code is not recommended as the project will be continued in another library (building with that would make most sense). 
+
+However, you may still use the models as they are by the means of the library production ready.
 
 In case you can't wait for the picky scientist in me, you can still build on my intermediate results. You can find them in the following locations 
 
@@ -76,7 +86,7 @@ In case you can't wait for the picky scientist in me, you can still build on my 
 
 # Support the development
 
-If you are happy about substantial progress in chemistry and life sciences that is not commercial first but cititzen first, well then just
+If you are happy about substantial progress in chemistry and life sciences that is not commercial first but citizen first, well then just
 
 <a href="https://www.buymeacoffee.com/capjmk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
