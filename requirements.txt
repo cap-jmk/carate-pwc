@@ -7,7 +7,6 @@ backcall==0.2.0
 black==22.12.0
 bleach==5.0.1
 build==0.9.0
--e git+http://raspberrytea/cap_jmk/carate-new.git@daac35840d64cb09cc5d10d17098f4845c7e83e7#egg=carate
 certifi==2022.9.24
 cffi==1.15.1
 charset-normalizer==2.1.1
