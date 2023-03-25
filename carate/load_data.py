@@ -60,7 +60,6 @@ class DatasetObject(ABC, DefaultObject, torch.utils.data.Dataset):
 
 
 class StandardPytorchGeometricDataset(DatasetObject):
-
     DataSet: torch.utils.data.Dataset
 
     @classmethod

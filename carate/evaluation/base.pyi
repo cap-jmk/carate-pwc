@@ -64,7 +64,7 @@ class Evaluation(DefaultObject):
         train_loader: torch.utils.data.Dataset,
         optimizer: torch.optim.Optimizer,
         num_classes: int,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> float: ...
     def test(
         self,
@@ -72,7 +72,7 @@ class Evaluation(DefaultObject):
         epoch: int,
         model_net: Model,
         device: torch.device,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Any: ...
     def save_result(
         self,

@@ -36,7 +36,7 @@ class RegressionEvaluation(Evaluation):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         device: torch.device,
-        resume:bool,
+        resume: bool,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -121,7 +121,6 @@ class RegressionEvaluation(Evaluation):
         model_save_freq: int,
         override: bool = True,
     ) -> Dict[str, Any]:
-
         # initialize
         (
             num_cv,
@@ -286,7 +285,6 @@ class RegressionEvaluation(Evaluation):
     def __normalization_factor(
         self, data_set: Any, num_classes: int
     ) -> npt.NDArray[np.float64]:
-
         y = np.zeros((len(data_set), 1, num_classes))
         for i in range(len(data_set)):
             y[i, :, :] = data_set[i].y

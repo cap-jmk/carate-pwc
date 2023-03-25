@@ -74,9 +74,8 @@ class Config:
         num_cv: int = 5,
         num_epoch: int = 150,
         override: bool = True,
-        resume:bool=False
+        resume: bool = False,
     ):
-
         # modelling
         self.model = model
         self.optimizer = optimizer
@@ -104,6 +103,7 @@ class Config:
         self.override = override
 
         self.resume = resume
+
 
 class ConfigInitializer:
     @classmethod
@@ -148,9 +148,9 @@ class ConfigInitializer:
             device = torch.device(
                 "cuda" if torch.cuda.is_available() else "cpu")
 
-        if "resume" in list(json_object.keys()): 
+        if "resume" in list(json_object.keys()):
             resume = json_object["resume"]
-        else: 
+        else:
             resume = False
 
         data_set = DATA_SET_MAP[json_object["data_set"]](
@@ -171,7 +171,7 @@ class ConfigInitializer:
             result_save_dir=json_object["result_save_dir"],
             model_save_freq=json_object["model_save_freq"],
             device=device,
-            resume=resume
+            resume=resume,
         )
         json_object["override"] = convert_str_to_bool(json_object["override"])
 
@@ -197,5 +197,5 @@ class ConfigInitializer:
             result_save_dir=str(json_object["result_save_dir"]),
             model_save_freq=int(json_object["model_save_freq"]),
             override=json_object["override"],
-            resume=resume
+            resume=resume,
         )

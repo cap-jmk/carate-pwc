@@ -57,6 +57,5 @@ def get_accuracy(json_object: Dict[Any, List[float]]) -> List[float]:
 
 
 def get_auc(json_object: Dict[Any, List[float]]) -> List[float]:
-
     auc = json_object["AUC"]
     return auc

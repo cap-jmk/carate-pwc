@@ -182,7 +182,6 @@ class Evaluation(DefaultObject):
             loss_store = []
 
             for epoch in range(1, num_epoch + 1):
-
                 train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
@@ -235,7 +234,6 @@ class Evaluation(DefaultObject):
                 tmp["AUC"] = list(auc_store)
 
                 if epoch % model_save_freq == 0:
-
                     self.save_whole_checkpoint(
                         result_save_dir=result_save_dir,
                         dataset_name=dataset_name,
