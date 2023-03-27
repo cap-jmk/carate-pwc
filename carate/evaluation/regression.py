@@ -11,7 +11,8 @@ from carate.load_data import DatasetObject
 from carate.utils.model_files import save_model_parameters
 from carate.models.base_model import Model
 
-# TODO Logging done right
+# TODO Logging done right, check cc 
+
 import logging
 
 logging.basicConfig(
