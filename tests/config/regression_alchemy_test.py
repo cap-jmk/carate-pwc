@@ -1,6 +1,6 @@
-dataset_name = "alchemy_full_test"
-num_classes = 1
-num_features = 18
+dataset_name = "alchemy_full"
+num_classes = 12
+num_features = 6
 model = "cgc_regression"
 evaluation = "regression"
 optimizer = "adams"  # defaults to adams optimizer

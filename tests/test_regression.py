@@ -33,7 +33,7 @@ def test_regression_multitaksing():
     check_dir_paths()
     config_filepath = "tests/config/regression_alchemy_test.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
-    result_dir = ""
+    result_dir = "tests/results/ALCHEMY_test"
     assert str(runner.data_set) == "StandardTUDataset"
     runner.run()  # takes instance attributes as parameters for the run() function
     

@@ -47,6 +47,7 @@ class RegressionEvaluation(Evaluation):
         shuffle: bool = True,
         model_save_freq: int = 100,
         override: bool = True,
+        normalize:bool = True
     ):
         """
         The __init__ function is called when the class is instantiated.
@@ -102,6 +103,7 @@ class RegressionEvaluation(Evaluation):
         self.model_save_freq = model_save_freq
         self.override = override
         self.resume = resume
+        self.normalize = normalize
 
     def cv(
         self,
@@ -121,6 +123,7 @@ class RegressionEvaluation(Evaluation):
         result_save_dir: str,
         model_save_freq: int,
         override: bool = True,
+        normalize:bool = True
     ) -> Dict[str, Any]:
         # initialize
         (
@@ -140,6 +143,7 @@ class RegressionEvaluation(Evaluation):
             result_save_dir,
             model_save_freq,
             override,
+            normalize
         ) = self._get_defaults(locals())
 
         # data container
@@ -166,9 +170,13 @@ class RegressionEvaluation(Evaluation):
                 shuffle=shuffle,
             )
             del train_dataset, test_dataset
-            norm_factor = self.__normalization_factor(
-                data_set=loaded_data_set, num_classes=num_classes
-            )
+
+            if normalize:
+                norm_factor = self.__normalization_factor(
+                    data_set=loaded_data_set, num_classes=num_classes
+                )
+            else: 
+                norm_factor = 1.0
             for epoch in range(1, num_epoch + 1):
                 train_mae_loss = self.train(
                     model_net=model_net,
@@ -236,13 +244,16 @@ class RegressionEvaluation(Evaluation):
         num_classes: int,
         **kwargs: Any,
     ) -> float:
-        norm_factor = float(kwargs["norm_factor"])
+
+
+        norm_factor: npt.NDArray[np.float64] = kwargs["norm_factor"]
         model_net.train()
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = (data.y.numpy()) / norm_factor
-            data.y = torch.from_numpy(data.y).type(torch.FloatTensor)
+            if norm_factor.all() != 1.0:
+                data.y = data.y / norm_factor
+
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
             optimizer.zero_grad()
@@ -266,13 +277,16 @@ class RegressionEvaluation(Evaluation):
         device: torch.device,
         **kwargs: Any,
     ) -> Tuple[float, float]:
-        norm_factor = float(kwargs["norm_factor"])
+        norm_factor: npt.NDArray[np.float64] = kwargs["norm_factor"]
         model_net.eval()
         mae = 0
         mse = 0
         for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
-            data.y = data.y / norm_factor
+
+            if norm_factor.all() != 0:
+                data.y = data.y / norm_factor
+            
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
             output_probs = model_net(data.x, data.edge_index, data.batch)
