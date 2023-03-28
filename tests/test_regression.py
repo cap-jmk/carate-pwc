@@ -28,57 +28,66 @@ logging.basicConfig(
 
 
 
-def test_regression_multitaksing():
-
-    check_dir_paths()
-    config_filepath = "tests/config/regression_alchemy_test.py"
-    runner = RunInitializer.from_file(config_filepath=config_filepath)
-    result_dir = "tests/results/ALCHEMY_test"
-    assert str(runner.data_set) == "StandardTUDataset"
-    runner.run()  # takes instance attributes as parameters for the run() function
-    
-    check_result_files(result_dir=result_dir)
 
 
 def test_regression_override():
 
     check_dir_paths()
     config_filepath = "tests/config/regression_test_config_override.py"
+    run_title = "ZINC_test"
+    data_set_name = "ZINC_test"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
-    result_dir = "tests/results/ZINC_test"
+    result_dir = f"tests/results/{run_title}"
     assert str(runner.data_set) == "StandardTUDataset"
     runner.run()  # takes instance attributes as parameters for the run() function
 
-    check_result_files(result_dir=result_dir)
+    assert check_result_files(result_dir=result_dir, run_title=run_title, data_set_name = data_set_name)
     
 def test_regression_no_override():
 
     check_dir_paths()
 
     config_filepath = "tests/config/regression_test_config_no_override.py"
+    run_title = "ZINC_test"
+    data_set_name = "ZINC_test"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
-    result_dir = "tests/results/ZINC_test/"
+    result_dir = f"tests/results/{run_title}/"
     assert str(runner.data_set) == "StandardTUDataset"
     runner.run()  # takes instance attributes as parameters for the run() function
 
-    check_result_files(result_dir=result_dir, override=True)
+    assert check_result_files(result_dir=result_dir, run_title = run_title, data_set_name = data_set_name,  override=True)
 
-def check_result_files(result_dir:str, override:bool=False)->bool: 
-    """
-    The check_files function checks the files in the result directory.
-    It checks if there are two subdirectories called CV_0 and CV_2, which contain a file called 
-    ZINC_test.json.Furthermore it checks if there is a subdirectory called checkpoints, which 
-    contains two directories named CV_0 and CV_2 with a file named ZINC-test.tar inside each of 
-    them.
+def test_regression_multitaksing():
+
+    check_dir_paths()
+    config_filepath = "tests/config/regression_alchemy_test.py"
+    run_title = "ALCHEMY_test"
+    data_set_name = "alchemy_full"
+    runner = RunInitializer.from_file(config_filepath=config_filepath)
+    result_dir = f"tests/results/{run_title}"
+    assert str(runner.data_set) == "StandardTUDataset"
+    runner.run()  # takes instance attributes as parameters for the run() function
     
-    :param result_dir:str: Used to Specify the directory where the results are stored.
-    :return: True if all the files are found.
+    assert check_result_files(result_dir=result_dir, data_set_name=data_set_name, run_title=run_title, override=True)
+
+#utility functions
+
+def check_result_files(result_dir:str, run_title:str, data_set_name:str, override:bool=False)->bool: 
+    """
+    The check_result_files function checks the result files in the directory specified by result_dir.
+    The function checks if there are two subdirectories, CV_0 and CV_2, which contain a 
+    file ZINC_test.json each. It also checks if there are two tar files in the checkpoint directory
+    with names ZINC_test.tar and ZINC-CV-0/ZINC-CV-2 respectively.
+    
+    :param result_dir:str: Used to Specify the directory where the results are saved.
+    :param run_title:str: Used to Create a unique directory name for the results.
+    :param override:bool=False: Used to Check if the override parameter is set to false, which means
+     that it will only save the best model.
+    :return: True if the result files are present and false otherwise.
     
     :doc-author: Trelent
     """
     
-
-
     if not result_dir.endswith("/"): 
         result_dir += "/"
 
@@ -100,8 +109,8 @@ def check_result_files(result_dir:str, override:bool=False)->bool:
 
     assert len(result_files) == 2
     reference_files = [
-        data_dir+"CV_0/ZINC_test.json",
-        data_dir+"CV_1/ZINC_test.json",
+        data_dir+f"CV_0/{data_set_name}.json",
+        data_dir+f"CV_1/{data_set_name}.json",
     ]
     for name in result_files:
         assert name in reference_files
@@ -123,17 +132,17 @@ def check_result_files(result_dir:str, override:bool=False)->bool:
     if override == False:
         assert len(result_files) == 2
         reference_files = [
-            checkpoint_dir+"CV_0/ZINC_test.tar",
-            checkpoint_dir+"CV_1/ZINC_test.tar",
+            checkpoint_dir+f"CV_0/{run_title}.tar",
+            checkpoint_dir+f"CV_1/{run_title}.tar",
         ]
        
     else:
         assert len(result_files) == 4
         reference_files = [
-            checkpoint_dir+"CV_0/ZINC_test_Epoch-1.tar",
-            checkpoint_dir+"CV_0/ZINC_test_Epoch-2.tar",
-            checkpoint_dir+"CV_1/ZINC_test_Epoch-1.tar",
-            checkpoint_dir+"CV_1/ZINC_test_Epoch-2.tar",
+            checkpoint_dir+f"CV_0/{data_set_name}_Epoch-1.tar",
+            checkpoint_dir+f"CV_0/{data_set_name}_Epoch-2.tar",
+            checkpoint_dir+f"CV_1/{data_set_name}_Epoch-1.tar",
+            checkpoint_dir+f"CV_1/{data_set_name}_Epoch-2.tar",
         ] 
     for name in result_files:
                 assert name in reference_files
@@ -143,6 +152,7 @@ def check_result_files(result_dir:str, override:bool=False)->bool:
     assert "model_architecture.json" in result_dir_content_data
 
     return True
+
 
 
 def check_dir_paths():

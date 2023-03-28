@@ -34,6 +34,7 @@ class Run(DefaultObject):
         result_save_dir: str,
         model_save_freq: int,
         resume: bool,
+        normalize: bool,
         data_set: DatasetObject,
         Evaluation: Evaluation,
         model_net: Model,
@@ -76,6 +77,7 @@ class Run(DefaultObject):
         self.data_set = data_set
         self.override = override
         self.resume = resume
+        self.normalize = normalize
 
     def run(self) -> None:
         self.Evaluation.cv(
@@ -156,4 +158,5 @@ class RunInitializer:
             model_save_freq=int(config.model_save_freq),
             override=config.override,
             resume=config.resume,
+            normalize = config.normalize
         )

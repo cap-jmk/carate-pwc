@@ -17,3 +17,4 @@ data_set = "StandardTUD"
 model_save_freq = 1
 override = True
 device = "auto"
+normalize = True

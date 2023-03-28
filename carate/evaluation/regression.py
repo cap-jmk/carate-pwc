@@ -47,7 +47,7 @@ class RegressionEvaluation(Evaluation):
         shuffle: bool = True,
         model_save_freq: int = 100,
         override: bool = True,
-        normalize:bool = True
+        normalize:bool = False
     ):
         """
         The __init__ function is called when the class is instantiated.
@@ -103,7 +103,8 @@ class RegressionEvaluation(Evaluation):
         self.model_save_freq = model_save_freq
         self.override = override
         self.resume = resume
-        self.normalize = normalize
+        self.normalize = normalize is not None
+        
 
     def cv(
         self,

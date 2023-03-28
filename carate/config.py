@@ -75,6 +75,7 @@ class Config:
         num_epoch: int = 150,
         override: bool = True,
         resume: bool = False,
+        normalize: bool = False
     ):
         # modelling
         self.model = model
@@ -82,6 +83,7 @@ class Config:
         self.device = device
         self.Evaluation = Evaluation
         self.data_set = data_set
+        self.normalize = normalize
 
         # model parameters
         self.dataset_name = dataset_name
@@ -103,6 +105,7 @@ class Config:
         self.override = override
 
         self.resume = resume
+        
 
 
 class ConfigInitializer:
@@ -153,6 +156,12 @@ class ConfigInitializer:
         else:
             resume = False
 
+        if "normalize" in json_object.keys(): 
+            normalize = json_object["normalize"]
+        else: 
+            normalize = False    
+
+
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
             dataset_name=json_object["dataset_name"],
@@ -198,4 +207,5 @@ class ConfigInitializer:
             model_save_freq=int(json_object["model_save_freq"]),
             override=json_object["override"],
             resume=resume,
+            normalize=normalize
         )
