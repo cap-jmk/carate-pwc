@@ -40,6 +40,7 @@ class DatasetObject(ABC, DefaultObject, torch.utils.data.Dataset):
         test_ratio: int,
         batch_size: int,
         shuffle: bool,
+        custom_size: Optional[int],
     ) -> None:
         raise NotImplementedError  # pragma: no cover
 
@@ -62,14 +63,15 @@ class DatasetObject(ABC, DefaultObject, torch.utils.data.Dataset):
 class StandardPytorchGeometricDataset(DatasetObject):
     DataSet: torch.utils.data.Dataset
 
-    @classmethod
+
     def load_data(
-        cls,
+        self,
         dataset_name: str,
         test_ratio: int,
         dataset_save_path: str,
         batch_size: int = 64,
         shuffle: bool = True,
+        custom_size: Optional[int] = None,
     ) -> List[torch.utils.data.DataLoader | torch.utils.data.Dataset]:
         """
         The load_dataset function loads a standard dataset, splits it into a training and testing set,
@@ -87,17 +89,37 @@ class StandardPytorchGeometricDataset(DatasetObject):
         """
 
         if shuffle:
-            dataset = cls.DataSet(
-                dataset_save_path, name=dataset_name).shuffle()
+            dataset = self.DataSet(dataset_save_path, name=dataset_name).shuffle()
         else:
-            dataset = cls.DataSet(dataset_save_path, name=dataset_name)
+            dataset = self.DataSet(dataset_save_path, name=dataset_name)
+
+        test_dataset, train_dataset, test_loader, train_loader = self.make_split(
+            dataset=dataset,
+            test_ratio=test_ratio,
+            batch_size=batch_size,
+            custom_size=custom_size,
+        )
+
+        return test_dataset, train_dataset, test_loader, train_loader, dataset
+
+    def make_split(
+        self,
+        dataset: torch.utils.data.Dataset,
+        test_ratio: int,
+        batch_size: int,
+        custom_size: Optional[int] = None,
+    ) -> List[torch.utils.data.DataLoader | torch.utils.data.Dataset]:
+        if custom_size == None:
+            custom_size = len(dataset)
+
+        dataset = dataset[:custom_size]
 
         test_dataset = dataset[: len(dataset) // test_ratio]
-        train_dataset = dataset[len(dataset) // test_ratio:]
+        train_dataset = dataset[len(dataset) // test_ratio :]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
 
-        return train_loader, test_loader, dataset, train_dataset, test_dataset
+        return [test_dataset, train_dataset, test_loader, train_loader]
 
 
 class StandardDatasetMoleculeNet(StandardPytorchGeometricDataset):
@@ -115,6 +137,7 @@ class StandardDatasetMoleculeNet(StandardPytorchGeometricDataset):
         test_ratio: int,
         batch_size: int,
         shuffle: bool = True,
+        custom_size: Optional[int] = None,
     ):
         """
         The __init__ function is called the constructor and is automatically called when you create a new instance of this class.

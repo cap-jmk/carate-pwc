@@ -7,7 +7,6 @@ from carate.utils.convert_to_json import convert_py_to_json, read_file
 
 
 def test_converter():
-
     ref_py = [
         "dataset_name = ZINC_test",
         "num_classes = 1",

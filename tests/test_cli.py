@@ -7,7 +7,6 @@ from amarium.utils import search_subdirs
 
 
 def test_cli_func():
-
     if os.path.isdir("tests/data"):
         shutil.rmtree("tests/data")
     if os.path.isdir("tests/results"):

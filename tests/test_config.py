@@ -3,7 +3,7 @@ Test to verify if the initialization of the config file is correct.
 
 :author: Julian M. Kleber
 """
-import torch 
+import torch
 from carate.load_data import StandardDatasetTUDataset
 
 from carate.config import Config, ConfigInitializer
@@ -32,6 +32,7 @@ def test_config():
     assert config.device == torch.device("cuda" if torch.cuda.is_available() else "cpu")
     assert config.result_save_dir == "tests/results/ENZYMES"
     assert config.data_set.__repr__() == "StandardTUDataset"
+
 
 def test_config_cpu():
     config_filepath = "tests/config/classification_test_config_no_override_cpu.py"

@@ -49,6 +49,7 @@ class Run(DefaultObject):
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
+        custom_size: Optional[int] = None,
     ) -> None:
         """
         Constructor
@@ -78,6 +79,7 @@ class Run(DefaultObject):
         self.override = override
         self.resume = resume
         self.normalize = normalize
+        self.custom_size = custom_size
 
     def run(self) -> None:
         self.Evaluation.cv(
@@ -97,6 +99,7 @@ class Run(DefaultObject):
             model_save_freq=int(self.model_save_freq),
             override=self.override,
             resume=self.resume,
+            custom_size = self.custom_size
         )
 
 
@@ -158,5 +161,6 @@ class RunInitializer:
             model_save_freq=int(config.model_save_freq),
             override=config.override,
             resume=config.resume,
-            normalize = config.normalize
+            normalize=config.normalize,
+            custom_size=config.custom_size,
         )

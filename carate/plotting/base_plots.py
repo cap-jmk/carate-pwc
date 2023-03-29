@@ -10,14 +10,14 @@ Plotting module for PyTorch prototyping
 """
 
 
-
-
 from typing import Type, Optional, Dict, Any, List, Tuple
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from amarium.utils import load_json_from_file, prepare_file_name_saving
 from collections import ChainMap
+
+
 def plot_range_band_multi(
     result: List[Dict[str, float]],
     key_vals: List[str],
@@ -43,8 +43,7 @@ def plot_range_band_multi(
     ax.set_ylabel("Value")
     ax.legend()
 
-    save_publication_graphic(
-        fig_object=fig, file_name=file_name, prefix=save_dir)
+    save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
 def plot_range_band_single(
@@ -71,8 +70,7 @@ def plot_range_band_single(
     min_val: List[float]
     avg_val: List[float]
 
-    max_val, min_val, avg_val = unpack_cross_validation(
-        result=result, key_val=key_val)
+    max_val, min_val, avg_val = unpack_cross_validation(result=result, key_val=key_val)
 
     fig, ax = plt.subplots()
     ax.plot(avg_val, "-")
@@ -81,8 +79,7 @@ def plot_range_band_single(
     ax.set_xlabel("Training step")
     ax.fill_between(min_val, max_val, alpha=0.2)
 
-    save_publication_graphic(
-        fig_object=fig, file_name=file_name, prefix=save_dir)
+    save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
 def unpack_cross_validation(

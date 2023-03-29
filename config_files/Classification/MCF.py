@@ -17,7 +17,6 @@ data_loader = "StandardTUD"
 model_save_freq = 30
 
 if __name__ == "__main__":
-
     from carate.run import RunInitializer
 
     config_filepath = "./MCF.py"
