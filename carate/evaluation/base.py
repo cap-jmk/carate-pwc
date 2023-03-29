@@ -4,7 +4,7 @@ The idea is to parametrize as much as possible.
 
 :author: Julian M. Kleber
 """
-from typing import Type, Any, Dict
+from typing import Type, Any, Dict, Optional
 import json
 import numpy as np
 
@@ -63,6 +63,7 @@ class Evaluation(DefaultObject):
         shuffle: bool = True,
         model_save_freq: int = 100,
         override: bool = True,
+        custom_size: Optional[int] = None
     ) -> None:
         """
 
@@ -102,6 +103,7 @@ class Evaluation(DefaultObject):
         self.override = override
         self.train_store = None
         self.resume = resume
+        self.custom_size = custom_size
 
     def cv(
         self,
@@ -121,6 +123,7 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_save_freq: int,
         override: bool = True,
+        custom_size: Optional[int] = None
     ) -> Dict[str, Any]:
         """
         The function is the core of the evaluation. The results are saved on disk during
@@ -155,6 +158,7 @@ class Evaluation(DefaultObject):
             result_save_dir,
             model_save_freq,
             override,
+            custom_size
         ) = self._get_defaults(locals())
         result = []
 
@@ -162,17 +166,15 @@ class Evaluation(DefaultObject):
         save_model_parameters(model_net, save_dir=result_save_dir)
         for i in range(num_cv):
             (
-                train_loader,
-                test_loader,
-                loaded_dataset,
-                train_dataset,
-                test_dataset,
+                test_dataset, train_dataset, test_loader, train_loader, loaded_dataset
+
             ) = data_set.load_data(
                 dataset_name=dataset_name,
                 dataset_save_path=dataset_save_path,
                 test_ratio=test_ratio,
                 batch_size=batch_size,
                 shuffle=shuffle,
+                custom_size = custom_size
             )
             # storage containers
 
