@@ -304,12 +304,12 @@ class RegressionEvaluation(Evaluation):
     ) -> npt.NDArray[np.float64]:
         y = np.zeros((len(data_set), 1, num_classes))
         for i in range(len(data_set)):
-            y[i, :, :] = data_set[i].y
+            y[i, :, :] = data_set[i].y 
         norm_factor = np.zeros((num_classes))
         for i in range(num_classes):
+            
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
-        assert 1 == 2, str(norm_factor)
         return norm_factor
 
     def __repr__(self) -> str:

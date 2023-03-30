@@ -8,7 +8,7 @@ from carate.plotting.base_plots import (
 
 
 def test_single_plot():
-    path_to_directory = ".../notebooks/data/"
+    path_to_directory = "./notebooks/data/"
     result = get_stacked_list(
         path_to_directory=path_to_directory,
         column_name="Acc",

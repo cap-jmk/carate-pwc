@@ -112,7 +112,8 @@ class StandardPytorchGeometricDataset(DatasetObject):
         if custom_size == None:
             custom_size = len(dataset)
 
-        dataset = dataset[:custom_size]
+        
+        dataset = dataset[:int(custom_size)] #make sure the size is an int
 
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]

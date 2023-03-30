@@ -1,3 +1,5 @@
+import os, shutil
+
 from amarium.utils import search_subdirs
 
 
@@ -34,7 +36,7 @@ def check_result_files(
         data_dir + "CV_0",
         data_dir + "CV_1",
     ]
-    assert len(result_dirs) == 2
+    assert len(result_dirs) == 2, str(len(result_dirs))
     for dir_name in result_dirs:
         assert dir_name in reference_dirs
 

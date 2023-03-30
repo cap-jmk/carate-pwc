@@ -4,13 +4,10 @@ a regression dataset
 
 :author: Julian M. Kleber
 """
-import os
-import shutil
-import torch
-
 from typing import Type
 import logging
 
+import torch
 
 from carate.run import RunInitializer
 import carate.models.cgc_regression as CGCR
@@ -36,7 +33,7 @@ def test_regression_multitaksing():
     assert str(runner.data_set) == "StandardTUDataset"
     runner.run()  # takes instance attributes as parameters for the run() function
 
-   check_result_files(
+    check_result_files(
         result_dir=result_dir,
         data_set_name=data_set_name,
         run_title=run_title,
