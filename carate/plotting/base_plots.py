@@ -77,7 +77,7 @@ def plot_range_band_single(
     ax.set_ylim(0, 1.1)
     ax.set_ylabel(key_val)
     ax.set_xlabel("Training step")
-    ax.fill_between(min_val, max_val, alpha=0.2)
+    ax.fill_between(min_val, max_val, alpha=0.8)
 
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 

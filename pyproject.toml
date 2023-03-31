@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools","torch"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.2.6"
+version = "0.2.8"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
