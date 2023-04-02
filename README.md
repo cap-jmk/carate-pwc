@@ -94,6 +94,11 @@ In case you can't wait for the picky scientist in me, you can still build on my 
 
 * [Google Drive](https://drive.google.com/drive/folders/1ikY_EW-Uadkybb--TvxXFgoZtCQtniyH?usp=sharing)
 
+We have to admit it though: There was a security incident on 31st of March 2023, so the results from 
+Alchemy and ZINC are still waiting. I logged all experiments  I did and uploaded the log, such 
+that any picky reviewer can check where there happened weird stuff, I made a mistake, or there 
+was an incident and requests more reproductions. That should solve the issue for now!
+
 # Support the development
 
 If you are happy about substantial progress in chemistry and life sciences that is not commercial first but citizen first, well then just

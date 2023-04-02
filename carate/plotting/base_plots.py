@@ -14,14 +14,23 @@ from typing import Type, Optional, Dict, Any, List, Tuple
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from amarium.utils import load_json_from_file, prepare_file_name_saving
+from amarium.utils import load_json_from_file, prepare_file_name_saving, attach_slash
 from collections import ChainMap
+
+import logging
+logging.basicConfig(
+    filename="train.log",
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="%(asctime)s %(message)s",
+)
 
 
 def plot_range_band_multi(
     result: List[Dict[str, float]],
     key_vals: List[str],
     file_name: str,
+    alpha:float=0.5,
     save_dir: Optional[str] = None,
 ) -> None:
     fig, ax = plt.subplots()
@@ -35,10 +44,13 @@ def plot_range_band_multi(
         max_val, min_val, avg_val = unpack_cross_validation(
             result=result, key_val=key_vals[i]
         )
+        logging.info(f"Max values are: {max_val}")
+        logging.info(f"Min values are: {min_val}")
+        logging.info(f"Avg values are: {avg_val}")
 
-        ax.plot(avg_val, "-", label=key_vals[i])
-        ax.set_ylim(0, 1.1)
-        ax.fill_between(min_val, max_val, alpha=0.2)
+        ax.plot(avg_val, label=key_vals[i])
+        plot_range_fill(max_val, min_val, avg_val, alpha, ax)
+        
 
     ax.set_ylabel("Value")
     ax.legend()
@@ -50,6 +62,7 @@ def plot_range_band_single(
     result: List[Dict[str, float]],
     key_val: str,
     file_name: str,
+    alpha:float=0.5,
     save_dir: Optional[str] = None,
 ) -> None:
     """
@@ -74,12 +87,33 @@ def plot_range_band_single(
 
     fig, ax = plt.subplots()
     ax.plot(avg_val, "-")
-    ax.set_ylim(0, 1.1)
+    plot_range_fill(max_val, min_val, avg_val, alpha, ax)
+
+    ax.set_ylim(0.0, 1.01)
     ax.set_ylabel(key_val)
     ax.set_xlabel("Training step")
-    ax.fill_between(min_val, max_val, alpha=0.8)
+
 
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
+
+
+def plot_range_fill(max_val:List[float], min_val:List[float], avg_val:List[float], alpha:float, ax)->None: 
+    """
+    The plot_range_lines function takes in three lists of floats, max_val, min_val and avg_val.
+    It then plots the average value as a line graph with the training steps on the x-axis and 
+    the average values on the y-axis. It also fills in between each point with a color to show 
+    the range of values for that particular step.
+    
+    :param max_val:List[float]: Used to Plot the maximum value of each training step.
+    :param min_val:List[float]: Used to Plot the minimum value of each metric.
+    :param avg_val:List[float]: Used to Plot the average value of a given metric.
+    :return: A plot with the average value, max value and min values for each training step.
+    
+    :doc-author: Trelent
+    """
+    
+    training_steps = np.arange(0, len(max_val), 1)
+    ax.fill_between(training_steps, min_val, max_val, alpha=alpha)
 
 
 def unpack_cross_validation(
@@ -103,14 +137,13 @@ def unpack_cross_validation(
     avg_val = []
 
     arr_res = np.zeros((len(result), len(result[0][key_val])))
-    print(arr_res.shape)
 
     for i, res in enumerate(result):
         arr_res[i, :] = res[key_val]
 
     for i in range(arr_res.shape[1]):
-        max_val.append(get_min(arr_res[:, i].tolist()))
-        min_val.append(get_max(arr_res[:, i].tolist()))
+        max_val.append(get_max(arr_res[:, i].tolist()))
+        min_val.append(get_min(arr_res[:, i].tolist()))
         avg_val.append(get_avg(arr_res[:, i].tolist()))
 
     return (max_val, min_val, avg_val)
@@ -145,14 +178,16 @@ def get_stacked_list(
 ) -> List[Dict[str, float]]:
     results = []
 
+    path_to_directory = attach_slash(path_to_directory)
+
     for i in range(num_cv):
-        print(f"Attempting cv {i}")
+        logging.info(f"Attempting cv {i}")
 
         result = parse_acc_list_json(
             path_to_json=path_to_directory + f"CV_{i}/" + json_name
         )
         results.append(result)
-        print(f"parsed results for CV {i}")
+        logging.info(f"parsed results for CV {i}")
 
     return results
 
@@ -207,7 +242,6 @@ def parse_acc_list_json_old_format(path_to_json: str) -> Dict[str, Any]:
 
     result = load_json_from_file(path_to_json)
     acc_store = result["Acc"]
-    print(len(acc_store))
     train_acc = []
     test_acc = []
 
@@ -217,7 +251,6 @@ def parse_acc_list_json_old_format(path_to_json: str) -> Dict[str, Any]:
         test_acc.append(test)
 
     del result["Acc"]
-    print(f"Len of train, {len(train_acc)}")
     result["Acc_train"] = train_acc
     result["Acc_val"] = test_acc
 
