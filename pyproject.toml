@@ -1,14 +1,14 @@
 [build-system]
-requires = ["setuptools","torch"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.2.5"
+version = "0.2.9"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
-description = "Filesystem handling utilities"
+description = "Providing reproducible modeling"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -17,7 +17,7 @@ classifiers = [
         "Operating System :: OS Independent",
 ]
 dependencies = [
-    "torch",
+    "torch==1.13.1",
     "torchvision",
     "torchaudio",
     "torch-geometric",
@@ -25,8 +25,8 @@ dependencies = [
     "networkx[default]",
     "matplotlib",  
     "Click", 
-    "torch-sparse",
-    "torch-scatter", 
+    "torch-sparse-carate",
+    "torch-scatter-carate", 
     "amarium", 
     "black"]
 

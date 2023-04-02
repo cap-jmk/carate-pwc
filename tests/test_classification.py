@@ -30,7 +30,6 @@ logging.basicConfig(
 
 
 def test_classification_override():
-
     check_dir_paths()
     config_filepath = "tests/config/classification_test_config_override.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
@@ -82,7 +81,6 @@ def test_classification_override():
 
 
 def test_classification_no_override():
-
     check_dir_paths()
     config_filepath = "tests/config/classification_test_config_no_override.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
@@ -117,7 +115,6 @@ def test_classification_no_override():
         "tests/results/ENZYMES/checkpoints/CV_0",
         "tests/results/ENZYMES/checkpoints/CV_1",
     ]
-
 
     assert len(result_dirs) == 2
     for dir_name in result_dirs:

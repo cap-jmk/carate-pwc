@@ -29,8 +29,7 @@ EVALUATION_MAP = {
 }
 
 ModelMap: Dict[str, Any]
-MODEL_MAP = {"cgc_classification": cgc_classification,
-             "cgc_regression": cgc_regression}
+MODEL_MAP = {"cgc_classification": cgc_classification, "cgc_regression": cgc_regression}
 
 DATA_SET_MAP: Dict[
     str,
@@ -74,14 +73,17 @@ class Config:
         num_cv: int = 5,
         num_epoch: int = 150,
         override: bool = True,
+        resume: bool = False,
+        normalize: bool = False,
+        custom_size: Optional[int] = None,
     ):
-
         # modelling
         self.model = model
         self.optimizer = optimizer
         self.device = device
         self.Evaluation = Evaluation
         self.data_set = data_set
+        self.normalize = normalize
 
         # model parameters
         self.dataset_name = dataset_name
@@ -101,6 +103,9 @@ class Config:
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
+
+        self.resume = resume
+        self.custom_size = custom_size
 
 
 class ConfigInitializer:
@@ -135,16 +140,30 @@ class ConfigInitializer:
 
         :doc-author: Julian M. Kleber
         """
+
         if json_object["device"] == "cpu":
             device = torch.device("cpu")
         elif json_object["device"] == "cuda":
             device = torch.device("cuda")
         elif json_object["device"] == "auto":
-            device = torch.device(
-                "cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
-            device = torch.device(
-                "cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        if "resume" in list(json_object.keys()):
+            resume = json_object["resume"]
+        else:
+            resume = False
+
+        if "normalize" in json_object.keys():
+            normalize = json_object["normalize"]
+        else:
+            normalize = False
+
+        if "custom_size" in json_object.keys():
+            custom_size = json_object["custom_size"]
+        else:
+            custom_size = None
 
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
@@ -164,6 +183,7 @@ class ConfigInitializer:
             result_save_dir=json_object["result_save_dir"],
             model_save_freq=json_object["model_save_freq"],
             device=device,
+            resume=resume,
         )
         json_object["override"] = convert_str_to_bool(json_object["override"])
 
@@ -189,4 +209,7 @@ class ConfigInitializer:
             result_save_dir=str(json_object["result_save_dir"]),
             model_save_freq=int(json_object["model_save_freq"]),
             override=json_object["override"],
+            resume=resume,
+            normalize=normalize,
+            custom_size=custom_size,
         )

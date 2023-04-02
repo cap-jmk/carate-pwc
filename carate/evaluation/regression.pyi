@@ -63,7 +63,7 @@ class RegressionEvaluation(Evaluation):
         train_loader: Type[torch.utils.data.DataLoader],
         optimizer: torch.optim.Optimizer,
         num_classes: int,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> float: ...
     def test(
         self,
@@ -71,5 +71,5 @@ class RegressionEvaluation(Evaluation):
         epoch: int,
         model_net: Model,
         device: torch.device,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Tuple[float, float]: ...

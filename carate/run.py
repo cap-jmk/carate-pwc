@@ -33,6 +33,8 @@ class Run(DefaultObject):
         num_classes: int,
         result_save_dir: str,
         model_save_freq: int,
+        resume: bool,
+        normalize: bool,
         data_set: DatasetObject,
         Evaluation: Evaluation,
         model_net: Model,
@@ -47,6 +49,7 @@ class Run(DefaultObject):
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
+        custom_size: Optional[int] = None,
     ) -> None:
         """
         Constructor
@@ -74,9 +77,11 @@ class Run(DefaultObject):
 
         self.data_set = data_set
         self.override = override
+        self.resume = resume
+        self.normalize = normalize
+        self.custom_size = custom_size
 
     def run(self) -> None:
-
         self.Evaluation.cv(
             dataset_name=self.dataset_name,
             dataset_save_path=self.dataset_save_path,
@@ -93,20 +98,20 @@ class Run(DefaultObject):
             result_save_dir=self.result_save_dir,
             model_save_freq=int(self.model_save_freq),
             override=self.override,
+            resume=self.resume,
+            custom_size = self.custom_size
         )
 
 
 class RunInitializer:
     @classmethod
     def from_file(cls, config_filepath: str) -> Run:
-
         config = ConfigInitializer.from_file(file_name=config_filepath)
         run_object = RunInitializer.__init_config(config)
         return run_object
 
     @classmethod
     def from_json(cls, json_object: Dict[Any, Any]) -> Run:
-
         config = ConfigInitializer.from_json(json_object=json_object)
         run_object = RunInitializer.__init_config(config)
         return run_object
@@ -155,4 +160,7 @@ class RunInitializer:
             data_set=config.data_set,
             model_save_freq=int(config.model_save_freq),
             override=config.override,
+            resume=config.resume,
+            normalize=config.normalize,
+            custom_size=config.custom_size,
         )

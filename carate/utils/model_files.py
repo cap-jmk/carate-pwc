@@ -47,7 +47,6 @@ def load_model_training_checkpoint(
     model_net: Type[torch.nn.Module],
     optimizer: Type[torch.optim.Optimizer],
 ) -> Tuple[Model, torch.optim.Optimizer]:
-
     # For any bug fixing please consult the PyTorch documentation:  https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
 
     model = model_net
@@ -71,7 +70,6 @@ def save_model_training_checkpoint(
     loss: float,
     override: bool,
 ) -> None:
-
     # For any bug fixing please refer to https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
 
     prefix = result_save_dir + "/checkpoints/CV_" + str(num_cv)
@@ -179,14 +177,12 @@ def save_model_parameters(model_net: Model, save_dir: str) -> None:
 
 
 def get_latest_checkpoint(search_dir: str, num_cv: int, epoch: int) -> str:
-
     if not search_dir.endswith("/"):
         search_dir += "/"
 
     search_dir += "checkpoints"
     checkpoint_dirs = os.listdir(search_dir)
-    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index(
-        "CV_" + str(num_cv))]
+    correct_sub_dir = checkpoint_dirs[checkpoint_dirs.index("CV_" + str(num_cv))]
     search_dir += "/" + correct_sub_dir
     checkpoints = os.listdir(search_dir)
     checkpoints = sorted(checkpoints)

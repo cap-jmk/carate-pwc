@@ -4,7 +4,7 @@ The idea is to parametrize as much as possible.
 
 :author: Julian M. Kleber
 """
-from typing import Type, Any, Dict
+from typing import Type, Any, Dict, Optional
 import json
 import numpy as np
 
@@ -53,6 +53,7 @@ class Evaluation(DefaultObject):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         device: torch.device,
+        resume: bool,
         test_ratio: int,
         num_epoch: int = 150,
         num_cv: int = 5,
@@ -62,6 +63,7 @@ class Evaluation(DefaultObject):
         shuffle: bool = True,
         model_save_freq: int = 100,
         override: bool = True,
+        custom_size: Optional[int] = None
     ) -> None:
         """
 
@@ -100,6 +102,8 @@ class Evaluation(DefaultObject):
         self.model_save_freq = model_save_freq
         self.override = override
         self.train_store = None
+        self.resume = resume
+        self.custom_size = custom_size
 
     def cv(
         self,
@@ -109,6 +113,7 @@ class Evaluation(DefaultObject):
         dataset_name: str,
         dataset_save_path: str,
         test_ratio: int,
+        resume: bool,
         data_set: DatasetObject,
         shuffle: bool,
         batch_size: int,
@@ -118,13 +123,14 @@ class Evaluation(DefaultObject):
         result_save_dir: str,
         model_save_freq: int,
         override: bool = True,
+        custom_size: Optional[int] = None
     ) -> Dict[str, Any]:
         """
         The function is the core of the evaluation. The results are saved on disk during
         the run and returned as json at the end of the run.
 
         :param self: Used to Represent the instance of the class.
-        :param num_cv:int: Used to Specify the number of cross-validation folds.
+        :param num_cv:int: Used to specify the number of cross-validation folds.
         :param num_epoch:int: Used to Specify the number of epochs to train for.
         :param num_classes:int: Used to Determine the number of classes in the dataset.
         :param dataset_name:str: Used to Specify the name of the dataset to be used.
@@ -142,6 +148,7 @@ class Evaluation(DefaultObject):
             dataset_name,
             dataset_save_path,
             test_ratio,
+            resume,
             data_set,
             shuffle,
             batch_size,
@@ -151,6 +158,7 @@ class Evaluation(DefaultObject):
             result_save_dir,
             model_save_freq,
             override,
+            custom_size
         ) = self._get_defaults(locals())
         result = []
 
@@ -158,17 +166,15 @@ class Evaluation(DefaultObject):
         save_model_parameters(model_net, save_dir=result_save_dir)
         for i in range(num_cv):
             (
-                train_loader,
-                test_loader,
-                loaded_dataset,
-                train_dataset,
-                test_dataset,
+                test_dataset, train_dataset, test_loader, train_loader, loaded_dataset
+
             ) = data_set.load_data(
                 dataset_name=dataset_name,
                 dataset_save_path=dataset_save_path,
                 test_ratio=test_ratio,
                 batch_size=batch_size,
                 shuffle=shuffle,
+                custom_size = custom_size
             )
             # storage containers
 
@@ -178,7 +184,6 @@ class Evaluation(DefaultObject):
             loss_store = []
 
             for epoch in range(1, num_epoch + 1):
-
                 train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
@@ -231,7 +236,6 @@ class Evaluation(DefaultObject):
                 tmp["AUC"] = list(auc_store)
 
                 if epoch % model_save_freq == 0:
-
                     self.save_whole_checkpoint(
                         result_save_dir=result_save_dir,
                         dataset_name=dataset_name,

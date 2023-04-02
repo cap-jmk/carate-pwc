@@ -27,7 +27,6 @@ logging.basicConfig(
 
 class Net(Model):
     def __init__(self, dim: int, num_classes: int, num_features: int) -> None:
-
         super(Net, self).__init__(
             dim=dim, num_classes=num_classes, num_features=num_features
         )

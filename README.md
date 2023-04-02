@@ -37,12 +37,22 @@ Prepare system
 sudo apt-get install python3-dev libffi-dev
 ```
 
+## Build manually
+
 ```bash 
 pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu 
 pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[default] matplotlib
 pip install torch-cluster 
 pip install torch-spline-conv 
 ``` 
+
+# Faster way 
+
+Inside the directory of your git-clone:
+
+```bash
+pip install -e .
+```
 
 # Usage 
 
@@ -83,6 +93,11 @@ However, you may still use the models as they are by the means of the library pr
 In case you can't wait for the picky scientist in me, you can still build on my intermediate results. You can find them in the following locations 
 
 * [Google Drive](https://drive.google.com/drive/folders/1ikY_EW-Uadkybb--TvxXFgoZtCQtniyH?usp=sharing)
+
+We have to admit it though: There was a security incident on 31st of March 2023, so the results from 
+Alchemy and ZINC are still waiting. I logged all experiments  I did and uploaded the log, such 
+that any picky reviewer can check where there happened weird stuff, I made a mistake, or there 
+was an incident and requests more reproductions. That should solve the issue for now!
 
 # Support the development
 
