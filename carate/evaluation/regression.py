@@ -296,7 +296,8 @@ class RegressionEvaluation(Evaluation):
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
             loss = torch.nn.MSELoss()
-            mse += loss_mae(output_probs, data.y).item()
+            loss = loss(output_probs, data.y)
+            mse += loss.item()
             torch.cuda.empty_cache()
         return mae / len(test_loader), mse / len(test_loader)
 
