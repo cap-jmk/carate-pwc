@@ -1,4 +1,4 @@
-"""Module providing a CLI 
+"""Module providing a CLI
 interface for training models#
 
 :author: Julian  M. Kleber

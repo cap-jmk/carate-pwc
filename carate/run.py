@@ -99,7 +99,7 @@ class Run(DefaultObject):
             model_save_freq=int(self.model_save_freq),
             override=self.override,
             resume=self.resume,
-            custom_size = self.custom_size
+            custom_size=self.custom_size,
         )
 
 

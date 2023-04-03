@@ -48,7 +48,7 @@ class RegressionEvaluation(Evaluation):
         model_save_freq: int = 100,
         override: bool = True,
         normalize: bool = False,
-        custom_size: Optional[int] = None
+        custom_size: Optional[int] = None,
     ):
         """
         The __init__ function is called when the class is instantiated.
@@ -126,7 +126,7 @@ class RegressionEvaluation(Evaluation):
         model_save_freq: int,
         override: bool = True,
         normalize: bool = True,
-        custom_size: Optional[int] = None
+        custom_size: Optional[int] = None,
     ) -> Dict[str, Any]:
         # initialize
         (
@@ -147,7 +147,7 @@ class RegressionEvaluation(Evaluation):
             model_save_freq,
             override,
             normalize,
-            custom_size
+            custom_size,
         ) = self._get_defaults(locals())
 
         # data container
@@ -161,18 +161,20 @@ class RegressionEvaluation(Evaluation):
         for i in range(num_cv):
             loaded_dataset: torch.utils.data.Dataset
             (
-               
-            test_dataset, train_dataset, test_loader, train_loader, loaded_dataset
-
+                test_dataset,
+                train_dataset,
+                test_loader,
+                train_loader,
+                loaded_dataset,
             ) = data_set.load_data(
                 dataset_name=dataset_name,
                 dataset_save_path=dataset_save_path,
                 test_ratio=test_ratio,
                 batch_size=batch_size,
                 shuffle=shuffle,
-                custom_size = custom_size
+                custom_size=custom_size,
             )
-            
+
             del train_dataset, test_dataset
 
             if normalize:
@@ -254,7 +256,6 @@ class RegressionEvaluation(Evaluation):
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
 
-            
             data.y = data.y / norm_factor
 
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
@@ -287,7 +288,6 @@ class RegressionEvaluation(Evaluation):
         for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
 
-            
             data.y = data.y / norm_factor
             assert 1 == 2, data.y
 
@@ -306,10 +306,9 @@ class RegressionEvaluation(Evaluation):
     ) -> npt.NDArray[np.float64]:
         y = np.zeros((len(data_set), 1, num_classes))
         for i in range(len(data_set)):
-            y[i, :, :] = data_set[i].y 
+            y[i, :, :] = data_set[i].y
         norm_factor = np.zeros((num_classes))
         for i in range(num_classes):
-            
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
         return norm_factor

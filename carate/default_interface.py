@@ -1,5 +1,5 @@
-"""Default Interface defining the Base object for all other objects. 
-Especially the __get_default_method is provided for all base objects. 
+"""Default Interface defining the Base object for all other objects.
+Especially the __get_default_method is provided for all base objects.
 
 :author: Julian M. Kleber
 """

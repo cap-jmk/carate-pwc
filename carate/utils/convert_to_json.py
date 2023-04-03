@@ -1,6 +1,6 @@
 """
-Module for handling config files used to start 
-the training and evaluation process 
+Module for handling config files used to start
+the training and evaluation process
 
 :author: Julian M. Kleber
 """
