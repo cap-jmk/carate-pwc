@@ -303,6 +303,22 @@ class RegressionEvaluation(Evaluation):
     def __normalization_factor(
         self, data_set: Any, num_classes: int
     ) -> npt.NDArray[np.float64]:
+        """
+        The __normalization_factor function is used to calculate the normalization factor 
+        for each class.The normalization factor is calculated by taking the L2 norm of all of the 
+        labels in a given class.
+        
+        This function returns an array containing one value for each class, where each value is 
+        equal to the L2 norm  of all labels belonging to that particular class.
+        
+        :param self: Used to Refer to the object itself.
+        :param data_set:Any: Used to Pass in the data set that we want to normalize.
+        :param num_classes:int: Used to Specify the number of classes in the data set.
+        :return: A vector of length num_classes,.
+        
+        :doc-author: Trelent
+        """
+    
         y = np.zeros((len(data_set), 1, num_classes))
         for i in range(len(data_set)):
             y[i, :, :] = data_set[i].y
@@ -311,6 +327,7 @@ class RegressionEvaluation(Evaluation):
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
         return norm_factor
+    
 
     def __repr__(self) -> str:
         return "Regression Evaluation Object"
