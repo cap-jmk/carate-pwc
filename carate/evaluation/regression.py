@@ -253,8 +253,9 @@ class RegressionEvaluation(Evaluation):
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            if norm_factor.all() != 1.0:
-                data.y = data.y / norm_factor
+
+            
+            data.y = data.y / norm_factor
 
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
@@ -286,8 +287,9 @@ class RegressionEvaluation(Evaluation):
         for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
 
-            if norm_factor.all() != 0:
-                data.y = data.y / norm_factor
+            
+            data.y = data.y / norm_factor
+            assert 1 == 2, data.y
 
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
