@@ -289,7 +289,6 @@ class RegressionEvaluation(Evaluation):
             data.x = data.x.type(torch.FloatTensor)
 
             data.y = data.y / norm_factor
-            assert 1 == 2, data.y
 
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
