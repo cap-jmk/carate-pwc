@@ -48,7 +48,7 @@ class RegressionEvaluation(Evaluation):
         model_save_freq: int = 100,
         override: bool = True,
         normalize: bool = False,
-        custom_size: Optional[int] = None
+        custom_size: Optional[int] = None,
     ):
         """
         The __init__ function is called when the class is instantiated.
@@ -126,7 +126,7 @@ class RegressionEvaluation(Evaluation):
         model_save_freq: int,
         override: bool = True,
         normalize: bool = True,
-        custom_size: Optional[int] = None
+        custom_size: Optional[int] = None,
     ) -> Dict[str, Any]:
         # initialize
         (
@@ -147,7 +147,7 @@ class RegressionEvaluation(Evaluation):
             model_save_freq,
             override,
             normalize,
-            custom_size
+            custom_size,
         ) = self._get_defaults(locals())
 
         # data container
@@ -161,18 +161,20 @@ class RegressionEvaluation(Evaluation):
         for i in range(num_cv):
             loaded_dataset: torch.utils.data.Dataset
             (
-               
-            test_dataset, train_dataset, test_loader, train_loader, loaded_dataset
-
+                test_dataset,
+                train_dataset,
+                test_loader,
+                train_loader,
+                loaded_dataset,
             ) = data_set.load_data(
                 dataset_name=dataset_name,
                 dataset_save_path=dataset_save_path,
                 test_ratio=test_ratio,
                 batch_size=batch_size,
                 shuffle=shuffle,
-                custom_size = custom_size
+                custom_size=custom_size,
             )
-            
+
             del train_dataset, test_dataset
 
             if normalize:
@@ -253,8 +255,8 @@ class RegressionEvaluation(Evaluation):
         mse = 0
         for data in train_loader:
             data.x = data.x.type(torch.FloatTensor)
-            if norm_factor.all() != 1.0:
-                data.y = data.y / norm_factor
+
+            data.y = data.y / norm_factor
 
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
@@ -286,8 +288,7 @@ class RegressionEvaluation(Evaluation):
         for data in test_loader:
             data.x = data.x.type(torch.FloatTensor)
 
-            if norm_factor.all() != 0:
-                data.y = data.y / norm_factor
+            data.y = data.y / norm_factor
 
             data.y = torch.nan_to_num(data.y.type(torch.FloatTensor))
             data = data.to(device)
@@ -295,19 +296,35 @@ class RegressionEvaluation(Evaluation):
             loss_mae = torch.nn.L1Loss()
             mae += loss_mae(output_probs, data.y).item()
             loss = torch.nn.MSELoss()
-            mse += loss_mae(output_probs, data.y).item()
+            loss = loss(output_probs, data.y)
+            mse += loss.item()
             torch.cuda.empty_cache()
         return mae / len(test_loader), mse / len(test_loader)
 
     def __normalization_factor(
         self, data_set: Any, num_classes: int
     ) -> npt.NDArray[np.float64]:
+        """
+        The __normalization_factor function is used to calculate the normalization factor
+        for each class.The normalization factor is calculated by taking the L2 norm of all of the
+        labels in a given class.
+
+        This function returns an array containing one value for each class, where each value is
+        equal to the L2 norm  of all labels belonging to that particular class.
+
+        :param self: Used to Refer to the object itself.
+        :param data_set:Any: Used to Pass in the data set that we want to normalize.
+        :param num_classes:int: Used to Specify the number of classes in the data set.
+        :return: A vector of length num_classes,.
+
+        :doc-author: Trelent
+        """
+
         y = np.zeros((len(data_set), 1, num_classes))
         for i in range(len(data_set)):
-            y[i, :, :] = data_set[i].y 
+            y[i, :, :] = data_set[i].y
         norm_factor = np.zeros((num_classes))
         for i in range(num_classes):
-            
             norm = np.linalg.norm(y[:, 0, i], ord=2)
             norm_factor[i] = norm
         return norm_factor

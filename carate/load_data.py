@@ -63,7 +63,6 @@ class DatasetObject(ABC, DefaultObject, torch.utils.data.Dataset):
 class StandardPytorchGeometricDataset(DatasetObject):
     DataSet: torch.utils.data.Dataset
 
-
     def load_data(
         self,
         dataset_name: str,
@@ -112,8 +111,7 @@ class StandardPytorchGeometricDataset(DatasetObject):
         if custom_size == None:
             custom_size = len(dataset)
 
-        
-        dataset = dataset[:int(custom_size)] #make sure the size is an int
+        dataset = dataset[: int(custom_size)]  # make sure the size is an int
 
         test_dataset = dataset[: len(dataset) // test_ratio]
         train_dataset = dataset[len(dataset) // test_ratio :]

@@ -16,8 +16,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from amarium.utils import load_json_from_file, prepare_file_name_saving, attach_slash
 from collections import ChainMap
-
 import logging
+
 logging.basicConfig(
     filename="train.log",
     encoding="utf-8",
@@ -30,7 +30,7 @@ def plot_range_band_multi(
     result: List[Dict[str, float]],
     key_vals: List[str],
     file_name: str,
-    alpha:float=0.5,
+    alpha: float = 0.5,
     save_dir: Optional[str] = None,
 ) -> None:
     fig, ax = plt.subplots()
@@ -50,7 +50,6 @@ def plot_range_band_multi(
 
         ax.plot(avg_val, label=key_vals[i])
         plot_range_fill(max_val, min_val, avg_val, alpha, ax)
-        
 
     ax.set_ylabel("Value")
     ax.legend()
@@ -62,7 +61,7 @@ def plot_range_band_single(
     result: List[Dict[str, float]],
     key_val: str,
     file_name: str,
-    alpha:float=0.5,
+    alpha: float = 0.5,
     save_dir: Optional[str] = None,
 ) -> None:
     """
@@ -93,25 +92,26 @@ def plot_range_band_single(
     ax.set_ylabel(key_val)
     ax.set_xlabel("Training step")
 
-
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
-def plot_range_fill(max_val:List[float], min_val:List[float], avg_val:List[float], alpha:float, ax)->None: 
+def plot_range_fill(
+    max_val: List[float], min_val: List[float], avg_val: List[float], alpha: float, ax
+) -> None:
     """
     The plot_range_lines function takes in three lists of floats, max_val, min_val and avg_val.
-    It then plots the average value as a line graph with the training steps on the x-axis and 
-    the average values on the y-axis. It also fills in between each point with a color to show 
+    It then plots the average value as a line graph with the training steps on the x-axis and
+    the average values on the y-axis. It also fills in between each point with a color to show
     the range of values for that particular step.
-    
+
     :param max_val:List[float]: Used to Plot the maximum value of each training step.
     :param min_val:List[float]: Used to Plot the minimum value of each metric.
     :param avg_val:List[float]: Used to Plot the average value of a given metric.
     :return: A plot with the average value, max value and min values for each training step.
-    
+
     :doc-author: Trelent
     """
-    
+
     training_steps = np.arange(0, len(max_val), 1)
     ax.fill_between(training_steps, min_val, max_val, alpha=alpha)
 

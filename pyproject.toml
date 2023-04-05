@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.2.9"
+version = "0.3.5"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
@@ -18,6 +18,8 @@ classifiers = [
 ]
 dependencies = [
     "torch==1.13.1",
+    "torch-sparse-carate",
+    "torch-scatter-carate", 
     "torchvision",
     "torchaudio",
     "torch-geometric",
@@ -25,8 +27,6 @@ dependencies = [
     "networkx[default]",
     "matplotlib",  
     "Click", 
-    "torch-sparse-carate",
-    "torch-scatter-carate", 
     "amarium", 
     "black"]
 
