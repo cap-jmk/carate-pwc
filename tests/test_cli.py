@@ -10,8 +10,8 @@ from tests.utils import check_result_files
 def test_cli_func():
     if os.path.isdir("tests/data"):
         shutil.rmtree("tests/data")
-    if os.path.isdir("tests/results"):
-        shutil.rmtree("tests/results")
+
+
     subprocess.run(["bash", "install.sh"])
     config_filepath = "tests/config/regression_test_config_override.py"
     result = subprocess.run(
@@ -20,7 +20,6 @@ def test_cli_func():
         stderr=subprocess.PIPE,
     )
     errs = result.stderr.decode()
-
     run_title = "ZINC_test"
     data_set_name = "ZINC_test"
     result_dir = f"tests/results/{run_title}"
