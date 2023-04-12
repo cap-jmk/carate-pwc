@@ -66,19 +66,19 @@ def test_custom_size():
     )
 
     test_dataset, train_dataset, test_loader, train_loader, dataset = loader.load_data(
-        dataset_name, test_ratio, dataset_save_path, custom_size = custom_size
+        dataset_name, test_ratio, dataset_save_path, custom_size=custom_size
     )
 
     assert str(loader) == "StandardMoleculeNet"
     assert len(test_dataset) == 10
     assert len(train_dataset) == 90
-    
+
     dataset_save_path = "tests/data/"
     dataset_name = "ZINC_test"
     test_ratio = 10
     batch_size = 64
     shuffle = True
-    custom_size = 100 
+    custom_size = 100
 
     loader = StandardDatasetTUDataset(
         dataset_save_path=dataset_save_path,
@@ -88,7 +88,7 @@ def test_custom_size():
     )
 
     test_dataset, train_dataset, test_loader, train_loader, dataset = loader.load_data(
-        dataset_name, test_ratio, dataset_save_path, custom_size = custom_size
+        dataset_name, test_ratio, dataset_save_path, custom_size=custom_size
     )
 
     assert str(loader) == "StandardTUDataset"

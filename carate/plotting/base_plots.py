@@ -3,11 +3,6 @@ Plotting module for PyTorch prototyping
 
 :author: Julian M. Kleber
 """
-"""
-Plotting module for PyTorch prototyping
-
-:author: Julian M. Kleber
-"""
 
 
 from typing import Type, Optional, Dict, Any, List, Tuple
@@ -32,7 +27,27 @@ def plot_range_band_multi(
     file_name: str,
     alpha: float = 0.5,
     save_dir: Optional[str] = None,
+    title_text: Optional[str] = None
 ) -> None:
+    """
+    The plot_range_band_multi function is used to plot multiple range bands on the same graph.
+    The function takes in a list of dictionaries, each dictionary containing the results from one
+    cross-validation run.It also takes in a list of keys that correspond to values within each
+    dictionary that should be plotted as range bands. The function then plots all these values as
+    separate lines with their corresponding ranges filled in between them.
+
+    :param result:List[Dict[str: Used to Pass in the list of dictionaries
+    :param float]]: Used to Set the alpha value of the fill.
+    :param key_vals:List[str]: Used to Specify which metrics to plot.
+    :param file_name:str: Used to name the file that will be saved.
+    :param alpha:float=0.5: Used to Set the transparency of the fill between.
+    :param save_dir:Optional[str]=None: Used to Save the plot in a specific directory.
+    :param : Used to Set the transparency of the fill between min and max values.
+    :return: A plot of the average, maximum and minimum values.
+
+    :doc-author: Julian M. Kleber
+    """
+
     fig, ax = plt.subplots()
     ax.set_xlabel("Training step")
 
@@ -53,7 +68,7 @@ def plot_range_band_multi(
 
     ax.set_ylabel("Value")
     ax.legend()
-
+    ax.set_title(title_text)
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
@@ -63,6 +78,7 @@ def plot_range_band_single(
     file_name: str,
     alpha: float = 0.5,
     save_dir: Optional[str] = None,
+    legend_text: Optional[str] = None,
 ) -> None:
     """
     The plot_range_band function takes in a list of dictionaries, each dictionary containing the
@@ -70,13 +86,13 @@ def plot_range_band_single(
     It then plots the average value for each key_val (e.g., 'accuracy') and also plots a
     range band between the minimum and maximum values for that key_val across all runs.
 
-    :param result:List[Dict[str: Used to Plot the results of each run.
-    :param float]]: Used to Specify the type of data that is being passed into the function.
-    :param key_val:str: Used to Specify which key in the dictionary to plot.
-    :param file_name:str: Used to Save the plot as a png file.
+    :param result:List[Dict[str: Used to plot the results of each run.
+    :param float]]: Used to specify the type of data that is being passed into the function.
+    :param key_val:str: Used to specify which key in the dictionary to plot.
+    :param file_name:str: Used to save the plot as a png file.
     :return: A plot with the average value of a list, and the minimum and maximum values.
 
-    :doc-author: Julian M. kleber
+    :doc-author: Julian M. Kleber
     """
     max_val: List[float]
     min_val: List[float]
@@ -85,11 +101,16 @@ def plot_range_band_single(
     max_val, min_val, avg_val = unpack_cross_validation(result=result, key_val=key_val)
 
     fig, ax = plt.subplots()
-    ax.plot(avg_val, "-")
+    if legend_text is not None:
+        ax.plot(avg_val, "-", label=legend_text)
+    else:
+        ax.plot(avg_val, "-", label=legend_text)
     plot_range_fill(max_val, min_val, avg_val, alpha, ax)
 
     ax.set_ylim(0.0, 1.01)
     ax.set_ylabel(key_val)
+    if legend_text is not None:
+        ax.legend()
     ax.set_xlabel("Training step")
 
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
@@ -109,7 +130,7 @@ def plot_range_fill(
     :param avg_val:List[float]: Used to Plot the average value of a given metric.
     :return: A plot with the average value, max value and min values for each training step.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     training_steps = np.arange(0, len(max_val), 1)
@@ -129,7 +150,7 @@ def unpack_cross_validation(
     :param key_val:str: Used to Specify which key in the dictionary to use for the unpacking.
     :return: The max, min and average value of the key_val parameter.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     max_val = []
@@ -176,6 +197,21 @@ def save_publication_graphic(
 def get_stacked_list(
     path_to_directory: str, column_name: str, num_cv: int, json_name: str
 ) -> List[Dict[str, float]]:
+    """
+    The get_stacked_list function takes in a path to a directory, the name of the column
+    that we want to stack, and the number of cross-validation folds. It then returns a list
+    of dictionaries that contain all of our stacked results.
+
+    :param path_to_directory:str: Used to Specify the directory where the json files are stored.
+    :param column_name:str: Used to Specify the column name of the dataframe in which we
+    want to get.
+    :param num_cv:int: Used to Specify the number of cross validation runs.
+    :param json_name:str: Used to Specify the name of the json file that will be parsed.
+    :return: A list of dictionaries, where each dictionary is the accuracy for a single cv.
+
+    :doc-author: Julian M. Kleber
+    """
+
     results = []
 
     path_to_directory = attach_slash(path_to_directory)
@@ -196,7 +232,8 @@ def parse_old_file_format_for_plot(
     stacked_list: List[float], path_to_json: str
 ) -> List[List[float]]:
     """
-    The parse_old_file_format_for_plot function takes in a path to a json file and returns the following:
+    The parse_old_file_format_for_plot function takes in a path to a json file and returns the
+    following:
 
     :param path_to_json:str: Used to Specify the path to the json file that we want to parse.
     :return: A list of dictionaries.
@@ -212,15 +249,17 @@ def parse_old_file_format_for_plot(
 
 def parse_acc_list_json(path_to_json: str) -> Dict[str, Any]:
     """
-    The parse_acc_list_json function takes in a path to a json file and returns the contents of that json file as a dictionary.
-    The function also parses the "Acc" key in the dictionary, which contains lists of tuples containing train and test accuracy values.
-    The function then separates these tuples into two separate lists, one for train accuracy values and one for test accuracy values.
-    These new lists are added to the original dictionary under keys "Acc_train" and "Acc_val", respectively.
+    The parse_acc_list_json function takes in a path to a json file and returns the contents of
+    that json file as a dictionary.The function also parses the "Acc" key in the dictionary,
+    which contains lists of tuples containing train and test accuracy values.
+    The function then separates these tuples into two separate lists, one for train accuracy values
+    and one for test accuracy values. These new lists are added to the original dictionary under
+    keys "Acc_train" and "Acc_val", respectively.
 
     :param path_to_json:str: Used to Specify the path to the json file.
     :return: A dictionary with the following keys:.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     result = load_json_from_file(path_to_json)
@@ -229,15 +268,17 @@ def parse_acc_list_json(path_to_json: str) -> Dict[str, Any]:
 
 def parse_acc_list_json_old_format(path_to_json: str) -> Dict[str, Any]:
     """
-    The parse_acc_list_json function takes in a path to a json file and returns the contents of that json file as a dictionary.
-    The function also parses the "Acc" key in the dictionary, which contains lists of tuples containing train and test accuracy values.
-    The function then separates these tuples into two separate lists, one for train accuracy values and one for test accuracy values.
-    These new lists are added to the original dictionary under keys "Acc_train" and "Acc_val", respectively.
+    The parse_acc_list_json function takes in a path to a json file and returns the contents of
+    that json file as a dictionary.The function also parses the "Acc" key in the dictionary, which
+    contains lists of tuples containing train and test accuracy values.
+    The function then separates these tuples into two separate lists, one for train accuracy values
+    and one for test accuracy values.These new lists are added to the original dictionary under
+    keys "Acc_train" and "Acc_val", respectively.
 
     :param path_to_json:str: Used to Specify the path to the json file.
     :return: A dictionary with the following keys:.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     result = load_json_from_file(path_to_json)
@@ -264,7 +305,7 @@ def parse_min_max_avg(result_list: List[List[float]]) -> List[float]:
     :param result_list:List[List[float]]: Used to Store the results of the simulation.
     :return: A list of the minimum values for each step.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     minima = []
@@ -286,7 +327,8 @@ def get_avg(step_list: List[float]) -> float:
     The get_avg function takes a list of floats and returns the average value.
 
 
-    :param step_list:List[float]: Used to Tell the function that it will be taking a list of floats as an argument.
+    :param step_list:List[float]: Used to Tell the function that it will be taking a list of
+    floats as an argument.
     :return: The mean of the step_list.
 
     :doc-author: Julian M. Kleber
@@ -303,7 +345,7 @@ def get_max(step_list: List[float]) -> float:
     :param step_list:List[float]: Used to Tell the function that step_list is a list of floats.
     :return: The maximum value in the list.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     return float(np.max(step_list))
@@ -313,10 +355,11 @@ def get_min(step_list: List[float]) -> float:
     """
     The get_min function takes a list of floats and returns the minimum value in that list.
 
-    :param step_list:List[float]: Used to Specify the type of parameter that is being passed into the function.
+    :param step_list:List[float]: Used to Specify the type of parameter that is being passed
+    into the function.
     :return: The minimum value in the step_list.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
     """
 
     return float(np.min(step_list))

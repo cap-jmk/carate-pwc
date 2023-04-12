@@ -3,7 +3,6 @@ import os, shutil
 from amarium.utils import search_subdirs
 
 
-
 def check_result_files(
     result_dir: str, run_title: str, data_set_name: str, override: bool = False
 ) -> bool:

@@ -7,10 +7,10 @@ from amarium.utils import search_subdirs
 
 from tests.utils import check_result_files
 
+
 def test_cli_func():
     if os.path.isdir("tests/data"):
         shutil.rmtree("tests/data")
-
 
     subprocess.run(["bash", "install.sh"])
     config_filepath = "tests/config/regression_test_config_override.py"
