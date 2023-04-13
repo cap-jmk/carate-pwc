@@ -10,32 +10,33 @@ from carate.plotting.base_plots import (
 )
 
 
-def plot_classification_algorithm(path_to_directory: str) -> None:
+def plot_classification_algorithm(path_to_directory: str, parameter: str, save_dir:str="./plots") -> None:
     """
-    The plot_classification_algorithm function takes in a path to a directory containing the 
-    results ofa classification algorithm and plots the accuracy of that algorithm on both training 
+    The plot_classification_algorithm function takes in a path to a directory containing the
+    results of a classification algorithm and plots the accuracy of that algorithm on both training
     and testing data.
-    
-    :param path_to_directory:str: Used to Specify the directory where the results are stored.
+
+    :param path_to_directory:str: Used to specify the directory where the results are stored.
     :return: None.
-    
+
     :doc-author: Julian M. Kleber
     """
-    
+
+    legend_text = path_to_directory.split("/")[-1]
+
     result = get_stacked_list(
         path_to_directory=path_to_directory,
-        column_name="Acc",
         num_cv=5,
-        json_name="MOLT-4.json",
+        json_name=f"{legend_text}.json",
     )
-    
+
     legend_text = path_to_directory.split("/")[-1]
 
     plot_range_band_single(
         result,
-        key_val="Acc_train",
-        file_name="ENZYMES_accuracy",
-        save_dir="./plots",
+        file_name=f"{legend_text}_{parameter}",
+        save_dir=save_dir,
+        key_val=parameter,
         alpha=0.4,
         legend_text=legend_text,
     )

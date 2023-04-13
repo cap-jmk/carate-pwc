@@ -3,15 +3,12 @@ Plotting module for PyTorch prototyping
 
 :author: Julian M. Kleber
 """
-
-
 from typing import Type, Optional, Dict, Any, List, Tuple
-import pandas as pd
+import logging
 import numpy as np
 import matplotlib.pyplot as plt
-from amarium.utils import load_json_from_file, prepare_file_name_saving, attach_slash
-from collections import ChainMap
-import logging
+from amarium.utils import load_json_from_file, prepare_file_name_saving, append_slash
+
 
 logging.basicConfig(
     filename="train.log",
@@ -27,7 +24,7 @@ def plot_range_band_multi(
     file_name: str,
     alpha: float = 0.5,
     save_dir: Optional[str] = None,
-    title_text: Optional[str] = None
+    title_text: Optional[str] = None,
 ) -> None:
     """
     The plot_range_band_multi function is used to plot multiple range bands on the same graph.
@@ -48,8 +45,8 @@ def plot_range_band_multi(
     :doc-author: Julian M. Kleber
     """
 
-    fig, ax = plt.subplots()
-    ax.set_xlabel("Training step")
+    fig, axis = plt.subplots()
+    axis.set_xlabel("Training step")
 
     for i in range(len(key_vals)):
         max_val: List[float]
@@ -63,17 +60,17 @@ def plot_range_band_multi(
         logging.info(f"Min values are: {min_val}")
         logging.info(f"Avg values are: {avg_val}")
 
-        ax.plot(avg_val, label=key_vals[i])
-        plot_range_fill(max_val, min_val, avg_val, alpha, ax)
+        axis.plot(avg_val, label=key_vals[i])
+        plot_range_fill(max_val, min_val, alpha, axis)
 
-    ax.set_ylabel("Value")
-    ax.legend()
-    ax.set_title(title_text)
+    axis.set_ylabel("Value")
+    axis.legend()
+    axis.set_title(title_text)
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
 def plot_range_band_single(
-    result: List[Dict[str, float]],
+    result: List[Dict[str, List[float]]],
     key_val: str,
     file_name: str,
     alpha: float = 0.5,
@@ -100,24 +97,25 @@ def plot_range_band_single(
 
     max_val, min_val, avg_val = unpack_cross_validation(result=result, key_val=key_val)
 
-    fig, ax = plt.subplots()
+    fig, axis = plt.subplots()
     if legend_text is not None:
-        ax.plot(avg_val, "-", label=legend_text)
+        axis.plot(avg_val, "-", label=legend_text)
     else:
-        ax.plot(avg_val, "-", label=legend_text)
-    plot_range_fill(max_val, min_val, avg_val, alpha, ax)
+        axis.plot(avg_val, "-", label=legend_text)
+    plot_range_fill(max_val, min_val, alpha, axis)
 
-    ax.set_ylim(0.0, 1.01)
-    ax.set_ylabel(key_val)
+    axis.set_ylim(0.0, 1.01)
+    axis.set_ylabel(key_val)
     if legend_text is not None:
-        ax.legend()
-    ax.set_xlabel("Training step")
+        axis.legend()
+
+    axis.set_xlabel("Training step")
 
     save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
 def plot_range_fill(
-    max_val: List[float], min_val: List[float], avg_val: List[float], alpha: float, ax
+    max_val: List[float], min_val: List[float], alpha: float, axis
 ) -> None:
     """
     The plot_range_lines function takes in three lists of floats, max_val, min_val and avg_val.
@@ -134,11 +132,11 @@ def plot_range_fill(
     """
 
     training_steps = np.arange(0, len(max_val), 1)
-    ax.fill_between(training_steps, min_val, max_val, alpha=alpha)
+    axis.fill_between(training_steps, min_val, max_val, alpha=alpha)
 
 
 def unpack_cross_validation(
-    result: List[Dict[str, float]], key_val: str
+    result: List[Dict[str, List[float]]], key_val: str
 ) -> Tuple[List[float]]:
     """
     The unpack_cross_validation function takes in a list of dictionaries, and a key value.
@@ -195,7 +193,7 @@ def save_publication_graphic(
 
 
 def get_stacked_list(
-    path_to_directory: str, column_name: str, num_cv: int, json_name: str
+    path_to_directory: str, num_cv: int, json_name: str
 ) -> List[Dict[str, float]]:
     """
     The get_stacked_list function takes in a path to a directory, the name of the column
@@ -214,7 +212,7 @@ def get_stacked_list(
 
     results = []
 
-    path_to_directory = attach_slash(path_to_directory)
+    path_to_directory = append_slash(path_to_directory)
 
     for i in range(num_cv):
         logging.info(f"Attempting cv {i}")
@@ -228,9 +226,7 @@ def get_stacked_list(
     return results
 
 
-def parse_old_file_format_for_plot(
-    stacked_list: List[float], path_to_json: str
-) -> List[List[float]]:
+def parse_old_file_format_for_plot(path_to_json: str) -> List[List[float]]:
     """
     The parse_old_file_format_for_plot function takes in a path to a json file and returns the
     following:
