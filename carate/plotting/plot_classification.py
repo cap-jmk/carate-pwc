@@ -3,6 +3,9 @@ Plotting function for the CARATE paper designed for classification algorithms
 
 :author: Julian M. Kleber
 """
+
+from typing import Optional
+
 from carate.plotting.base_plots import (
     plot_range_band_single,
     plot_range_band_multi,
@@ -10,7 +13,12 @@ from carate.plotting.base_plots import (
 )
 
 
-def plot_classification_algorithm(path_to_directory: str, parameter: str, save_dir:str="./plots") -> None:
+def plot_classification_algorithm(
+    path_to_directory: str,
+    parameter: str,
+    save_dir: str = "./plots",
+    data_name: Optional[str] = None,
+) -> None:
     """
     The plot_classification_algorithm function takes in a path to a directory containing the
     results of a classification algorithm and plots the accuracy of that algorithm on both training
@@ -24,19 +32,22 @@ def plot_classification_algorithm(path_to_directory: str, parameter: str, save_d
 
     legend_text = path_to_directory.split("/")[-1]
 
+    if data_name is None:
+        data_name = f"{legend_text}.json"
+
+  
     result = get_stacked_list(
-        path_to_directory=path_to_directory,
-        num_cv=5,
-        json_name=f"{legend_text}.json",
-    )
+            path_to_directory=path_to_directory,
+            num_cv=5,
+            json_name=data_name,
+        )
 
-    legend_text = path_to_directory.split("/")[-1]
-
+  
     plot_range_band_single(
-        result,
-        file_name=f"{legend_text}_{parameter}",
-        save_dir=save_dir,
-        key_val=parameter,
-        alpha=0.4,
-        legend_text=legend_text,
-    )
+            result,
+            file_name=f"{legend_text}_{parameter}",
+            save_dir=save_dir,
+            key_val=parameter,
+            alpha=0.4,
+            legend_text=legend_text,
+        )

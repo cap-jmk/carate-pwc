@@ -99,17 +99,16 @@ def check_dir_paths():
     if os.path.isdir("tests/results"):
         shutil.rmtree("tests/results")
 
-def check_plotting_dir()->None: 
+
+def check_plotting_dir() -> None:
     """
-    The check_plotting_dir function checks to see if the plots directory exists. If it does, it 
+    The check_plotting_dir function checks to see if the plots directory exists. If it does, it
     deletes the directory and all of its contents.
-    
+
     :return: None
-    
+
     :doc-author: Trelent
     """
-    
 
     if os.path.isdir("./plots"):
         shutil.rmtree("./plots")
-
