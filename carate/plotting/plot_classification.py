@@ -35,19 +35,17 @@ def plot_classification_algorithm(
     if data_name is None:
         data_name = f"{legend_text}.json"
 
-  
     result = get_stacked_list(
-            path_to_directory=path_to_directory,
-            num_cv=5,
-            json_name=data_name,
-        )
+        path_to_directory=path_to_directory,
+        num_cv=5,
+        json_name=data_name,
+    )
 
-  
     plot_range_band_single(
-            result,
-            file_name=f"{legend_text}_{parameter}",
-            save_dir=save_dir,
-            key_val=parameter,
-            alpha=0.4,
-            legend_text=legend_text,
-        )
+        result,
+        file_name=f"{legend_text}_{parameter}",
+        save_dir=save_dir,
+        key_val=parameter,
+        alpha=0.4,
+        legend_text=legend_text,
+    )

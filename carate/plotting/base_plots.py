@@ -158,7 +158,9 @@ def unpack_cross_validation(
     arr_res = np.zeros((len(result), len(result[0][key_val])))
 
     for i, res in enumerate(result):
-        assert len(res[key_val]) == arr_res.shape[1], str(len(res[key_val])) +str(arr_res.shape[1])
+        assert len(res[key_val]) == arr_res.shape[1], str(len(res[key_val])) + str(
+            arr_res.shape[1]
+        )
         arr_res[i, :] = res[key_val]
 
     for i in range(arr_res.shape[1]):
