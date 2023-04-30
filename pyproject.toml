@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.3.6"
+version = "0.3.8"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
@@ -28,7 +28,8 @@ dependencies = [
     "matplotlib",  
     "Click", 
     "amarium", 
-    "black"]
+    "black"
+    ]
 
 [project.urls]
 "Homepage" = "https://www.codeberg.org/sail.black/carate.git"

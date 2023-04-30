@@ -6,6 +6,8 @@ Plotting function for the CARATE paper designed for classification algorithms
 
 from typing import Optional
 
+from amarium.utils import append_slash
+
 from carate.plotting.base_plots import (
     plot_range_band_single,
     plot_range_band_multi,
@@ -30,7 +32,8 @@ def plot_classification_algorithm(
     :doc-author: Julian M. Kleber
     """
 
-    legend_text = path_to_directory.split("/")[-1]
+    path_to_directory = append_slash(path_to_directory) + "data/"
+    legend_text = path_to_directory.split("/")[-3]
 
     if data_name is None:
         data_name = f"{legend_text}.json"

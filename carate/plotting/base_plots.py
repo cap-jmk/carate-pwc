@@ -74,6 +74,7 @@ def plot_range_band_single(
     key_val: str,
     file_name: str,
     alpha: float = 0.5,
+    fixed_y_lim=(0.0, 1.01),
     save_dir: Optional[str] = None,
     legend_text: Optional[str] = None,
 ) -> None:
@@ -104,7 +105,7 @@ def plot_range_band_single(
         axis.plot(avg_val, "-", label=legend_text)
     plot_range_fill(max_val, min_val, alpha, axis)
 
-    axis.set_ylim(0.0, 1.01)
+    axis.set_ylim(*fixed_y_lim)
     axis.set_ylabel(key_val)
     if legend_text is not None:
         axis.legend()
@@ -229,7 +230,9 @@ def get_stacked_list(
     return results
 
 
-def parse_old_file_format_for_plot(path_to_json: str) -> List[List[float]]:
+def parse_old_file_format_for_plot(
+    path_to_json: str,
+) -> List[List[float]]:  # pragma no-cover
     """
     The parse_old_file_format_for_plot function takes in a path to a json file and returns the
     following:

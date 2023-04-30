@@ -152,13 +152,14 @@ class RegressionEvaluation(Evaluation):
 
         # data container
         result = {}
-        test_mse = []
-        train_mae = []
-        train_mse = []
 
         save_model_parameters(model_net=model_net, save_dir=result_save_dir)
         for i in range(num_cv):
             tmp = {}
+            test_mse = []
+            train_mae = []
+            train_mse = []
+
             loaded_dataset: torch.utils.data.Dataset
             (
                 test_dataset,

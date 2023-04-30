@@ -20,7 +20,7 @@ def test_classification_plot_run():
 
 def test_regression_plot_run():
     check_plotting_dir()
-    path_to_directory = "./notebooks/data/ALCHEMY_20"
+    path_to_directory = "./notebooks/data/ALCHEMY_20_test_training_length_no_norm/"
     parameter = "MAE Train"
     data_name = "alchemy_full.json"
 
@@ -28,4 +28,6 @@ def test_regression_plot_run():
         path_to_directory=path_to_directory, parameter=parameter, data_name=data_name
     )
     assert os.path.isdir("./plots")
-    assert os.path.isfile(f"./plots/ENZYMES_{parameter}.png")
+    assert os.path.isfile(
+        f"./plots/ALCHEMY_20_test_training_length_no_norm_{parameter}.png"
+    )
