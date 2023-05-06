@@ -9,13 +9,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from amarium.utils import load_json_from_file, prepare_file_name_saving, append_slash
 
+from carate.statistics.analysis import get_avg, get_min, get_max, unpack_run, get_stacked_list, load_result_json
 
-logging.basicConfig(
-    filename="train.log",
-    encoding="utf-8",
-    level=logging.DEBUG,
-    format="%(asctime)s %(message)s",
-)
+
 
 
 def plot_range_band_multi(
@@ -53,7 +49,7 @@ def plot_range_band_multi(
         min_val: List[float]
         avg_val: List[float]
 
-        max_val, min_val, avg_val = unpack_cross_validation(
+        max_val, min_val, avg_val = get_min_max_avg_cv_run(
             result=result, key_val=key_vals[i]
         )
         logging.info(f"Max values are: {max_val}")
@@ -96,7 +92,7 @@ def plot_range_band_single(
     min_val: List[float]
     avg_val: List[float]
 
-    max_val, min_val, avg_val = unpack_cross_validation(result=result, key_val=key_val)
+    max_val, min_val, avg_val = get_min_max_avg_cv_run(result=result, key_val=key_val)
 
     fig, axis = plt.subplots()
     if legend_text is not None:
@@ -136,11 +132,11 @@ def plot_range_fill(
     axis.fill_between(training_steps, min_val, max_val, alpha=alpha)
 
 
-def unpack_cross_validation(
+def get_min_max_avg_cv_run(
     result: List[Dict[str, List[float]]], key_val: str
 ) -> Tuple[List[float]]:
     """
-    The unpack_cross_validation function takes in a list of dictionaries, and a key value.
+    The get_min_max_avg_cv_run function takes in a list of dictionaries, and a key value.
     It then unpacks the values associated with that key into three lists: max_val, min_val, avg_val.
     These lists are returned as a tuple.
 
@@ -156,13 +152,7 @@ def unpack_cross_validation(
     min_val = []
     avg_val = []
 
-    arr_res = np.zeros((len(result), len(result[0][key_val])))
-
-    for i, res in enumerate(result):
-        assert len(res[key_val]) == arr_res.shape[1], str(len(res[key_val])) + str(
-            arr_res.shape[1]
-        )
-        arr_res[i, :] = res[key_val]
+    arr_res = unpack_run(result)
 
     for i in range(arr_res.shape[1]):
         max_val.append(get_max(arr_res[:, i].tolist()))
@@ -196,40 +186,6 @@ def save_publication_graphic(
     plt.savefig(file_name, dpi=300)
 
 
-def get_stacked_list(
-    path_to_directory: str, num_cv: int, json_name: str
-) -> List[Dict[str, float]]:
-    """
-    The get_stacked_list function takes in a path to a directory, the name of the column
-    that we want to stack, and the number of cross-validation folds. It then returns a list
-    of dictionaries that contain all of our stacked results.
-
-    :param path_to_directory:str: Used to Specify the directory where the json files are stored.
-    :param column_name:str: Used to Specify the column name of the dataframe in which we
-    want to get.
-    :param num_cv:int: Used to Specify the number of cross validation runs.
-    :param json_name:str: Used to Specify the name of the json file that will be parsed.
-    :return: A list of dictionaries, where each dictionary is the accuracy for a single cv.
-
-    :doc-author: Julian M. Kleber
-    """
-
-    results = []
-
-    path_to_directory = append_slash(path_to_directory)
-
-    for i in range(num_cv):
-        logging.info(f"Attempting cv {i}")
-
-        result = parse_acc_list_json(
-            path_to_json=path_to_directory + f"CV_{i}/" + json_name
-        )
-        results.append(result)
-        logging.info(f"parsed results for CV {i}")
-
-    return results
-
-
 def parse_old_file_format_for_plot(
     path_to_json: str,
 ) -> List[List[float]]:  # pragma no-cover
@@ -243,34 +199,17 @@ def parse_old_file_format_for_plot(
     :doc-author: Julian M. Kleber
     """
 
-    result_acc = parse_acc_list_json(path_to_json=path_to_json)
+    result_acc = load_result_json(path_to_json=path_to_json)
     train_frames_acc = parse_min_max_avg(result_acc["Train_acc"])
     test_frames_acc = parse_min_max_avg(result_acc["Test_acc"])
     return train_frames_acc, test_frames_acc
 
 
-def parse_acc_list_json(path_to_json: str) -> Dict[str, Any]:
+
+
+def load_result_json_old_format(path_to_json: str) -> Dict[str, Any]:
     """
-    The parse_acc_list_json function takes in a path to a json file and returns the contents of
-    that json file as a dictionary.The function also parses the "Acc" key in the dictionary,
-    which contains lists of tuples containing train and test accuracy values.
-    The function then separates these tuples into two separate lists, one for train accuracy values
-    and one for test accuracy values. These new lists are added to the original dictionary under
-    keys "Acc_train" and "Acc_val", respectively.
-
-    :param path_to_json:str: Used to Specify the path to the json file.
-    :return: A dictionary with the following keys:.
-
-    :doc-author: Julian M. Kleber
-    """
-
-    result = load_json_from_file(path_to_json)
-    return result
-
-
-def parse_acc_list_json_old_format(path_to_json: str) -> Dict[str, Any]:
-    """
-    The parse_acc_list_json function takes in a path to a json file and returns the contents of
+    The load_result_json function takes in a path to a json file and returns the contents of
     that json file as a dictionary.The function also parses the "Acc" key in the dictionary, which
     contains lists of tuples containing train and test accuracy values.
     The function then separates these tuples into two separate lists, one for train accuracy values
@@ -323,45 +262,3 @@ def parse_min_max_avg(result_list: List[List[float]]) -> List[float]:
         averages.append(average)
     return [minima, maxima, averages]
 
-
-def get_avg(step_list: List[float]) -> float:
-    """
-    The get_avg function takes a list of floats and returns the average value.
-
-
-    :param step_list:List[float]: Used to Tell the function that it will be taking a list of
-    floats as an argument.
-    :return: The mean of the step_list.
-
-    :doc-author: Julian M. Kleber
-    """
-
-    return float(np.mean(step_list))
-
-
-def get_max(step_list: List[float]) -> float:
-    """
-    The get_max function takes a list of floats and returns the maximum value in that list.
-
-
-    :param step_list:List[float]: Used to Tell the function that step_list is a list of floats.
-    :return: The maximum value in the list.
-
-    :doc-author: Julian M. Kleber
-    """
-
-    return float(np.max(step_list))
-
-
-def get_min(step_list: List[float]) -> float:
-    """
-    The get_min function takes a list of floats and returns the minimum value in that list.
-
-    :param step_list:List[float]: Used to Specify the type of parameter that is being passed
-    into the function.
-    :return: The minimum value in the step_list.
-
-    :doc-author: Julian M. Kleber
-    """
-
-    return float(np.min(step_list))
