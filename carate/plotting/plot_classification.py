@@ -52,4 +52,3 @@ def plot_classification_algorithm(
         alpha=0.4,
         legend_text=legend_text,
     )
-^

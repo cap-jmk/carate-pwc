@@ -20,7 +20,9 @@ def test_classification_plot_run():
 
 def test_regression_plot_run():
     check_plotting_dir()
-    path_to_directory = "./notebooks/data/Regression/ALCHEMY_20_test_training_length_no_norm/"
+    path_to_directory = (
+        "./notebooks/data/Regression/ALCHEMY_20_test_training_length_no_norm/"
+    )
     parameter = "MAE Train"
     data_name = "alchemy_full.json"
 

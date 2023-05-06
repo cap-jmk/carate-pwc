@@ -3,7 +3,7 @@ Module to perform analysis of runs.
 
 :author: Julian M. Kleber
 """
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 import numpy as np
 from amarium.utils import append_slash, load_json_from_file
 import logging
@@ -17,9 +17,7 @@ logging.basicConfig(
 
 
 def get_best_average(stpe_list: List[float]):
-
     best_vals = np.max(step_list, axis=1)
-    
 
 
 def get_avg(step_list: List[float]) -> float:
@@ -65,22 +63,50 @@ def get_min(step_list: List[float]) -> float:
     return float(np.min(step_list))
 
 
-def unpack_run(result_list:List[Dict[str, float]])->List[List[float]]:
+def get_min_max_avg_cv_run(
+    result: List[Dict[str, List[float]]], key_val: str
+) -> Tuple[List[float]]:
+    """
+    The get_min_max_avg_cv_run function takes in a list of dictionaries, and a key value.
+    It then unpacks the values associated with that key into three lists: max_val, min_val, avg_val.
+    These lists are returned as a tuple.
+
+    :param result:List[Dict[str: Used to Store the result of each iteration.
+    :param float]]: Used to Store the results of the cross validation.
+    :param key_val:str: Used to Specify which key in the dictionary to use for the unpacking.
+    :return: The max, min and average value of the key_val parameter.
+
+    :doc-author: Julian M. Kleber
+    """
+
+    arr_res = unpack_run(result, key_val=key_val)
+
+    max_val = []
+    min_val = []
+    avg_val = []
+
+    for i in range(arr_res.shape[1]):
+        max_val.append(get_max(arr_res[:, i].tolist()))
+        min_val.append(get_min(arr_res[:, i].tolist()))
+        avg_val.append(get_avg(arr_res[:, i].tolist()))
+
+
+def unpack_run(result_list: List[Dict[str, float]], key_val: str) -> List[List[float]]:
     """
     The unpack_run function takes a list of dictionaries and returns a list of lists.
     The input is the output from the run_experiment function, which is a list of dictionaries.
-    Each dictionary contains two keys: 'params' and 'val'. The value associated with the key 
-    'params' is another dictionary containing all parameters used in that particular experiment. 
-    The value associated with the key 'val' is an array containing all values returned by 
-    each call to f(x). 
-    
+    Each dictionary contains two keys: 'params' and 'val'. The value associated with the key
+    'params' is another dictionary containing all parameters used in that particular experiment.
+    The value associated with the key 'val' is an array containing all values returned by
+    each call to f(x).
+
 
     :param result_list:List[Dict[str: Used to Specify the type of the input parameter.
     :param float]]: Used to Specify the type of data that is expected to be returned by the function.
     :return: A list of lists, where each sublist is the result of a run.
-    
+
     :doc-author: Trelent
-    """ 
+    """
 
     arr_res = np.zeros((len(result_list), len(result_list[0][key_val])))
 
@@ -90,6 +116,7 @@ def unpack_run(result_list:List[Dict[str, float]])->List[List[float]]:
         )
         arr_res[i, :] = res[key_val]
     return arr_res.to_list()
+
 
 def get_stacked_list(
     path_to_directory: str, num_cv: int, json_name: str
@@ -123,6 +150,7 @@ def get_stacked_list(
         logging.info(f"parsed results for CV {i}")
 
     return results
+
 
 def load_result_json(path_to_json: str) -> Dict[str, Any]:
     """

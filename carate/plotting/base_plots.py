@@ -9,9 +9,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from amarium.utils import load_json_from_file, prepare_file_name_saving, append_slash
 
-from carate.statistics.analysis import get_avg, get_min, get_max, unpack_run, get_stacked_list, load_result_json
-
-
+from carate.statistics.analysis import (
+    get_avg,
+    get_min,
+    get_max,
+    unpack_run,
+    get_stacked_list,
+    load_result_json,
+    get_min_max_avg_cv_run,
+)
 
 
 def plot_range_band_multi(
@@ -131,34 +137,6 @@ def plot_range_fill(
     training_steps = np.arange(0, len(max_val), 1)
     axis.fill_between(training_steps, min_val, max_val, alpha=alpha)
 
-
-def get_min_max_avg_cv_run(
-    result: List[Dict[str, List[float]]], key_val: str
-) -> Tuple[List[float]]:
-    """
-    The get_min_max_avg_cv_run function takes in a list of dictionaries, and a key value.
-    It then unpacks the values associated with that key into three lists: max_val, min_val, avg_val.
-    These lists are returned as a tuple.
-
-    :param result:List[Dict[str: Used to Store the result of each iteration.
-    :param float]]: Used to Store the results of the cross validation.
-    :param key_val:str: Used to Specify which key in the dictionary to use for the unpacking.
-    :return: The max, min and average value of the key_val parameter.
-
-    :doc-author: Julian M. Kleber
-    """
-
-    max_val = []
-    min_val = []
-    avg_val = []
-
-    arr_res = unpack_run(result)
-
-    for i in range(arr_res.shape[1]):
-        max_val.append(get_max(arr_res[:, i].tolist()))
-        min_val.append(get_min(arr_res[:, i].tolist()))
-        avg_val.append(get_avg(arr_res[:, i].tolist()))
-
     return (max_val, min_val, avg_val)
 
 
@@ -203,8 +181,6 @@ def parse_old_file_format_for_plot(
     train_frames_acc = parse_min_max_avg(result_acc["Train_acc"])
     test_frames_acc = parse_min_max_avg(result_acc["Test_acc"])
     return train_frames_acc, test_frames_acc
-
-
 
 
 def load_result_json_old_format(path_to_json: str) -> Dict[str, Any]:
@@ -261,4 +237,3 @@ def parse_min_max_avg(result_list: List[List[float]]) -> List[float]:
         maxima.append(maximum)
         averages.append(average)
     return [minima, maxima, averages]
-
