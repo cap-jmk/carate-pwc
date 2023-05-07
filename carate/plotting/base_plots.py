@@ -137,7 +137,6 @@ def plot_range_fill(
     training_steps = np.arange(0, len(max_val), 1)
     axis.fill_between(training_steps, min_val, max_val, alpha=alpha)
 
-    return (max_val, min_val, avg_val)
 
 
 def save_publication_graphic(

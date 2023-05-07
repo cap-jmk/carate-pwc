@@ -16,9 +16,26 @@ logging.basicConfig(
 )
 
 
-def get_best_average(stpe_list: List[float]):
+def get_best_average(result_list: List[float], key_val:str)->List[float]:
+    """
+    The get_best_average function takes a list of floats and returns the average of the best values 
+    in that list.
+            
+    Returns: List[float]: A list containing only the best averages for each run in step_list.
+    
+    :param step_list:List[float]: Used to Determine the step size for each run.
+    :param key_val:str: Used to Specify the key value of the dictionary that is being unpacked.
+    :return: The best average reward for each run.
+    
+    :doc-author: Trelent
+    """
+    
+    step_list = unpack_run(result_list, key_val)
     best_vals = np.max(step_list, axis=1)
-
+    avg = np.mean(best_vals)
+    std = np.std(best_vals)
+    print(avg, "pm", std)
+    return [avg, std]
 
 def get_avg(step_list: List[float]) -> float:
     """
@@ -79,7 +96,7 @@ def get_min_max_avg_cv_run(
     :doc-author: Julian M. Kleber
     """
 
-    arr_res = unpack_run(result, key_val=key_val)
+    arr_res = np.array(unpack_run(result, key_val=key_val))
 
     max_val = []
     min_val = []
@@ -89,7 +106,7 @@ def get_min_max_avg_cv_run(
         max_val.append(get_max(arr_res[:, i].tolist()))
         min_val.append(get_min(arr_res[:, i].tolist()))
         avg_val.append(get_avg(arr_res[:, i].tolist()))
-
+    return max_val, min_val, avg_val
 
 def unpack_run(result_list: List[Dict[str, float]], key_val: str) -> List[List[float]]:
     """
@@ -115,7 +132,7 @@ def unpack_run(result_list: List[Dict[str, float]], key_val: str) -> List[List[f
             arr_res.shape[1]
         )
         arr_res[i, :] = res[key_val]
-    return arr_res.to_list()
+    return arr_res.tolist()
 
 
 def get_stacked_list(
