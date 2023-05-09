@@ -35,7 +35,7 @@ def get_best_average(result_list: List[float], key_val:str)->List[float]:
     avg = np.mean(best_vals)
     std = np.std(best_vals)
     print(avg, "pm", std)
-    return [avg, std]
+    return [ ]
 
 def get_avg(step_list: List[float]) -> float:
     """
