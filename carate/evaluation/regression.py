@@ -182,6 +182,7 @@ class RegressionEvaluation(Evaluation):
                 norm_factor = self.__normalization_factor(
                     data_set=loaded_dataset, num_classes=num_classes
                 )
+        
             else:
                 norm_factor = 1.0
             for epoch in range(1, num_epoch + 1):
