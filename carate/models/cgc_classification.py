@@ -37,13 +37,13 @@ class Net(Model):
 
     """
 
-    def __init__(self, dim: int, num_features: int, num_classes: int) -> None:
+    def __init__(self, dim: int, num_features: int, num_classes: int, heads:int=16) -> None:
         super(Net, self).__init__(
             dim=dim, num_features=num_features, num_classes=num_classes
         )
 
         self.conv1 = GraphConv(self.num_features, self.dim)
-        self.conv3 = GATConv(self.dim, self.dim, dropout=0.6, heads=16)
+        self.conv3 = GATConv(self.dim, self.dim, dropout=0.6, heads=self.heads)
         self.conv5 = GraphConv(self.dim * 16, self.dim)
 
         self.fc1 = Linear(self.dim, self.dim)
@@ -56,8 +56,6 @@ class Net(Model):
         x = F.relu(self.conv5(x, edge_index, edge_weight))
         x = global_add_pool(x, batch)
         x = F.relu(self.fc1(x))
-        x = F.dropout(
-            x, p=0.5, training=self.training
-        ) 
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc2(x)
         return torch.sigmoid(x)

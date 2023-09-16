@@ -30,9 +30,11 @@ EVALUATION_MAP = {
 }
 
 ModelMap: Dict[str, Any]
-MODEL_MAP = {"cgc_classification": cgc_classification, 
-             "cgc_regression": cgc_regression,
-             "g_classification": g_classification}
+MODEL_MAP = {
+    "cgc_classification": cgc_classification,
+    "cgc_regression": cgc_regression,
+    "g_classification": g_classification,
+}
 
 DATA_SET_MAP: Dict[
     str,
@@ -149,9 +151,11 @@ class ConfigInitializer:
         elif json_object["device"] == "cuda":
             device = torch.device("cuda")
         elif json_object["device"] == "auto":
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device(
+                "cuda" if torch.cuda.is_available() else "cpu")
         else:
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device(
+                "cuda" if torch.cuda.is_available() else "cpu")
 
         if "resume" in list(json_object.keys()):
             resume = json_object["resume"]

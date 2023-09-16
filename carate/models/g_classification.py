@@ -28,21 +28,22 @@ class Net(Model):
     in the evaluation module with the Evaluation class.
     """
 
-    def __init__(self, dim: int, num_features: int, num_classes: int) -> None:
+    def __init__(
+        self, dim: int, num_features: int, num_classes: int, heads: int = 16
+    ) -> None:
         super(Net, self).__init__(
             dim=dim, num_features=num_features, num_classes=num_classes
         )
 
-        self.conv3 = GATConv(self.num_features, self.dim, dropout=0.6, heads=16)
+        self.conv3 = GATConv(self.num_features, self.dim,
+                             dropout=0.6, heads=self.heads)
 
-        self.fc1 = Linear(self.dim, self.dim)
+        self.fc1 = Linear(self.dim*self.heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv3(x, edge_index, edge_weight))
-        assert 1==2, str(x.shape)
-        x = F.dropout(
-            x, p=0.5, training=self.training
-        ) 
+        assert 1 == 2, str(x.shape)
+        x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc2(x)
         return torch.sigmoid(x)

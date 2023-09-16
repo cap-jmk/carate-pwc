@@ -88,7 +88,8 @@ class StandardPytorchGeometricDataset(DatasetObject):
         """
 
         if shuffle:
-            dataset = self.DataSet(dataset_save_path, name=dataset_name).shuffle()
+            dataset = self.DataSet(
+                dataset_save_path, name=dataset_name).shuffle()
         else:
             dataset = self.DataSet(dataset_save_path, name=dataset_name)
 
@@ -114,7 +115,7 @@ class StandardPytorchGeometricDataset(DatasetObject):
         dataset = dataset[: int(custom_size)]  # make sure the size is an int
 
         test_dataset = dataset[: len(dataset) // test_ratio]
-        train_dataset = dataset[len(dataset) // test_ratio :]
+        train_dataset = dataset[len(dataset) // test_ratio:]
         test_loader = DataLoader(test_dataset, batch_size=batch_size)
         train_loader = DataLoader(train_dataset, batch_size=batch_size)
 
