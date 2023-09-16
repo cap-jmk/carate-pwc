@@ -36,7 +36,7 @@ class Net(Model):
         )
 
         self.conv3 = GATConv(self.num_features, self.dim,
-                             dropout=0.6, heads=self.heads)
+                             dropout=0.6, heads=heads)
 
         self.fc1 = Linear(self.dim*self.heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
