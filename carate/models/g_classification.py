@@ -43,7 +43,6 @@ class Net(Model):
 
     def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv3(x, edge_index, edge_weight))
-        assert 1 == 2, str(x.shape)
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc2(x)
         return torch.sigmoid(x)
