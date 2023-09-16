@@ -3,7 +3,6 @@ import os, shutil
 from amarium.utils import search_subdirs
 
 
-
 def check_result_files(
     result_dir: str, run_title: str, data_set_name: str, override: bool = False
 ) -> bool:
@@ -99,3 +98,17 @@ def check_dir_paths():
         shutil.rmtree("tests/data")
     if os.path.isdir("tests/results"):
         shutil.rmtree("tests/results")
+
+
+def check_plotting_dir() -> None:
+    """
+    The check_plotting_dir function checks to see if the plots directory exists. If it does, it
+    deletes the directory and all of its contents.
+
+    :return: None
+
+    :doc-author: Trelent
+    """
+
+    if os.path.isdir("./plots"):
+        shutil.rmtree("./plots")

@@ -152,13 +152,14 @@ class RegressionEvaluation(Evaluation):
 
         # data container
         result = {}
-        test_mse = []
-        train_mae = []
-        train_mse = []
-        tmp = {}
 
         save_model_parameters(model_net=model_net, save_dir=result_save_dir)
         for i in range(num_cv):
+            tmp = {}
+            test_mse = []
+            train_mae = []
+            train_mse = []
+
             loaded_dataset: torch.utils.data.Dataset
             (
                 test_dataset,
@@ -181,6 +182,7 @@ class RegressionEvaluation(Evaluation):
                 norm_factor = self.__normalization_factor(
                     data_set=loaded_dataset, num_classes=num_classes
                 )
+        
             else:
                 norm_factor = 1.0
             for epoch in range(1, num_epoch + 1):

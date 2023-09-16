@@ -1,25 +1,26 @@
 # CARATE
 
 [![Downloads](https://static.pepy.tech/personalized-badge/carate?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/carate)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL_v3+-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%20-blue)
-![Style Black](https://warehouse-camo.ingress.cmh1.psfhosted.org/fbfdc7754183ecf079bc71ddeabaf88f6cbc5c00/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f64652532307374796c652d626c61636b2d3030303030302e737667)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 ![Bert goes into the karate club](bert_goes_into_the_karate_club.png)
 
 <!-- TOC -->
-- [1. Why](#1-why)
-- [2. What](#2-what)
-- [3. Scope](#3-scope)
-- [4. Installation on CPU](#4-installation-on-cpu)
-  - [4.1. Build manually](#41-build-manually)
-  - [4.2. Installation from repo](#42-installation-from-repo)
-- [5. Usage](#5-usage)
-  - [5.1. Start a run](#51-start-a-run)
-  - [5.2. Training results](#52-training-results)
-- [6. Build on the project](#6-build-on-the-project)
-- [7. Support the development](#7-support-the-development)
-- [8. Cite](#8-cite)
+- [CARATE](#carate)
+  - [1. Why](#1-why)
+  - [2. What](#2-what)
+  - [3. Scope](#3-scope)
+  - [4. Installation on CPU](#4-installation-on-cpu)
+    - [4.1. Build manually](#41-build-manually)
+    - [4.2. Installation from repo](#42-installation-from-repo)
+  - [5. Usage](#5-usage)
+    - [5.1. Start a run](#51-start-a-run)
+    - [5.2. Training results](#52-training-results)
+  - [6. Build on the project](#6-build-on-the-project)
+  - [7. Support the development](#7-support-the-development)
+  - [8. Cite](#8-cite)
 <!-- /TOC -->
 
 ## 1. Why
@@ -44,22 +45,16 @@ For a chemist it is quite intuitive but seldomly modelled as such: A molecule ex
 
 The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](https://codeberg.org/sail.black/chembee.git) pattern. Actually, the chembee pattern is mimicked in this project to provide a stand alone tool. The overall structure of the program is reusable for other deep-learning projects and will be transferred to an own project that should work similar to opinionated frameworks.
 
-## 4. Installation on CPU
-
-Prepare system
-
-```bash
-sudo apt-get install python3-dev libffi-dev
-```
-
 ### 4.1. Build manually
 
-```bash
-pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu 
-pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[default] matplotlib
-pip install torch-cluster 
-pip install torch-spline-conv 
-```
+The vision is to move away from PyTorch as it frequently creates problems in maintainance. 
+
+The numpy interface of Jax seems to be more promising and robust against problems. By using the numpy
+interface the package would become more independent and one might as well implement the algorithm 
+in numpy or a similar package. 
+
+To install the package make sure you install all correct verions mentioned in requirements.txt for 
+debugging or in pyproject.toml for production use. See below on how to install the package. 
 
 ### 4.2. Installation from repo
 
@@ -89,7 +84,7 @@ carate -c path_to_config_file.py
 
 To start a run you need to define the configuration. You can do so by defining a `.json` or a `config.py` file
 
-Examples for `config.py` files are given in `config_files`
+All examples for `config.py` files for the paper are given in `notebooks/config_files`
 
 Or you can check the the `tutorial.ipynb` in `notebooks` how to use the package with a `.json` file
 
@@ -121,6 +116,8 @@ was an incident and requests more reproductions. That should solve the issue for
 If you are happy about substantial progress in chemistry and life sciences that is not commercial first but citizen first, well then just
 
 <a href="https://www.buymeacoffee.com/capjmk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+Or you can of start join the development of the code. 
 
 ## 8. Cite
 
