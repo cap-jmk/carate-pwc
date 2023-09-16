@@ -5,7 +5,7 @@ Module to perform analysis of runs.
 """
 from typing import List, Dict, Any, Tuple
 import numpy as np
-from amarium.utils import append_slash, load_json_from_file
+from amarium.utils import attach_slash, load_json_from_file
 import logging
 
 logging.basicConfig(
@@ -155,7 +155,7 @@ def get_stacked_list(
 
     results = []
 
-    path_to_directory = append_slash(path_to_directory)
+    path_to_directory = attach_slash(path_to_directory)
 
     for i in range(num_cv):
         logging.info(f"Attempting cv {i}")

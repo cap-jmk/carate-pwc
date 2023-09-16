@@ -10,7 +10,7 @@ import logging
 
 import torch
 
-from amarium.utils import append_slash, load_json_from_file
+from amarium.utils import attach_slash, load_json_from_file
 
 from carate.run import RunInitializer
 import carate.models.cgc_regression as CGCR
@@ -85,6 +85,6 @@ def test_regression_multitaksing():
 
 
 def verify_len_json(result_dir: str, dataset_name: str) -> None:
-    result_file = append_slash(result_dir) + f"data/CV_1/{dataset_name}.json"
+    result_file = attach_slash(result_dir) + f"data/CV_1/{dataset_name}.json"
     result = load_json_from_file(result_file)
     assert len(result["MAE Train"]) == 2

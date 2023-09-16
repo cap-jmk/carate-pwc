@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.3.8"
+version = "0.3.10"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
-description = "Providing reproducible modeling"
+description = "Chemical and Pharmaceutical Autoencoder - Providing reproducible modelling for quantum chemistry"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -20,8 +20,6 @@ dependencies = [
     "torch==1.13.1",
     "torch-sparse-carate",
     "torch-scatter-carate", 
-    "torchaudio==0.13.1"
-    "torchvision==0.14.1",
     "torch-geometric",
     "rdkit-pypi",
     "networkx[default]",

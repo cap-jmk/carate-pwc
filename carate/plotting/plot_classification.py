@@ -6,7 +6,7 @@ Plotting function for the CARATE paper designed for classification algorithms
 
 from typing import Optional
 
-from amarium.utils import append_slash
+from amarium.utils import attach_slash
 
 from carate.plotting.base_plots import (
     plot_range_band_single,
@@ -32,7 +32,7 @@ def plot_classification_algorithm(
     :doc-author: Julian M. Kleber
     """
 
-    path_to_directory = append_slash(path_to_directory) + "data/"
+    path_to_directory = attach_slash(path_to_directory) + "data/"
     legend_text = path_to_directory.split("/")[-3]
 
     if data_name is None:

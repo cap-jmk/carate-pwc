@@ -7,7 +7,7 @@ from typing import Type, Optional, Dict, Any, List, Tuple
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
-from amarium.utils import load_json_from_file, prepare_file_name_saving, append_slash
+from amarium.utils import load_json_from_file, prepare_file_name_saving, attach_slash
 
 from carate.statistics.analysis import (
     get_avg,

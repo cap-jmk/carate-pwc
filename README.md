@@ -45,26 +45,16 @@ For a chemist it is quite intuitive but seldomly modelled as such: A molecule ex
 
 The aim is to implement the algorithm in a reusable way, e.g. for the [chembee](https://codeberg.org/sail.black/chembee.git) pattern. Actually, the chembee pattern is mimicked in this project to provide a stand alone tool. The overall structure of the program is reusable for other deep-learning projects and will be transferred to an own project that should work similar to opinionated frameworks.
 
-## 4. Installation on CPU
-
-Prepare system
-
-```bash
-sudo apt-get install python3-dev libffi-dev
-```
-
 ### 4.1. Build manually
 
-There is a problem with the PytorchGeometric maintainer rusty1s. I tried to collaborate with him, but his packages frequently brake the installation process of this package. For the long run, I want to move away from PyTorch and associates because it only creates problems. 
+The vision is to move away from PyTorch as it frequently creates problems in maintainance. 
 
-The numpy interface of Jax seems to be more promising and robust against problems. 
+The numpy interface of Jax seems to be more promising and robust against problems. By using the numpy
+interface the package would become more independent and one might as well implement the algorithm 
+in numpy or a similar package. 
 
-```bash
-pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu 
-pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[default] matplotlib
-pip install torch-cluster 
-pip install torch-spline-conv 
-```
+To install the package make sure you install all correct verions mentioned in requirements.txt for 
+debugging or in pyproject.toml for production use. See below on how to install the package. 
 
 ### 4.2. Installation from repo
 
@@ -94,7 +84,7 @@ carate -c path_to_config_file.py
 
 To start a run you need to define the configuration. You can do so by defining a `.json` or a `config.py` file
 
-Examples for `config.py` files are given in `config_files`
+All examples for `config.py` files for the paper are given in `notebooks/config_files`
 
 Or you can check the the `tutorial.ipynb` in `notebooks` how to use the package with a `.json` file
 
@@ -126,6 +116,8 @@ was an incident and requests more reproductions. That should solve the issue for
 If you are happy about substantial progress in chemistry and life sciences that is not commercial first but citizen first, well then just
 
 <a href="https://www.buymeacoffee.com/capjmk" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
+Or you can of start join the development of the code. 
 
 ## 8. Cite
 
