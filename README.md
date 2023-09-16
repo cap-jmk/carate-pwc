@@ -1,25 +1,26 @@
 # CARATE
 
 [![Downloads](https://static.pepy.tech/personalized-badge/carate?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/carate)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL_v3+-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%20-blue)
-![Style Black](https://warehouse-camo.ingress.cmh1.psfhosted.org/fbfdc7754183ecf079bc71ddeabaf88f6cbc5c00/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f636f64652532307374796c652d626c61636b2d3030303030302e737667)
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 ![Bert goes into the karate club](bert_goes_into_the_karate_club.png)
 
 <!-- TOC -->
-- [1. Why](#1-why)
-- [2. What](#2-what)
-- [3. Scope](#3-scope)
-- [4. Installation on CPU](#4-installation-on-cpu)
-  - [4.1. Build manually](#41-build-manually)
-  - [4.2. Installation from repo](#42-installation-from-repo)
-- [5. Usage](#5-usage)
-  - [5.1. Start a run](#51-start-a-run)
-  - [5.2. Training results](#52-training-results)
-- [6. Build on the project](#6-build-on-the-project)
-- [7. Support the development](#7-support-the-development)
-- [8. Cite](#8-cite)
+- [CARATE](#carate)
+  - [1. Why](#1-why)
+  - [2. What](#2-what)
+  - [3. Scope](#3-scope)
+  - [4. Installation on CPU](#4-installation-on-cpu)
+    - [4.1. Build manually](#41-build-manually)
+    - [4.2. Installation from repo](#42-installation-from-repo)
+  - [5. Usage](#5-usage)
+    - [5.1. Start a run](#51-start-a-run)
+    - [5.2. Training results](#52-training-results)
+  - [6. Build on the project](#6-build-on-the-project)
+  - [7. Support the development](#7-support-the-development)
+  - [8. Cite](#8-cite)
 <!-- /TOC -->
 
 ## 1. Why
