@@ -20,8 +20,8 @@ dependencies = [
     "torch==1.13.1",
     "torch-sparse-carate",
     "torch-scatter-carate", 
-    "torchvision",
-    "torchaudio",
+    "torchaudio==0.13.1"
+    "torchvision==0.14.1",
     "torch-geometric",
     "rdkit-pypi",
     "networkx[default]",

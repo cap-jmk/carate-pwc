@@ -55,6 +55,10 @@ sudo apt-get install python3-dev libffi-dev
 
 ### 4.1. Build manually
 
+There is a problem with the PytorchGeometric maintainer rusty1s. I tried to collaborate with him, but his packages frequently brake the installation process of this package. For the long run, I want to move away from PyTorch and associates because it only creates problems. 
+
+The numpy interface of Jax seems to be more promising and robust against problems. 
+
 ```bash
 pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu 
 pip install torch-scatter torch-sparse torch-geometric rdkit-pypi networkx[default] matplotlib
