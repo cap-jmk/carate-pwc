@@ -92,27 +92,32 @@ class Config:
         self.normalize = normalize
 
         # model parameters
+        
         self.dataset_name = dataset_name
         self.num_classes = num_classes
         self.num_features = num_features
         self.net_dimension = net_dimension
-        self.learning_rate = learning_rate
+        
 
         # evaluation parameters
-        self.dataset_name = dataset_name
-        self.dataset_save_path = dataset_save_path
-        self.test_ratio = test_ratio
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.num_cv = num_cv
-        self.num_epoch = num_epoch
+
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
 
+        #training
         self.resume = resume
+        self.learning_rate = learning_rate
+        self.test_ratio = test_ratio
+        self.batch_size = batch_size
         self.custom_size = custom_size
+        self.num_cv = num_cv
+        self.num_epoch = num_epoch
 
+        # data 
+        self.dataset_name = dataset_name
+        self.dataset_save_path = dataset_save_path
+        self.shuffle = shuffle
 
 class ConfigInitializer:
     @classmethod

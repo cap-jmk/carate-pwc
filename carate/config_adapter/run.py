@@ -129,16 +129,19 @@ class RunInitializer:
         :doc-author: Julian M. Kleber
         """
 
+        # Model initalization
         model_net = config.model.Net(
             dim=int(config.net_dimension),
             num_classes=int(config.num_classes),
             num_features=int(config.num_features),
         ).to(config.device)
+
         optimizer = get_optimizer(
             optimizer_str=config.optimizer,
             model_net=model_net,
             learning_rate=config.learning_rate,
         )
+        
         return Run(
             dataset_name=config.dataset_name,
             device=config.device,
