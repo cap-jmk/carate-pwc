@@ -34,6 +34,7 @@ MODEL_MAP = {
     "cgc_classification": cgc_classification,
     "cgc_regression": cgc_regression,
     "g_classification": g_classification,
+    "g_regression": g_regression
 }
 
 DATA_SET_MAP: Dict[
