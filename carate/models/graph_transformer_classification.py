@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import global_add_pool,  TransformerConv
+from torch_geometric.nn import global_add_pool, TransformerConv
 
 import numpy as np
 import sklearn.metrics as metrics
@@ -35,10 +35,11 @@ class Net(Model):
             dim=dim, num_features=num_features, num_classes=num_classes
         )
         self.heads = heads
-        self.conv3 = TransformerConv(self.num_features, self.dim,
-                             dropout=0.6, heads=self.heads)
+        self.conv3 = TransformerConv(
+            self.num_features, self.dim, dropout=0.6, heads=self.heads
+        )
 
-        self.fc1 = Linear(self.dim*self.heads, self.dim)
+        self.fc1 = Linear(self.dim * self.heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):

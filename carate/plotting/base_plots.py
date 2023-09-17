@@ -68,8 +68,7 @@ def plot_range_band_multi(
     axis.set_ylabel("Value")
     axis.legend()
     axis.set_title(title_text)
-    save_publication_graphic(
-        fig_object=fig, file_name=file_name, prefix=save_dir)
+    save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
 def plot_range_band_single(
@@ -99,8 +98,7 @@ def plot_range_band_single(
     min_val: List[float]
     avg_val: List[float]
 
-    max_val, min_val, avg_val = get_min_max_avg_cv_run(
-        result=result, key_val=key_val)
+    max_val, min_val, avg_val = get_min_max_avg_cv_run(result=result, key_val=key_val)
 
     fig, axis = plt.subplots()
     if legend_text is not None:
@@ -116,8 +114,7 @@ def plot_range_band_single(
 
     axis.set_xlabel("Training step")
 
-    save_publication_graphic(
-        fig_object=fig, file_name=file_name, prefix=save_dir)
+    save_publication_graphic(fig_object=fig, file_name=file_name, prefix=save_dir)
 
 
 def plot_range_fill(

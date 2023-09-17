@@ -35,14 +35,14 @@ class Net(Model):
             dim=dim, num_features=num_features, num_classes=num_classes
         )
         self.heads = heads
-        self.conv3 = GATv2Conv(self.num_features, self.dim,
-                             dropout=0.6, heads=self.heads)
+        self.conv3 = GATv2Conv(
+            self.num_features, self.dim, dropout=0.6, heads=self.heads
+        )
 
-        self.fc1 = Linear(self.dim*self.heads, self.dim)
+        self.fc1 = Linear(self.dim * self.heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
-        
-    def forward(self, x, edge_index, batch, edge_weight=None):
 
+    def forward(self, x, edge_index, batch, edge_weight=None):
         x = F.relu(self.conv3(x, edge_index, edge_weight))
         x = F.dropout(x, p=0.5, training=self.training)
         x = global_add_pool(x, batch)

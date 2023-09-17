@@ -11,7 +11,18 @@ from typing import Type, Optional, Dict, TypeVar, Any, Generic
 from amarium.utils import convert_str_to_bool
 
 from carate.evaluation import base, classification, regression
-from carate.models import cgc_classification, cgc_regression, g_classification, g_regression
+from carate.models import (
+    cgc_classification,
+    cgc_regression,
+    g_classification,
+    g_regression,
+    cgc_classification,
+    cgc_regression,
+    gatv2_classification,
+    gatv2_regression,
+    graph_transformer_classification,
+    graph_transformer_regression,
+)
 
 from carate.load_data import (
     DatasetObject,
@@ -34,7 +45,13 @@ MODEL_MAP = {
     "cgc_classification": cgc_classification,
     "cgc_regression": cgc_regression,
     "g_classification": g_classification,
-    "g_regression": g_regression
+    "g_regression": g_regression,
+    "cc_classification": cc_classification,
+    "cc_regression": cc_regression,
+    "gatv2_classification": gatv2_classification,
+    "gatv2_regression": gatv2_regression,
+    "graph_transformer_classification": graph_transformer_classification,
+    "graph_transformer_regression": graph_transformer_regression,
 }
 
 DATA_SET_MAP: Dict[
@@ -92,12 +109,11 @@ class Config:
         self.normalize = normalize
 
         # model parameters
-        
+
         self.dataset_name = dataset_name
         self.num_classes = num_classes
         self.num_features = num_features
         self.net_dimension = net_dimension
-        
 
         # evaluation parameters
 
@@ -105,7 +121,7 @@ class Config:
         self.model_save_freq = model_save_freq
         self.override = override
 
-        #training
+        # training
         self.resume = resume
         self.learning_rate = learning_rate
         self.test_ratio = test_ratio
@@ -114,10 +130,11 @@ class Config:
         self.num_cv = num_cv
         self.num_epoch = num_epoch
 
-        # data 
+        # data
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.shuffle = shuffle
+
 
 class ConfigInitializer:
     @classmethod
@@ -157,11 +174,9 @@ class ConfigInitializer:
         elif json_object["device"] == "cuda":
             device = torch.device("cuda")
         elif json_object["device"] == "auto":
-            device = torch.device(
-                "cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
-            device = torch.device(
-                "cuda" if torch.cuda.is_available() else "cpu")
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         if "resume" in list(json_object.keys()):
             resume = json_object["resume"]

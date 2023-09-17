@@ -37,12 +37,14 @@ class Net(Model):
 
     """
 
-    def __init__(self, dim: int, num_features: int, num_classes: int, heads:int=16) -> None:
+    def __init__(
+        self, dim: int, num_features: int, num_classes: int, heads: int = 16
+    ) -> None:
         super(Net, self).__init__(
             dim=dim, num_features=num_features, num_classes=num_classes
         )
         self.heads = heads
-        
+
         self.conv1 = GraphConv(self.num_features, self.dim)
         self.conv2 = GraphConv(self.dim * 16, self.dim)
 
@@ -50,11 +52,10 @@ class Net(Model):
         self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
-
         x = F.relu(self.conv1(x, edge_index, edge_weight))
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu(self.conv2(x, edge_index, edge_weight))
-        
+
         x = global_add_pool(x, batch)
         x = F.relu(self.fc1(x))
         x = F.dropout(x, p=0.5, training=self.training)

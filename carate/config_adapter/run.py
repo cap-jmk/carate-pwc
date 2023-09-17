@@ -134,6 +134,7 @@ class RunInitializer:
             dim=int(config.net_dimension),
             num_classes=int(config.num_classes),
             num_features=int(config.num_features),
+            num_heads=int(config.num_heads),
         ).to(config.device)
 
         optimizer = get_optimizer(
@@ -141,7 +142,7 @@ class RunInitializer:
             model_net=model_net,
             learning_rate=config.learning_rate,
         )
-        
+
         return Run(
             dataset_name=config.dataset_name,
             device=config.device,

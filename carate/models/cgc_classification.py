@@ -37,7 +37,9 @@ class Net(Model):
 
     """
 
-    def __init__(self, dim: int, num_features: int, num_classes: int, heads:int=16) -> None:
+    def __init__(
+        self, dim: int, num_features: int, num_classes: int, heads: int = 16
+    ) -> None:
         super(Net, self).__init__(
             dim=dim, num_features=num_features, num_classes=num_classes
         )
@@ -54,7 +56,7 @@ class Net(Model):
         x = F.dropout(x, p=0.5, training=self.training)
         x = F.relu(self.conv3(x, edge_index, edge_weight))
         x = F.relu(self.conv5(x, edge_index, edge_weight))
-        
+
         x = global_add_pool(x, batch)
         x = F.relu(self.fc1(x))
         x = F.dropout(x, p=0.5, training=self.training)

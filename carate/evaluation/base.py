@@ -89,8 +89,8 @@ class Evaluation(DefaultObject):
         self.model_net = model_net
         self.num_classes = num_classes
 
-        # training 
-        
+        # training
+
         self.num_cv = num_cv
         self.optimizer = optimizer
         self.batch_size = batch_size
@@ -101,21 +101,19 @@ class Evaluation(DefaultObject):
         self.override = override
         self.train_store = None
         self.resume = resume
-        
 
         # data
 
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.out_dir = out_dir
-        self.data_set = data_set        
+        self.data_set = data_set
         self.shuffle = shuffle
         self.custom_size = custom_size
-        
-        #hardware
-        
-        self.device = device
 
+        # hardware
+
+        self.device = device
 
     def cv(
         self,
