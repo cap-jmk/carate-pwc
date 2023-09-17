@@ -11,7 +11,7 @@ from typing import Type, Optional, Dict, TypeVar, Any, Generic
 from amarium.utils import convert_str_to_bool
 
 from carate.evaluation import base, classification, regression
-from carate.models import cgc_classification, cgc_regression, g_classification
+from carate.models import cgc_classification, cgc_regression, g_classification, g_regression
 
 from carate.load_data import (
     DatasetObject,
