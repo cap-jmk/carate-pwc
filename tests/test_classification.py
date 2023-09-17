@@ -10,12 +10,12 @@ import torch
 
 from amarium.utils import search_subdirs, load_json_from_file
 
-from carate.run import RunInitializer
+
 import carate.models.cgc_classification as CGCC
 from carate.evaluation.classification import ClassificationEvaluation
 from carate.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
-from carate.config import Config
-
+from carate.config_adapter.config import Config
+from carate.config_adapter.run import RunInitializer
 
 import logging
 

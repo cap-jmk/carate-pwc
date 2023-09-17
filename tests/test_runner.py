@@ -4,7 +4,7 @@ leads to weird results
 
 :author: Julian M. Kleber
 """
-from carate.run import RunInitializer
+from carate.config_adapter.run import RunInitializer
 
 
 def test_runner():

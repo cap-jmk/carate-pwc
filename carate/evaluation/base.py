@@ -85,25 +85,37 @@ class Evaluation(DefaultObject):
 
         :doc-author: Julian M. Kleber
         """
-        self.dataset_name = dataset_name
-        self.dataset_save_path = dataset_save_path
+        # model
+        self.model_net = model_net
+        self.num_classes = num_classes
+
+        # training 
+        
+        self.num_cv = num_cv
+        self.optimizer = optimizer
+        self.batch_size = batch_size
         self.test_ratio = test_ratio
         self.num_epoch = num_epoch
-        self.model_net = model_net
-        self.optimizer = optimizer
-        self.num_classes = num_classes
-        self.num_cv = num_cv
-        self.out_dir = out_dir
-        self.data_set = data_set
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.device = device
         self.result_save_dir = result_save_dir
         self.model_save_freq = model_save_freq
         self.override = override
         self.train_store = None
         self.resume = resume
+        
+
+        # data
+
+        self.dataset_name = dataset_name
+        self.dataset_save_path = dataset_save_path
+        self.out_dir = out_dir
+        self.data_set = data_set        
+        self.shuffle = shuffle
         self.custom_size = custom_size
+        
+        #hardware
+        
+        self.device = device
+
 
     def cv(
         self,
