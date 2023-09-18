@@ -50,6 +50,8 @@ class Run(DefaultObject):
         num_cv: int = 5,
         num_epoch: int = 150,
         num_heads: int = 3,
+        dropout_forward: float = 0.6, 
+        dropout_gat: float = 0.5,
         custom_size: Optional[int] = None,
     ) -> None:
         """
@@ -65,6 +67,9 @@ class Run(DefaultObject):
         self.net_dimension = net_dimension
         self.optimizer = optimizer
         self.num_heads = num_heads
+        self.dropout_gat = dropout_gat
+        self.dropout_forward = dropout_forward
+        self.dropout_gat = dropout_gat
 
         # evaulation / training parameters
         self.model_save_freq = model_save_freq

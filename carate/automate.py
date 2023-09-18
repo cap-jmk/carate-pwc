@@ -8,6 +8,9 @@ import click
 
 from carate.config_adapter.run import RunInitializer, Run
 
+@click.group()
+def carate_cli() -> None:
+    pass #pragma: no cover 
 
 @click.command()
 @click.option("-c", help="Path to config file")
@@ -29,6 +32,8 @@ def train_algorithm(c: str) -> None:
     runner = RunInitializer.from_file(config_filepath=config_filepath)
 
     runner.run()
+
+def 
 
 
 if __name__ == "__main__":

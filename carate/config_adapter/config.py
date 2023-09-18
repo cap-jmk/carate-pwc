@@ -101,6 +101,8 @@ class Config:
         resume: bool = False,
         normalize: bool = False,
         num_heads: int = 3,
+        dropout_gat: float = 0.6,
+        dropout_forward: float = 0.5,
         custom_size: Optional[int] = None,
     ):
         # modelling
@@ -118,6 +120,8 @@ class Config:
         self.num_features = num_features
         self.net_dimension = net_dimension
         self.num_heads = num_heads
+        self.dropout_gat = dropout_gat
+        self.dropout_forward = dropout_forward
 
         # evaluation parameters
 
@@ -201,7 +205,17 @@ class ConfigInitializer:
             num_heads = json_object["num_heads"]
         else:
             num_heads = 3
+        
+        if "dropout_forward" in json_object.keys():
+            dropout_forward = json_object["dropout_forward"]
+        else:
+            dropout_forward = 3
 
+        if "dropout_gat" in json_object.keys():
+            dropout_gat = json_object["dropout_gat"]
+        else:
+            dropout_gat = 0.6
+        
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
             dataset_name=json_object["dataset_name"],
@@ -249,5 +263,7 @@ class ConfigInitializer:
             resume=resume,
             normalize=normalize,
             num_heads=num_heads,
+            dropout_forward = dropout_forward,
+            dropout_gat = dropout_gat,
             custom_size=custom_size,
         )
