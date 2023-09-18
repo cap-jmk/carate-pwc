@@ -10,10 +10,16 @@ import click
 from carate.config_adapter.run import RunInitializer, Run
 
 
-
-@click.command()
+@click.group(invoke_without_command=True)
+@click.pass_context
 @click.option("-c", help="Path to config file")
 @click.option("-d", help="Path to directory")
+def cli(ctx):
+    if ctx.invoked_subcommand is None:
+        start_run(c=c, d=d)
+    else:
+        click.echo(f"I am about to invoke {ctx.invoked_subcommand}")
+
 def start_run(c: str, d:str) -> None:
     """
     The train_algorithm function takes in a config file and an output directory.
@@ -21,7 +27,8 @@ def start_run(c: str, d:str) -> None:
     and saves all of its outputs to the output directory.
 
     :param c:str: Used to specify the path to the configuration file.
-    :param o:str: Used to specify the output directory.
+    :param d:str: Used to specify the path to the configuration file.
+
     :return: None.
 
     :doc-author: Julian M. Kleber

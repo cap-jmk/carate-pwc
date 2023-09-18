@@ -1,7 +1,7 @@
 import click
 
-from carate.cli.automate import start_run
+from carate.cli.automate import cli
 
 
 if __name__ == "__main__": 
-    start_run()
+    cli()
