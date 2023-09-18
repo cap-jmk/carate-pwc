@@ -16,8 +16,10 @@ from carate.models import (
     cgc_regression,
     g_classification,
     g_regression,
-    cgc_classification,
-    cgc_regression,
+    cc_classification,
+    cc_regression,
+    gcc_classification,
+    gcc_regression,
     gatv2_classification,
     gatv2_regression,
     graph_transformer_classification,
@@ -98,6 +100,7 @@ class Config:
         override: bool = True,
         resume: bool = False,
         normalize: bool = False,
+        num_heads: int = 3,
         custom_size: Optional[int] = None,
     ):
         # modelling
@@ -114,6 +117,7 @@ class Config:
         self.num_classes = num_classes
         self.num_features = num_features
         self.net_dimension = net_dimension
+        self.num_heads = num_heads
 
         # evaluation parameters
 
@@ -193,6 +197,11 @@ class ConfigInitializer:
         else:
             custom_size = None
 
+        if "num_heads" in json_object.keys():
+            num_heads = json_object["num_heads"]
+        else:
+            num_heads = 3
+
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
             dataset_name=json_object["dataset_name"],
@@ -239,5 +248,6 @@ class ConfigInitializer:
             override=json_object["override"],
             resume=resume,
             normalize=normalize,
+            num_heads=num_heads,
             custom_size=custom_size,
         )

@@ -6,6 +6,7 @@ tested int the publication Introducing CARATE: Finally speaking chemistry.
 
 :author: Julian M. Kleber
 """
+from typing import Any
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear
@@ -38,12 +39,11 @@ class Net(Model):
     """
 
     def __init__(
-        self, dim: int, num_features: int, num_classes: int, heads: int = 16
+        self, dim: int, num_features: int, num_classes: int, *args, **kwargs
     ) -> None:
         super(Net, self).__init__(
-            dim=dim, num_features=num_features, num_classes=num_classes
+            self, dim=dim, num_classes=num_classes, num_features=num_features
         )
-        self.heads = heads
 
         self.conv1 = GraphConv(self.num_features, self.dim)
         self.conv2 = GraphConv(self.dim * 16, self.dim)

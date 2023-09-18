@@ -4,6 +4,8 @@ The graph neural network is structured with a convolutional,
 and another convolutional layer. The cgc_classificatin model was the model tested int the publication
 Introducing CARATE: Finally speaking chemistry.
 """
+from typing import Any
+
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -27,10 +29,10 @@ logging.basicConfig(
 
 class Net(Model):
     def __init__(
-        self, dim: int, num_classes: int, num_features: int, heads: int = 16
+        self, dim: int, num_features: int, num_classes: int, *args, **kwargs
     ) -> None:
         super(Net, self).__init__(
-            dim=dim, num_classes=num_classes, num_features=num_features
+            dim=dim, num_classes=num_classes, num_features=num_features, *args, **kwargs
         )
 
         self.conv1 = GraphConv(self.num_features, self.dim)

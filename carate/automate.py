@@ -6,7 +6,7 @@ interface for training models#
 from typing import Type
 import click
 
-from carate.run import RunInitializer, Run
+from carate.config_adapter.run import RunInitializer, Run
 
 
 @click.command()

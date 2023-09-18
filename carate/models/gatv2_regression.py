@@ -29,22 +29,34 @@ class Net(Model):
     """
 
     def __init__(
-        self, dim: int, num_features: int, num_classes: int, heads: int = 16
+        self,
+        dim: int,
+        num_features: int,
+        num_classes: int,
+        num_heads: int = 16,
+        dropout_gat: float = 0.6,
+        dropout_forward=0.5,
+        *args,
+        **kwargs,
     ) -> None:
         super(Net, self).__init__(
-            dim=dim, num_features=num_features, num_classes=num_classes
-        )
-        self.heads = heads
-        self.conv3 = GATv2Conv(
-            self.num_features, self.dim, dropout=0.6, heads=self.heads
+            dim=dim, num_classes=num_classes, num_features=num_features
         )
 
-        self.fc1 = Linear(self.dim * self.heads, self.dim)
+        self.num_heads = num_heads
+        self.dropout_gat = dropout_gat
+        self.dropout_forward = dropout_forward
+
+        self.conv1 = GATv2Conv(
+            self.num_features, self.dim, dropout=self.dropout_gat, heads=self.num_heads
+        )
+
+        self.fc1 = Linear(self.dim * self.num_heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
-        x = F.relu(self.conv3(x, edge_index, edge_weight))
-        x = F.dropout(x, p=0.5, training=self.training)
+        x = F.relu(self.conv1(x, edge_index, edge_weight))
+        x = F.dropout(x, p=self.dropout_forward, training=self.training)
         x = global_add_pool(x, batch)
 
         x = F.relu(self.fc1(x))

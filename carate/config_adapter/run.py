@@ -49,6 +49,7 @@ class Run(DefaultObject):
         shuffle: bool = True,
         num_cv: int = 5,
         num_epoch: int = 150,
+        num_heads: int = 3,
         custom_size: Optional[int] = None,
     ) -> None:
         """
@@ -62,24 +63,29 @@ class Run(DefaultObject):
         self.Evaluation = Evaluation
         self.model_net = model_net
         self.net_dimension = net_dimension
-        self.learning_rate = learning_rate
         self.optimizer = optimizer
+        self.num_heads = num_heads
+
+        # evaulation / training parameters
         self.model_save_freq = model_save_freq
-        # evaulation parameters
-        self.dataset_name = dataset_name
-        self.dataset_save_path = dataset_save_path
         self.test_ratio = test_ratio
         self.batch_size = batch_size
+        self.learning_rate = learning_rate
         self.shuffle = shuffle
         self.num_cv = num_cv
         self.num_epoch = num_epoch
-        self.result_save_dir = result_save_dir
 
+        # data set
         self.data_set = data_set
         self.override = override
         self.resume = resume
         self.normalize = normalize
         self.custom_size = custom_size
+        self.result_save_dir = result_save_dir
+        self.dataset_name = dataset_name
+
+        # Results
+        self.dataset_save_path = dataset_save_path
 
     def run(self) -> None:
         self.Evaluation.cv(
