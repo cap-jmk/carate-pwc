@@ -29,7 +29,7 @@ from carate.models.base_model import Model
 
 
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",

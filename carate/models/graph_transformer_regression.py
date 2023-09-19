@@ -14,7 +14,7 @@ from carate.models.base_model import Model
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -26,7 +26,7 @@ class Net(Model):
     The Net is the core algorithm and needs a constructor and a
     forward pass. The train, test and evaluation methods are implemented
     in the evaluation module with the Evaluation class. The net takes plain graph transformer
-    and applies common postprocessing. 
+    and applies common postprocessing.
     """
 
     def __init__(
@@ -64,3 +64,6 @@ class Net(Model):
         x = self.fc2(x)
         x = torch.sigmoid(x)
         return x
+
+    def __str__(self): 
+        return "graph_transformer_regression"

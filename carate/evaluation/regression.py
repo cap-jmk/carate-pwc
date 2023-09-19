@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import numpy.typing as npt
 from typing import Type, Any, Tuple, Dict, Optional
+import datetime
 
 from carate.evaluation.base import Evaluation
 from carate.loader.load_data import DatasetObject
@@ -14,12 +15,6 @@ from carate.models.base_model import Model
 
 import logging
 
-logging.basicConfig(
-    filename="train.log",
-    encoding="utf-8",
-    level=logging.DEBUG,
-    format="%(asctime)s %(message)s",
-)
 
 
 class RegressionEvaluation(Evaluation):
@@ -105,6 +100,9 @@ class RegressionEvaluation(Evaluation):
         self.resume = resume
         self.normalize = normalize is not None
         self.custom_size = custom_size
+
+        
+
 
     def cv(
         self,
@@ -332,3 +330,7 @@ class RegressionEvaluation(Evaluation):
 
     def __repr__(self) -> str:
         return "Regression Evaluation Object"
+    
+    def __str(self) ->str:
+        return "Regression Evaluation Object"
+

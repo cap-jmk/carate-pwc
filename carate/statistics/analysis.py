@@ -9,7 +9,7 @@ from amarium.utils import attach_slash, load_json_from_file
 import logging
 
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",

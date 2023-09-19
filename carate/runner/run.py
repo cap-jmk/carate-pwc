@@ -14,7 +14,7 @@ from typing import Type, Optional
 import logging
 
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -50,7 +50,7 @@ class Run(DefaultObject):
         num_cv: int = 5,
         num_epoch: int = 150,
         num_heads: int = 3,
-        dropout_forward: float = 0.6, 
+        dropout_forward: float = 0.6,
         dropout_gat: float = 0.5,
         custom_size: Optional[int] = None,
     ) -> None:

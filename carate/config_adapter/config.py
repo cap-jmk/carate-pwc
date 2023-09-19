@@ -205,7 +205,7 @@ class ConfigInitializer:
             num_heads = json_object["num_heads"]
         else:
             num_heads = 3
-        
+
         if "dropout_forward" in json_object.keys():
             dropout_forward = json_object["dropout_forward"]
         else:
@@ -215,7 +215,7 @@ class ConfigInitializer:
             dropout_gat = json_object["dropout_gat"]
         else:
             dropout_gat = 0.6
-        
+
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
             dataset_name=json_object["dataset_name"],
@@ -263,7 +263,7 @@ class ConfigInitializer:
             resume=resume,
             normalize=normalize,
             num_heads=num_heads,
-            dropout_forward = dropout_forward,
-            dropout_gat = dropout_gat,
+            dropout_forward=dropout_forward,
+            dropout_gat=dropout_gat,
             custom_size=custom_size,
         )

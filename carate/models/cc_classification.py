@@ -23,7 +23,7 @@ from carate.models.base_model import Model
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -61,3 +61,6 @@ class Net(Model):
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.fc2(x)
         return torch.sigmoid(x)
+
+    def __str__(self): 
+        return "cc_classification-{self.dim}"
