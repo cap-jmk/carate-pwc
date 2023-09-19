@@ -1,0 +1,10 @@
+torch==1.13.1
+torch-sparse-carate
+torch-scatter-carate
+torch-geometric
+rdkit-pypi
+networkx[default]
+matplotlib
+Click
+amarium
+blac
