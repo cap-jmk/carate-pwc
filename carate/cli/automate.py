@@ -7,14 +7,14 @@ import os
 from typing import Type
 import click
 
-from carate.config_adapter.run import RunInitializer, Run
+from carate.runner.run import RunInitializer, Run
 
 
 @click.group(invoke_without_command=True)
 @click.pass_context
 @click.option("-c", help="Path to config file")
 @click.option("-d", help="Path to directory")
-def cli(ctx):
+def carate(ctx, c, d):
     if ctx.invoked_subcommand is None:
         start_run(c=c, d=d)
     else:

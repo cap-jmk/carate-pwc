@@ -1,7 +1,7 @@
 import torch
 from _typeshed import Incomplete as Incomplete
 from carate.evaluation.base import Evaluation as Evaluation
-from carate.load_data import DatasetObject as DatasetObject
+from carate.loader.load_data import DatasetObject as DatasetObject
 
 class ClassificationEvaluation(Evaluation):
     dataset_name: Incomplete

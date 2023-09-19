@@ -48,11 +48,12 @@ class Net(Model):
         self.dropout_forward = dropout_forward
 
         self.dropout_forward = dropout_forward
-        self.conv1 = GATConv(
-            self.num_features, self.dim, dropout=self.dropout_gat, heads=self.num_heads
-        )
 
-        self.fc1 = Linear(self.dim * self.heads, self.dim)
+        self.conv1 = GATConv(
+             self.num_features, self.dim, dropout=self.dropout_gat, heads=self.num_heads
+            )
+
+        self.fc1 = Linear(self.dim * self.num_heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):

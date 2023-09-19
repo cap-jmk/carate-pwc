@@ -98,7 +98,7 @@ class StandardPytorchGeometricDataset(DatasetObject):
             batch_size=batch_size,
             custom_size=custom_size,
         )
-
+        logging.info(self.dataset_name + " has num_features: " + str(train_dataset.num_features) + " and classes: "+ str(train_dataset.num_classes))
         return test_dataset, train_dataset, test_loader, train_loader, dataset
 
     def make_split(

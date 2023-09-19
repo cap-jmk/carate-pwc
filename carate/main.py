@@ -1,7 +1,7 @@
 import click
 
-from carate.cli.automate import cli
+from carate.cli.automate import carate
 
 
 if __name__ == "__main__": 
-    cli()
+    carate()

@@ -21,7 +21,7 @@ from carate.utils.model_files import (
     load_model_training_checkpoint,
 )
 
-from carate.load_data import (
+from carate.loader.load_data import (
     DatasetObject,
 )
 from carate.default_interface import DefaultObject

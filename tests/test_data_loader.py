@@ -4,7 +4,7 @@ doubt
 
 :author: Julian M. Kleber
 """
-from carate.load_data import StandardDatasetTUDataset, StandardDatasetMoleculeNet
+from carate.loader.load_data import StandardDatasetTUDataset, StandardDatasetMoleculeNet
 
 
 def test_tu_data_set():

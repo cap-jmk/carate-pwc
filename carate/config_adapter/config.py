@@ -26,7 +26,7 @@ from carate.models import (
     graph_transformer_regression,
 )
 
-from carate.load_data import (
+from carate.loader.load_data import (
     DatasetObject,
     StandardPytorchGeometricDataset,
     StandardDatasetTUDataset,

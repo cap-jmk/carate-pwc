@@ -7,11 +7,10 @@ import numpy.typing as npt
 from typing import Type, Any, Tuple, Dict, Optional
 
 from carate.evaluation.base import Evaluation
-from carate.load_data import DatasetObject
+from carate.loader.load_data import DatasetObject
 from carate.utils.model_files import save_model_parameters
 from carate.models.base_model import Model
 
-# TODO Logging done right, check cc
 
 import logging
 
