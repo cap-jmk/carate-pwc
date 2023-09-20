@@ -19,6 +19,7 @@ class MetricsLogger:
         self.filename = prepare_file_name_saving(
             prefix=save_dir, file_name=f"{self.time_initialized}-metrics_logger", suffix=".log"
         )
+        
         self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         self.fileHandler = logging.FileHandler(self.filename)
         self.encoding = "utf-8"
