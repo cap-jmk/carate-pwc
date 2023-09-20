@@ -190,4 +190,3 @@ class RunInitializer:
     def __copy_config(confi_filepath:str, result_save_dir:str)->None: 
 
 
-g
