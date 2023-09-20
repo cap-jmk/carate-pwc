@@ -7,9 +7,9 @@ from amarium.utils import prepare_file_name_saving
 
 class MetricsLogger:
     """The class implements the Logger factory for basic metrics used in ML and
-    deep Learning :author: Julian M.
-
-    Kleber
+    deep Learning 
+    
+    :author: Julian M. Kleber
     """
 
     def __init__(self, save_dir: str) -> None:
@@ -54,4 +54,11 @@ class MetricsLogger:
                 self.logger.info(self.basic_layout(key, val))
 
     def basic_layout(self, metric: str, value: str) -> str:
+        """
+        Defines the basic logging layout for the MetricsLogger
+        
+        :param: metric: str: Name of the metric
+        :paraM: value: str: Value of the metric 
+        :author: Julian M. Kleber
+        """
         return f"{metric} : {value}"
