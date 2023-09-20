@@ -17,3 +17,6 @@ data_set = "StandardTUD"
 model_save_freq = 1
 override = True
 device = "auto"
+heads = 16
+dropout_forward = 0.5
+dropout_gat = 0.6

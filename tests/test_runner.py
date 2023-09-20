@@ -4,7 +4,7 @@ leads to weird results
 
 :author: Julian M. Kleber
 """
-from carate.run import RunInitializer
+from carate.runner.run import RunInitializer
 
 
 def test_runner():
@@ -16,3 +16,4 @@ def test_runner():
         str(runner.Evaluation)
         == "Evaluation for cgc_regression with the Default evaluation"
     )
+    

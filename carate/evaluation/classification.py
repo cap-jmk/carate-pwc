@@ -5,7 +5,7 @@ from typing import Type
 
 import torch
 from carate.evaluation.base import Evaluation
-from carate.load_data import DatasetObject
+from carate.loader.load_data import DatasetObject
 
 
 class ClassificationEvaluation(Evaluation):

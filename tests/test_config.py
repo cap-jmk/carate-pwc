@@ -4,9 +4,9 @@ Test to verify if the initialization of the config file is correct.
 :author: Julian M. Kleber
 """
 import torch
-from carate.load_data import StandardDatasetTUDataset
+from carate.loader.load_data import StandardDatasetTUDataset
 
-from carate.config import Config, ConfigInitializer
+from carate.config_adapter.config import Config, ConfigInitializer
 from carate.models import cgc_classification
 from carate.evaluation import classification
 from typing import Type

@@ -1,6 +1,6 @@
 from _typeshed import Incomplete as Incomplete
 from carate.evaluation import evaluation as evaluation
-from carate.load_data import (
+from carate.loader.load_data import (
     DatasetObject as DatasetObject,
     StandardDatasetMoleculeNet as StandardDatasetMoleculeNet,
     StandardPytorchGeometricDataset as StandardPytorchGeometricDataset,

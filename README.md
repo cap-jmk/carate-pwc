@@ -3,6 +3,7 @@
 [![Downloads](https://static.pepy.tech/personalized-badge/carate?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/carate)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL_v3+-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%20-blue)
+[![Documentation Status](https://readthedocs.org/projects/carate/badge/?version=latest)](https://carate.readthedocs.io/en/latest/?badge=latest)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
 ![Bert goes into the karate club](bert_goes_into_the_karate_club.png)

@@ -12,14 +12,14 @@ import torch
 
 from amarium.utils import attach_slash, load_json_from_file
 
-from carate.run import RunInitializer
+from carate.runner.run import RunInitializer
 import carate.models.cgc_regression as CGCR
 from carate.evaluation.regression import RegressionEvaluation
-from carate.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
+from carate.loader.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
 from tests.utils import check_dir_paths, check_result_files
 
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",

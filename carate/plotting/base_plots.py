@@ -138,7 +138,6 @@ def plot_range_fill(
     axis.fill_between(training_steps, min_val, max_val, alpha=alpha)
 
 
-
 def save_publication_graphic(
     fig_object: Type[plt.figure], file_name: str, prefix: Optional[str] = None
 ) -> None:

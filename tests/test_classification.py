@@ -8,21 +8,21 @@ import shutil
 
 import torch
 
-from amarium.utils import search_subdirs, load_json_from_file
+from amarium.utils import search_subdirs, load_json_from_file, delete_file
 
-from carate.run import RunInitializer
+
 import carate.models.cgc_classification as CGCC
 from carate.evaluation.classification import ClassificationEvaluation
-from carate.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
-from carate.config import Config
-
+from carate.loader.load_data import StandardDatasetMoleculeNet, StandardDatasetTUDataset
+from carate.config_adapter.config import Config
+from carate.runner.run import RunInitializer
 
 import logging
 
 from typing import Type
 
 logging.basicConfig(
-    filename="train.log",
+    filename="carate.log",
     encoding="utf-8",
     level=logging.DEBUG,
     format="%(asctime)s %(message)s",
@@ -30,6 +30,7 @@ logging.basicConfig(
 
 
 def test_classification_override():
+
     check_dir_paths()
     config_filepath = "tests/config/classification_test_config_override.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)

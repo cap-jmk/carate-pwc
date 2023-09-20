@@ -5,22 +5,16 @@ import torch
 import numpy as np
 import numpy.typing as npt
 from typing import Type, Any, Tuple, Dict, Optional
+import datetime
 
 from carate.evaluation.base import Evaluation
-from carate.load_data import DatasetObject
+from carate.loader.load_data import DatasetObject
 from carate.utils.model_files import save_model_parameters
 from carate.models.base_model import Model
 
-# TODO Logging done right, check cc
 
 import logging
 
-logging.basicConfig(
-    filename="train.log",
-    encoding="utf-8",
-    level=logging.DEBUG,
-    format="%(asctime)s %(message)s",
-)
 
 
 class RegressionEvaluation(Evaluation):
@@ -37,6 +31,7 @@ class RegressionEvaluation(Evaluation):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         device: torch.device,
+        logger: Any, 
         resume: bool,
         test_ratio: int,
         num_epoch: int = 150,
@@ -49,6 +44,7 @@ class RegressionEvaluation(Evaluation):
         override: bool = True,
         normalize: bool = False,
         custom_size: Optional[int] = None,
+        
     ):
         """
         The __init__ function is called when the class is instantiated.
@@ -80,10 +76,6 @@ class RegressionEvaluation(Evaluation):
         :param : Used to Set the number of epochs for training.
         :return: The object itself, which is then assigned to the variable "model_trainer".
 
-        :doc-author: Trelent
-        """
-        """
-
 
         :doc-author: Julian M. Kleber
         """
@@ -97,6 +89,7 @@ class RegressionEvaluation(Evaluation):
         self.num_cv = num_cv
         self.out_dir = out_dir
         self.data_set = data_set
+        self.logger = logger
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
@@ -106,6 +99,10 @@ class RegressionEvaluation(Evaluation):
         self.resume = resume
         self.normalize = normalize is not None
         self.custom_size = custom_size
+        
+
+        
+
 
     def cv(
         self,
@@ -117,6 +114,7 @@ class RegressionEvaluation(Evaluation):
         test_ratio: int,
         resume: bool,
         data_set: DatasetObject,
+        logger:Any,
         shuffle: bool,
         batch_size: int,
         model_net: Model,
@@ -138,6 +136,7 @@ class RegressionEvaluation(Evaluation):
             test_ratio,
             resume,
             data_set,
+            logger,
             shuffle,
             batch_size,
             model_net,
@@ -154,11 +153,15 @@ class RegressionEvaluation(Evaluation):
         result = {}
 
         save_model_parameters(model_net=model_net, save_dir=result_save_dir)
+        logger.logger.info("Starting " + str(num_cv) +  " CVs for "+ dataset_name +
+                            " with data_stored in " + dataset_save_path )
         for i in range(num_cv):
             tmp = {}
             test_mse = []
             train_mae = []
             train_mse = []
+
+            logger.logger.info("Starting CV "+str(i))
 
             loaded_dataset: torch.utils.data.Dataset
             (
@@ -182,11 +185,11 @@ class RegressionEvaluation(Evaluation):
                 norm_factor = self.__normalization_factor(
                     data_set=loaded_dataset, num_classes=num_classes
                 )
-        
+
             else:
                 norm_factor = 1.0
             for epoch in range(1, num_epoch + 1):
-                train_mae_loss = self.train(
+                train_mae_loss, train_loss = self.train(
                     model_net=model_net,
                     epoch=epoch,
                     optimizer=optimizer,
@@ -209,16 +212,21 @@ class RegressionEvaluation(Evaluation):
                     norm_factor=norm_factor,
                     epoch=epoch,
                 )
+
                 train_mae.append(train_mae_val)
                 train_mse.append(train_mse_val)
                 test_mse.append(test_mae_val)
                 test_mse.append(test_mse_val)
-                logging.info(
-                    "Epoch: {:03d}, Train MAE, MSE at epoch: ({:.7f}, {:.7f}), "
-                    "Test MAE, MSE at epoch: ({:.7f}, {:.7f})".format(
-                        epoch, train_mae_val, train_mse_val, test_mae_val, test_mse_val
-                    )
-                )
+
+                logger.log({
+                    "Epoch": epoch,
+                    "Train_Loss": "{:16f}".format(train_loss),
+                    "Train_MAE_Loss": "{:16f}".format(train_mae_loss),
+                    "Train_MAE": "{:16f}".format(train_mae_val),
+                    "Train_MSE": "{:16f}".format(train_mse_val), 
+                    "Test_MAE": "{:16f}".format(test_mae_val),
+                    "Test_MSE": "{:16f}".format(test_mse_val), 
+                })
                 torch.cuda.empty_cache()
 
                 tmp["MAE Train"] = list(train_mae)
@@ -273,7 +281,7 @@ class RegressionEvaluation(Evaluation):
             loss.backward()
             optimizer.step()
             torch.cuda.empty_cache()
-        return mse / len(train_loader)
+        return mse / len(train_loader), loss
 
     def test(
         self,
@@ -333,3 +341,7 @@ class RegressionEvaluation(Evaluation):
 
     def __repr__(self) -> str:
         return "Regression Evaluation Object"
+    
+    def __str(self) ->str:
+        return "Regression Evaluation Object"
+
