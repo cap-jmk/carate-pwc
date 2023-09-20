@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.3.12"
+version = "0.3.15"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
@@ -34,4 +34,4 @@ dependencies = [
 "Bug Tracker" = "https://www.codeberg.org/sail.black/carate.git/issues"
 [tool.setuptools]
 
-packages = ["carate", "carate.evaluation", "carate.cli", "carate.config_adapter", "carate.statistics", "carate.models", "carate.runner", "carate.plotting", "carate.utils"]
+packages = ["carate", "carate.optimizer", "carate.dataset", "carate.loader","carate.cli", "carate.evaluation", "carate.cli", "carate.logging", "carate.config_adapter", "carate.statistics", "carate.models", "carate.runner", "carate.plotting", "carate.utils"]
