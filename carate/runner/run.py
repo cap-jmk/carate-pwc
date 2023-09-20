@@ -1,6 +1,9 @@
+import os 
+
 from typing import Type, Dict, Any, TypeVar, Generic
 import torch
 
+from amarium.utils import make_full_filename, read_file, write_file
 
 from carate.models.base_model import Model
 from carate.models.cgc_classification import Net
@@ -33,6 +36,7 @@ class Run(DefaultObject):
         num_classes: int,
         result_save_dir: str,
         model_save_freq: int,
+        config_filepath:str,
         resume: bool,
         normalize: bool,
         data_set: DatasetObject,
@@ -92,9 +96,14 @@ class Run(DefaultObject):
 
         # Results
         self.dataset_save_path = dataset_save_path
+        self.config_filepath = config_filepath
         self.logger = logger
 
     def run(self) -> None:
+        """
+        Function to run training a model. Here only the CV is considered 
+        #TODO Make it more flexibile by passing the function as a parameter
+        """
         self.Evaluation.cv(
             dataset_name=self.dataset_name,
             dataset_save_path=self.dataset_save_path,
@@ -115,6 +124,8 @@ class Run(DefaultObject):
             custom_size=self.custom_size,
             logger = self.logger
         )
+
+
 
 
 class RunInitializer:
@@ -165,6 +176,7 @@ class RunInitializer:
             device=config.device,
             num_classes=config.num_classes,
             num_features=config.num_features,
+            config_filepath = config.file_path, 
             Evaluation=config.Evaluation,
             model_net=model_net,
             optimizer=optimizer,
@@ -186,7 +198,4 @@ class RunInitializer:
             custom_size=config.custom_size,
             logger = config.logger
         )
-    @classmethod
-    def __copy_config(confi_filepath:str, result_save_dir:str)->None: 
-
 

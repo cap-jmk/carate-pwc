@@ -156,6 +156,7 @@ notebooks/
 DevNotes.md
 data/
 *results/
+tests/results/
 *.log
 example_config/
 carate/utils/config.py

@@ -8,7 +8,7 @@ import shutil
 
 import torch
 
-from amarium.utils import search_subdirs, load_json_from_file
+from amarium.utils import search_subdirs, load_json_from_file, delete_file
 
 
 import carate.models.cgc_classification as CGCC
@@ -30,6 +30,7 @@ logging.basicConfig(
 
 
 def test_classification_override():
+
     check_dir_paths()
     config_filepath = "tests/config/classification_test_config_override.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)
