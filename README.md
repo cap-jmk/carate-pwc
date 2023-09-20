@@ -5,7 +5,7 @@
 ![Python Versions](https://img.shields.io/badge/python-3.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%20-blue)
 [![Documentation Status](https://readthedocs.org/projects/carate/badge/?version=latest)](https://carate.readthedocs.io/en/latest/?badge=latest)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-
+[![PyPI - Version](https://img.shields.io/pypi/v/amarium.svg)](https://pypi.org/project/carate)
 ![Bert goes into the karate club](bert_goes_into_the_karate_club.png)
 
 <!-- TOC -->
