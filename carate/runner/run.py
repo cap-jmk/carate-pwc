@@ -41,6 +41,7 @@ class Run(DefaultObject):
         optimizer: torch.optim.Optimizer,
         device: torch.device,
         override: bool,
+        logger: Any, 
         net_dimension: int = 364,
         learning_rate: float = 0.0005,
         dataset_save_path: str = ".",
@@ -91,6 +92,7 @@ class Run(DefaultObject):
 
         # Results
         self.dataset_save_path = dataset_save_path
+        self.logger = logger
 
     def run(self) -> None:
         self.Evaluation.cv(
@@ -111,6 +113,7 @@ class Run(DefaultObject):
             override=self.override,
             resume=self.resume,
             custom_size=self.custom_size,
+            logger = self.logger
         )
 
 
@@ -139,6 +142,9 @@ class RunInitializer:
 
         :doc-author: Julian M. Kleber
         """
+
+        #copy config to result dir
+
 
         # Model initalization
         model_net = config.model.Net(
@@ -178,4 +184,10 @@ class RunInitializer:
             resume=config.resume,
             normalize=config.normalize,
             custom_size=config.custom_size,
+            logger = config.logger
         )
+    @classmethod
+    def __copy_config(confi_filepath:str, result_save_dir:str)->None: 
+
+
+g

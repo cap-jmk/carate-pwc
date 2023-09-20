@@ -33,7 +33,7 @@ from carate.loader.load_data import (
     StandardDatasetMoleculeNet,
 )
 from carate.utils.convert_to_json import convert_py_to_json
-
+from carate.logging.metrics_logger import MetricsLogger
 
 EvaluationMap: Dict[str, base.Evaluation]
 EVALUATION_MAP = {
@@ -79,6 +79,7 @@ class Config:
 
     def __init__(
         self,
+        config_filepath:str,
         dataset_name: str,
         num_features: int,
         num_classes: int,
@@ -87,6 +88,7 @@ class Config:
         Evaluation: base.Evaluation,
         data_set: DatasetObject,
         model: Any,
+        logger: Any, 
         optimizer: str,
         device: str = "auto",
         net_dimension: int = 364,
@@ -105,7 +107,11 @@ class Config:
         dropout_forward: float = 0.5,
         custom_size: Optional[int] = None,
     ):
+
+        #save path
+        self.config_filepath = config_filepath
         # modelling
+
         self.model = model
         self.optimizer = optimizer
         self.device = device
@@ -142,6 +148,7 @@ class Config:
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
         self.shuffle = shuffle
+        self.logger = logger
 
 
 class ConfigInitializer:
@@ -160,11 +167,11 @@ class ConfigInitializer:
         """
 
         json_object = convert_py_to_json(file_name)
-        config_object = ConfigInitializer.from_json(json_object)
+        config_object = ConfigInitializer.from_json(file_name=file_name, json_object = json_object)
         return config_object
 
     @classmethod
-    def from_json(cls, json_object: Dict[Any, Any]) -> Config:
+    def from_json(cls, config_file_name:str, json_object: Dict[Any, Any]) -> Config:
         """
         The from_json function is a class method that takes in a json object and returns an instance of the Config class.
         The function is used to load the configuration from a file, which can be done by calling:
@@ -215,6 +222,14 @@ class ConfigInitializer:
             dropout_gat = json_object["dropout_gat"]
         else:
             dropout_gat = 0.6
+        
+        if "log_save_dir" not in json_object.keys(): 
+            log_save_dir = json_object["result_save_dir"]
+        else: 
+            log_save_dir = json_object["log_save_dir"]
+        
+        metrics_logger = MetricsLogger(json_object["result_save_dir"])
+        metrics_logger.logger.info("Initializing configuration for the config file "+ config_file_name)
 
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
@@ -223,6 +238,8 @@ class ConfigInitializer:
             batch_size=json_object["batch_size"],
             shuffle=json_object["shuffle"],
         )
+
+
 
         evaluation = EVALUATION_MAP[json_object["evaluation"]](
             dataset_name=json_object["dataset_name"],
@@ -235,10 +252,12 @@ class ConfigInitializer:
             model_save_freq=json_object["model_save_freq"],
             device=device,
             resume=resume,
+            logger = metrics_logger
         )
         json_object["override"] = convert_str_to_bool(json_object["override"])
 
         return Config(
+            config_filepath = config_file_name,
             model=MODEL_MAP[json_object["model"]],
             optimizer=json_object["optimizer"],
             device=device,
@@ -266,4 +285,5 @@ class ConfigInitializer:
             dropout_forward=dropout_forward,
             dropout_gat=dropout_gat,
             custom_size=custom_size,
+            logger = metrics_logger
         )

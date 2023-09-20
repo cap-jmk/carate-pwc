@@ -53,6 +53,7 @@ class Evaluation(DefaultObject):
         optimizer: torch.optim.Optimizer,
         data_set: DatasetObject,
         device: torch.device,
+        logger: Any, 
         resume: bool,
         test_ratio: int,
         num_epoch: int = 150,
@@ -63,6 +64,7 @@ class Evaluation(DefaultObject):
         shuffle: bool = True,
         model_save_freq: int = 100,
         override: bool = True,
+        normalize: bool = False,
         custom_size: Optional[int] = None,
     ) -> None:
         """
@@ -106,6 +108,7 @@ class Evaluation(DefaultObject):
 
         self.dataset_name = dataset_name
         self.dataset_save_path = dataset_save_path
+        self.logger = logger
         self.out_dir = out_dir
         self.data_set = data_set
         self.shuffle = shuffle
@@ -114,7 +117,7 @@ class Evaluation(DefaultObject):
         # hardware
 
         self.device = device
-
+        
     def cv(
         self,
         num_cv: int,
@@ -122,6 +125,7 @@ class Evaluation(DefaultObject):
         num_classes: int,
         dataset_name: str,
         dataset_save_path: str,
+        logger: Any, 
         test_ratio: int,
         resume: bool,
         data_set: DatasetObject,
@@ -157,6 +161,7 @@ class Evaluation(DefaultObject):
             num_classes,
             dataset_name,
             dataset_save_path,
+            logger,
             test_ratio,
             resume,
             data_set,
@@ -174,6 +179,8 @@ class Evaluation(DefaultObject):
 
         tmp = {}
         save_model_parameters(model_net, save_dir=result_save_dir)
+        logger.logger.info("Starting " + str(num_cv) +  " CVs for "+ dataset_name +
+                            " with data_stored in " + dataset_save_path )
         for i in range(num_cv):
             (
                 test_dataset,
@@ -190,7 +197,7 @@ class Evaluation(DefaultObject):
                 custom_size=custom_size,
             )
             # storage containers
-
+            logger.logger.info("Starting CV "+str(i))
             acc_store_train = []
             acc_store_test = []
             auc_store = []
@@ -221,11 +228,12 @@ class Evaluation(DefaultObject):
                 )
                 acc_store_train.append(train_acc.cpu().tolist())
                 acc_store_test.append(test_acc.cpu().tolist())
-                logging.info(
-                    "Epoch: {:03d}, Train Loss: {:.7f}, Train Acc: {:.7f}, Test Acc: {:.7f}".format(
-                        epoch, train_loss, train_acc, test_acc
-                    )
-                )
+                logger.log({
+                    "Epoch": epoch,
+                    "Train_ACC": "{:16f}".format(train_acc),
+                    "Train_Loss": "{:16f}".format(train_loss),
+                    "Test_Acc": "{:16f}".format(test_acc), 
+                })
                 preds = np.zeros((len(test_dataset)))
                 features = self.train_store
 
