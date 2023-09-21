@@ -204,7 +204,7 @@ class Evaluation(DefaultObject):
             loss_store = []
 
             for epoch in range(1, num_epoch + 1):
-                train_loss = self.train(
+                train_accuracy, train_loss = self.train(
                     epoch=epoch,
                     model_net=model_net,
                     device=device,
@@ -315,7 +315,7 @@ class Evaluation(DefaultObject):
             optimizer.step()
             correct += (output == data.y).float().sum() / num_classes
         accuracy = correct / len(train_loader.dataset)
-        return accuracy
+        return accuracy, loss
 
     def test(
         self,
