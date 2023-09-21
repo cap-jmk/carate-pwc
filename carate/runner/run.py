@@ -124,6 +124,8 @@ class Run(DefaultObject):
             custom_size=self.custom_size,
             logger = self.logger
         )
+        
+        self.logger.close_logger() #close the current logging file after a run
 
 
 

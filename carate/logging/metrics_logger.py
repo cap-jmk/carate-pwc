@@ -62,3 +62,16 @@ class MetricsLogger:
         :author: Julian M. Kleber
         """
         return f"{metric} : {value}"
+    
+    def close_logger(self)->None: 
+        """
+        To limit logging to one file for multi run experiments
+        the function closes the current logging file. 
+
+        :author: Julian M. Kleber
+        """
+        handlers = self.logger.handlers
+        for handler in handlers: 
+            if isinstance(handler, logging.FileHandler):
+                self.logger.removeHandler(handler)
+                handler.close()
