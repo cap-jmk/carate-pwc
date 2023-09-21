@@ -7,4 +7,5 @@ networkx[default]
 matplotlib
 Click
 amarium
-blac
+black
+sphinx-rtd-theme

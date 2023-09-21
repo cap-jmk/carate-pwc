@@ -43,10 +43,7 @@ class Net(Model):
             self,
             dim=dim,
             num_features=num_features,
-            num_classes=num_classes,
-            heads=heads,
-            dropout_gat=dropout_gat,
-            dropout_forward=dropout_forward,
+            num_classes=num_classes
         )
 
         self.num_heads = num_heads
@@ -57,7 +54,7 @@ class Net(Model):
             self.num_features, self.dim, dropout=self.dropout_gat, heads=self.num_heads
         )
 
-        self.fc1 = Linear(self.dim * self.heads, self.dim)
+        self.fc1 = Linear(self.dim * self.num_heads, self.dim)
         self.fc2 = Linear(self.dim, self.num_classes)
 
     def forward(self, x, edge_index, batch, edge_weight=None):
