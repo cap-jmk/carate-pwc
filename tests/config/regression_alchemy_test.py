@@ -18,4 +18,4 @@ model_save_freq = 1
 override = False
 device = "auto"
 normalize = True
-custom_size = 10
+custom_size = 100

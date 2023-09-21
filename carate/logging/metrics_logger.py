@@ -7,9 +7,9 @@ from amarium.utils import prepare_file_name_saving
 
 class MetricsLogger:
     """The class implements the Logger factory for basic metrics used in ML and
-    deep Learning :author: Julian M.
-
-    Kleber
+    deep Learning 
+    
+    :author: Julian M. Kleber
     """
 
     def __init__(self, save_dir: str) -> None:
@@ -19,6 +19,7 @@ class MetricsLogger:
         self.filename = prepare_file_name_saving(
             prefix=save_dir, file_name=f"{self.time_initialized}-metrics_logger", suffix=".log"
         )
+        
         self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         self.fileHandler = logging.FileHandler(self.filename)
         self.encoding = "utf-8"
@@ -53,4 +54,24 @@ class MetricsLogger:
                 self.logger.info(self.basic_layout(key, val))
 
     def basic_layout(self, metric: str, value: str) -> str:
+        """
+        Defines the basic logging layout for the MetricsLogger
+        
+        :param: metric: str: Name of the metric
+        :paraM: value: str: Value of the metric 
+        :author: Julian M. Kleber
+        """
         return f"{metric} : {value}"
+    
+    def close_logger(self)->None: 
+        """
+        To limit logging to one file for multi run experiments
+        the function closes the current logging file. 
+
+        :author: Julian M. Kleber
+        """
+        handlers = self.logger.handlers
+        for handler in handlers: 
+            if isinstance(handler, logging.FileHandler):
+                self.logger.removeHandler(handler)
+                handler.close()

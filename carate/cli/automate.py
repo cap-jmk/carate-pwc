@@ -43,7 +43,7 @@ def start_run(c: str, d: str) -> None:
         runner = RunInitializer.from_file(config_filepath=config_filepath)
 
         runner.run()
-    elif d != None and c == NOne:
+    elif d != None and c == None:
         train_whole_directory(d)
 
 
@@ -66,7 +66,7 @@ def train_whole_directory(d: str) -> None:
     directory_file_path = d
     config_files = [
         file
-        for file in os.path.listdir(directory_file_path)
+        for file in os.listdir(directory_file_path)
         if (file.endswith(".py") or file.endswith(".json") or file.endswith(".yml"))
     ]
     if len(config_files) == 0:
@@ -76,9 +76,9 @@ def train_whole_directory(d: str) -> None:
 
     for config_file in config_files:
         if config_file.endswith(".py"):
-            runner = RunInitializer.from_file(config_filepath=config_filepath)
+            runner = RunInitializer.from_file(config_filepath=config_file)
         elif config_file.endswith(".json"):
-            runner = RunInitializer.from_json(config_filepath=config_filepath)
+            runner = RunInitializer.from_json(config_filepath=config_file)
         else:
             continue
 
