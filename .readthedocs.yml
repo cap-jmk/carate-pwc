@@ -16,7 +16,7 @@ build:
     # golang: "1.19"
   jobs: 
     post_create_environment: 
-      - pip install sphinx-rtd-theme
+      - pip install sphinx-rtd-theme amarium numpy Click torch==1.13.1 matplotlib torch-sparse-carate torch-scatter-carate torch-geometric rdkit-pypi networkx[default]
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
