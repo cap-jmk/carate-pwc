@@ -40,7 +40,6 @@ class Net(Model):
         **kwargs,
     ) -> None:
         super(Net, self).__init__(
-            self,
             dim=dim,
             num_features=num_features,
             num_classes=num_classes
