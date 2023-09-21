@@ -7,12 +7,14 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
+import datetime
 
+year = datetime.date.today().year
 sys.path.insert(0, os.path.abspath("../../"))
 
 
 project = "carate"
-copyright = "2021, Julian M. Kleber"
+copyright = f"2021-{year}, Julian M. Kleber"
 author = "Julian M. Kleber"
 release = "0.4.0"
 
@@ -44,7 +46,7 @@ pygments_style = "default"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "press"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
