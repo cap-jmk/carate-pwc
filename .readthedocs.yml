@@ -16,7 +16,7 @@ build:
     # golang: "1.19"
   jobs: 
     post_create_environment: 
-      - pip install sphinx-press-theme
+      - pip install sphinx-rtd-theme
 
 # Build documentation in the "docs/" directory with Sphinx
 sphinx:
