@@ -11,7 +11,7 @@ import sys
 sys.path.insert(0, os.path.abspath("../../"))
 
 
-project = "chembee"
+project = "carate"
 copyright = "2021, Julian M. Kleber"
 author = "Julian M. Kleber"
 release = "0.4.0"
@@ -20,8 +20,8 @@ extensions = ["sphinx.ext.todo", "sphinx.ext.viewcode", "sphinx.ext.autodoc"]
 
 
 autosummary_generate = True
-napoleon_google_docstring = False
-napoleon_use_param = False
+napoleon_google_docstring = True
+napoleon_use_param = True
 napoleon_use_ivar = True
 
 
