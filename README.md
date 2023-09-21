@@ -9,11 +9,11 @@
 ![Bert goes into the karate club](bert_goes_into_the_karate_club.png)
 
 <!-- TOC -->
+
 - [CARATE](#carate)
   - [1. Why](#1-why)
   - [2. What](#2-what)
   - [3. Scope](#3-scope)
-  - [4. Installation on CPU](#4-installation-on-cpu)
     - [4.1. Build manually](#41-build-manually)
     - [4.2. Installation from repo](#42-installation-from-repo)
   - [5. Usage](#5-usage)
@@ -22,6 +22,7 @@
   - [6. Build on the project](#6-build-on-the-project)
   - [7. Support the development](#7-support-the-development)
   - [8. Cite](#8-cite)
+
 <!-- /TOC -->
 
 ## 1. Why
@@ -100,6 +101,10 @@ Therefore, any ETL or data processing might not be affected by any interruption 
 ## 6. Build on the project
 
 Building on the code is not recommended as the project will be continued in another library (building with that would make most sense).
+
+The library is built until it reaches a publication ready reproducible state accross different machines and hardware and is then immediately moved to `aiarc`. 
+
+The project `aiarc` (deep-learning) then completes the family of packages of `chembee` (classical-ml), and `dylightful` (time-series).
 
 However, you may still use the models as they are by the means of the library production ready.
 
