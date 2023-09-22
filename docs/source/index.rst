@@ -7,8 +7,16 @@ Welcome to carate's documentation!
 ==================================
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Getting Started
+
+   installation
+   minimalconfiguration
+   notebooks/Analysis.ipynb
+   notebooks/Regression.ipynb
+   notebooks/Regression.ipynb
+   publication 
 
 
 
