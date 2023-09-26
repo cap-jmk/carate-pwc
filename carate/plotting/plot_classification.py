@@ -1,5 +1,5 @@
-"""
-Plotting function for the CARATE paper designed for classification algorithms
+"""Plotting function for the CARATE paper designed for classification
+algorithms.
 
 :author: Julian M. Kleber
 """
@@ -21,15 +21,13 @@ def plot_classification_algorithm(
     save_dir: str = "./plots",
     data_name: Optional[str] = None,
 ) -> None:
-    """
-    The plot_classification_algorithm function takes in a path to a directory containing the
-    results of a classification algorithm and plots the accuracy of that algorithm on both training
-    and testing data.
+    """The plot_classification_algorithm function takes in a path to a
+    directory containing the results of a classification algorithm and plots
+    the accuracy of that algorithm on both training and testing data.
 
-    :param path_to_directory:str: Used to specify the directory where the results are stored.
-    :return: None.
-
-    :doc-author: Julian M. Kleber
+    :param path_to_directory: str: Used to specify the directory where
+        the results are stored.
+    :return: None.  :doc-author: Julian M. Kleber
     """
 
     path_to_directory = attach_slash(path_to_directory) + "data/"

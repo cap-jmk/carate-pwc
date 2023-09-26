@@ -1,5 +1,4 @@
-"""
-Plotting module for PyTorch prototyping
+"""Plotting module for PyTorch prototyping.
 
 :author: Julian M. Kleber
 """
@@ -28,23 +27,27 @@ def plot_range_band_multi(
     save_dir: Optional[str] = None,
     title_text: Optional[str] = None,
 ) -> None:
-    """
-    The plot_range_band_multi function is used to plot multiple range bands on the same graph.
-    The function takes in a list of dictionaries, each dictionary containing the results from one
-    cross-validation run.It also takes in a list of keys that correspond to values within each
-    dictionary that should be plotted as range bands. The function then plots all these values as
-    separate lines with their corresponding ranges filled in between them.
+    """The plot_range_band_multi function is used to plot multiple range bands
+    on the same graph. The function takes in a list of dictionaries, each
+    dictionary containing the results from one cross-validation run.It also
+    takes in a list of keys that correspond to values within each dictionary
+    that should be plotted as range bands. The function then plots all these
+    values as separate lines with their corresponding ranges filled in between
+    them.
 
-    :param result:List[Dict[str: Used to Pass in the list of dictionaries
-    :param float]]: Used to Set the alpha value of the fill.
-    :param key_vals:List[str]: Used to Specify which metrics to plot.
-    :param file_name:str: Used to name the file that will be saved.
-    :param alpha:float=0.5: Used to Set the transparency of the fill between.
-    :param save_dir:Optional[str]=None: Used to Save the plot in a specific directory.
-    :param : Used to Set the transparency of the fill between min and max values.
-    :return: A plot of the average, maximum and minimum values.
-
-    :doc-author: Julian M. Kleber
+    :param result: List[Dict[str: Used to Pass in the list of
+        dictionaries :param float]]: Used to Set the alpha value of the
+        fill.
+    :param key_vals: List[str]: Used to Specify which metrics to plot.
+    :param file_name: str: Used to name the file that will be saved.
+    :param alpha: float=0.5: Used to Set the transparency of the fill
+        between.
+    :param save_dir: Optional[str]=None: Used to Save the plot in a
+        specific directory.
+    :param : Used to Set the transparency of the fill between min and
+        max values.
+    :return: A plot of the average, maximum and minimum values. :doc-
+        author: Julian M. Kleber
     """
 
     fig, axis = plt.subplots()
@@ -80,19 +83,19 @@ def plot_range_band_single(
     save_dir: Optional[str] = None,
     legend_text: Optional[str] = None,
 ) -> None:
-    """
-    The plot_range_band function takes in a list of dictionaries, each dictionary containing the
-    results from one run.
-    It then plots the average value for each key_val (e.g., 'accuracy') and also plots a
-    range band between the minimum and maximum values for that key_val across all runs.
+    """The plot_range_band function takes in a list of dictionaries, each
+    dictionary containing the results from one run. It then plots the average
+    value for each key_val (e.g., 'accuracy') and also plots a range band
+    between the minimum and maximum values for that key_val across all runs.
 
-    :param result:List[Dict[str: Used to plot the results of each run.
-    :param float]]: Used to specify the type of data that is being passed into the function.
-    :param key_val:str: Used to specify which key in the dictionary to plot.
-    :param file_name:str: Used to save the plot as a png file.
-    :return: A plot with the average value of a list, and the minimum and maximum values.
-
-    :doc-author: Julian M. Kleber
+    :param result: List[Dict[str: Used to plot the results of each run.
+        :param float]]: Used to specify the type of data that is being
+        passed into the function.
+    :param key_val: str: Used to specify which key in the dictionary to
+        plot.
+    :param file_name: str: Used to save the plot as a png file.
+    :return: A plot with the average value of a list, and the minimum
+        and maximum values. :doc-author: Julian M. Kleber
     """
     max_val: List[float]
     min_val: List[float]
@@ -120,18 +123,20 @@ def plot_range_band_single(
 def plot_range_fill(
     max_val: List[float], min_val: List[float], alpha: float, axis
 ) -> None:
-    """
-    The plot_range_lines function takes in three lists of floats, max_val, min_val and avg_val.
-    It then plots the average value as a line graph with the training steps on the x-axis and
-    the average values on the y-axis. It also fills in between each point with a color to show
-    the range of values for that particular step.
+    """The plot_range_lines function takes in three lists of floats, max_val,
+    min_val and avg_val. It then plots the average value as a line graph with
+    the training steps on the x-axis and the average values on the y-axis. It
+    also fills in between each point with a color to show the range of values
+    for that particular step.
 
-    :param max_val:List[float]: Used to Plot the maximum value of each training step.
-    :param min_val:List[float]: Used to Plot the minimum value of each metric.
-    :param avg_val:List[float]: Used to Plot the average value of a given metric.
-    :return: A plot with the average value, max value and min values for each training step.
-
-    :doc-author: Julian M. Kleber
+    :param max_val: List[float]: Used to Plot the maximum value of each
+        training step.
+    :param min_val: List[float]: Used to Plot the minimum value of each
+        metric.
+    :param avg_val: List[float]: Used to Plot the average value of a
+        given metric.
+    :return: A plot with the average value, max value and min values for
+        each training step. :doc-author: Julian M. Kleber
     """
 
     training_steps = np.arange(0, len(max_val), 1)
@@ -141,18 +146,19 @@ def plot_range_fill(
 def save_publication_graphic(
     fig_object: Type[plt.figure], file_name: str, prefix: Optional[str] = None
 ) -> None:
-    """
-    The save_publication_graphic function saves the current figure to a file.
+    """The save_publication_graphic function saves the current figure to a
+    file.
 
-    The save_publication_graphic function saves the current figure to a file, with
-    a default resolution of 300 dpi. The function also tightens up the layout of
-    the plot before saving it, so that there is no wasted space around it in its saved form.
+    The save_publication_graphic function saves the current figure to a
+    file, with a default resolution of 300 dpi. The function also
+    tightens up the layout of the plot before saving it, so that there
+    is no wasted space around it in its saved form.
 
-    :param file_name:str: Used to Specify the name of the file to be saved.
-    :param prefix:Optional[str]=None: Used to Specify the directory where the file is saved.
-    :return: None.
-
-    :doc-author: Julian M. Kleber
+    :param file_name: str: Used to Specify the name of the file to be
+        saved.
+    :param prefix: Optional[str]=None: Used to Specify the directory
+        where the file is saved.
+    :return: None.  :doc-author: Julian M. Kleber
     """
 
     file_name = prepare_file_name_saving(
@@ -182,18 +188,17 @@ def parse_old_file_format_for_plot(
 
 
 def load_result_json_old_format(path_to_json: str) -> Dict[str, Any]:
-    """
-    The load_result_json function takes in a path to a json file and returns the contents of
-    that json file as a dictionary.The function also parses the "Acc" key in the dictionary, which
-    contains lists of tuples containing train and test accuracy values.
-    The function then separates these tuples into two separate lists, one for train accuracy values
-    and one for test accuracy values.These new lists are added to the original dictionary under
+    """The load_result_json function takes in a path to a json file and returns
+    the contents of that json file as a dictionary.The function also parses the
+    "Acc" key in the dictionary, which contains lists of tuples containing
+    train and test accuracy values. The function then separates these tuples
+    into two separate lists, one for train accuracy values and one for test
+    accuracy values.These new lists are added to the original dictionary under
     keys "Acc_train" and "Acc_val", respectively.
 
-    :param path_to_json:str: Used to Specify the path to the json file.
-    :return: A dictionary with the following keys:.
-
-    :doc-author: Julian M. Kleber
+    :param path_to_json: str: Used to Specify the path to the json file.
+    :return: A dictionary with the following keys:. :doc-author: Julian
+        M. Kleber
     """
 
     result = load_json_from_file(path_to_json)
@@ -214,13 +219,13 @@ def load_result_json_old_format(path_to_json: str) -> Dict[str, Any]:
 
 
 def parse_min_max_avg(result_list: List[List[float]]) -> List[float]:
-    """
-    The parse_min function takes a list of lists and returns the minimum value for each sublist.
+    """The parse_min function takes a list of lists and returns the minimum
+    value for each sublist.
 
-    :param result_list:List[List[float]]: Used to Store the results of the simulation.
-    :return: A list of the minimum values for each step.
-
-    :doc-author: Julian M. Kleber
+    :param result_list: List[List[float]]: Used to Store the results of
+        the simulation.
+    :return: A list of the minimum values for each step. :doc-author:
+        Julian M. Kleber
     """
 
     minima = []

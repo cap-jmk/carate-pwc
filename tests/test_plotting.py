@@ -2,11 +2,46 @@ import os
 import pandas as pd
 
 from carate.plotting.plot_classification import plot_classification_algorithm
+from carate.plotting.multi_run import plot_all_runs_in_dir
 
 from tests.utils import check_plotting_dir
 
 
+
+def test_multi_plot_regression(): 
+    
+    check_plotting_dir()
+    path_to_directory = "./notebooks/data/Regression/"
+    parameter = "Acc_test"
+    save_name = "./plots/multi_run_regression.png"
+
+    plot_all_runs_in_dir(path_to_directory, save_name = save_name, val_single = parameter)
+    
+    assert os.path.isdir("./plots")
+    assert os.path.isfile(
+        save_name
+    )
+
+
+
+def test_multi_plot_classification(): 
+    
+    check_plotting_dir()
+    path_to_directory = "./notebooks/data/Classification/"
+    parameter = "Acc_test"
+    save_name = "./plots/multi_run_classification.png"
+
+    plot_all_runs_in_dir(path_to_directory, save_name = save_name, y_lims=(0.009, 0.0009), val_single =parameter)
+    
+    assert os.path.isdir("./plots")
+    assert os.path.isfile(
+        save_name
+    )
+
+
+
 def test_classification_plot_run():
+
     check_plotting_dir()
     path_to_directory = "./notebooks/data/Classification/ENZYMES/"
     parameter = "Acc_test"
@@ -19,6 +54,7 @@ def test_classification_plot_run():
 
 
 def test_regression_plot_run():
+
     check_plotting_dir()
     path_to_directory = (
         "./notebooks/data/Regression/ALCHEMY_20_test_training_length_no_norm/"

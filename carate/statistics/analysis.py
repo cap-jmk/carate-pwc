@@ -25,7 +25,7 @@ def get_best_average(result_list: List[float], key_val: str) -> List[float]:
 
     :param step_list:List[float]: Used to Determine the step size for each run.
     :param key_val:str: Used to Specify the key value of the dictionary that is being unpacked.
-    :return: The best average reward for each run.
+    :return list: [avg, std]The best average reward for each run.
 
     :doc-author: Trelent
     """
@@ -34,8 +34,9 @@ def get_best_average(result_list: List[float], key_val: str) -> List[float]:
     best_vals = np.max(step_list, axis=1)
     avg = np.mean(best_vals)
     std = np.std(best_vals)
-    print(avg, "pm", std)
-    return []
+    logging.info("Average", avg)
+    logging.info("Standard deviation:", std)
+    return [avg, std]
 
 
 def get_avg(step_list: List[float]) -> float:
