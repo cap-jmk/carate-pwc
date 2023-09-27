@@ -19,6 +19,8 @@ from carate.statistics.analysis import (
 )
 
 
+logger = logging.getLogger(__name__)
+
 def plot_range_band_multi(
     result: List[Dict[str, float]],
     key_vals: List[str],
@@ -166,6 +168,7 @@ def save_publication_graphic(
     )
     plt.tight_layout()
     plt.savefig(file_name, dpi=300)
+    logging.info("Saved plot", file_name)
 
 
 def parse_old_file_format_for_plot(

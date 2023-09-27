@@ -228,7 +228,7 @@ class ConfigInitializer:
         else: 
             log_save_dir = json_object["log_save_dir"]
         
-        metrics_logger = MetricsLogger(json_object["result_save_dir"])
+        metrics_logger = MetricsLogger(log_save_dir)
         metrics_logger.logger.info("Initializing configuration for the config file "+ file_name)
         metrics_logger.logger.info("The configuration is: " + str(json_object))
         data_set = DATA_SET_MAP[json_object["data_set"]](
@@ -238,8 +238,6 @@ class ConfigInitializer:
             batch_size=json_object["batch_size"],
             shuffle=json_object["shuffle"],
         )
-
-
 
         evaluation = EVALUATION_MAP[json_object["evaluation"]](
             dataset_name=json_object["dataset_name"],

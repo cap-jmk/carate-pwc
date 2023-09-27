@@ -15,10 +15,9 @@ logging.basicConfig(
     format="%(asctime)s %(message)s",
 )
 
-
-def get_best_average(result_list: List[float], key_val: str) -> List[float]:
+def get_min_average(result_list: List[float], key_val: str) -> List[float]:
     """
-    The get_best_average function takes a list of floats and returns the average of the best values
+    The get_min_average function takes a list of floats and returns the average of the minimal values
     in that list.
 
     Returns: List[float]: A list containing only the best averages for each run in step_list.
@@ -27,7 +26,30 @@ def get_best_average(result_list: List[float], key_val: str) -> List[float]:
     :param key_val:str: Used to Specify the key value of the dictionary that is being unpacked.
     :return list: [avg, std]The best average reward for each run.
 
-    :doc-author: Trelent
+    :doc-author: Julian M. Kleber
+    """
+
+    step_list = unpack_run(result_list, key_val)
+    best_vals = np.min(step_list, axis=1)
+    avg = np.mean(best_vals)
+    std = np.std(best_vals)
+    logging.info("Average", avg)
+    logging.info("Standard deviation:", std)
+    return [avg, std]
+
+
+def get_max_average(result_list: List[float], key_val: str) -> List[float]:
+    """
+    The get_max_average function takes a list of floats and returns the average of the max values
+    in that list.
+
+    Returns: List[float]: A list containing only the best averages for each run in step_list.
+
+    :param step_list:List[float]: Used to Determine the step size for each run.
+    :param key_val:str: Used to Specify the key value of the dictionary that is being unpacked.
+    :return list: [avg, std]The best average reward for each run.
+
+    :doc-author: Julian M. Kleber
     """
 
     step_list = unpack_run(result_list, key_val)

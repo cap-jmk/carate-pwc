@@ -5,7 +5,7 @@ algorithms.
 """
 
 from typing import Optional
-
+import logging
 from amarium.utils import attach_slash
 
 from carate.plotting.base_plots import (
@@ -14,6 +14,8 @@ from carate.plotting.base_plots import (
     get_stacked_list,
 )
 
+
+logger = logging.getLogger(__name__)
 
 def plot_classification_algorithm(
     path_to_directory: str,

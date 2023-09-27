@@ -12,9 +12,10 @@ from amarium.utils import attach_slash
 from carate.statistics.analysis import (
     get_min_max_avg_cv_run,
     get_stacked_list,
-    get_best_average,
+    get_max_average,
+    get_min_average
 )
-from carate.plotting.base_plots import plot_range_fill
+from carate.plotting.base_plots import plot_range_fill, save_publication_graphic
 
 import logging
 
@@ -28,49 +29,39 @@ def plot_all_runs_in_dir(
     val_multi: Tuple[str] = ("Acc_train", "Acc_test"),
     y_lims=(0.0, 1.01),
 ) -> None:
+
     run_dirs = os.listdir(base_dir)
     fig, axis = plt.subplots()
     for run_dir in run_dirs:
         full_dir = attach_slash(base_dir) + attach_slash(run_dir) + attach_slash("data")
-        try:
+  
             # encapsulate into function
 
-            name = os.listdir(full_dir + attach_slash("CV_0"))[0]
+        name = os.listdir(full_dir + attach_slash("CV_0"))[0]
 
-            logger.info("Full dir for run to plot:", full_dir)
-            legend_text = full_dir.split("/")[-3]
-            logger.info("Plotting: ", legend_text)
-            result = get_stacked_list(
-                path_to_directory=full_dir,
-                num_cv=5,
-                json_name=name,
-            )
-
-            mean, std = get_best_average(result, val_single)
-            logger.info(full_dir, " - Mean : ", mean, " Std: ", std)
-            plot_range_band_multi_run(
-                result,
-                fixed_y_lim=y_lims,
-                key_val=val_single,
-                file_name=f"{legend_text}_accuracy",
-                save_dir="./plots",
-                alpha=0.4,
-                legend_text=legend_text,
-                fig=fig,
-                axis=axis,
-            )
-        except:
-            raise RuntimeWarning("Could not plot ", full_dir)
-        finally:
-            continue
-
-    try:
-        plt.savefig("./plots/Compound_Regression.png", dpi=300)
-        logging.info("Succesfully plotted ", save_name)
-    except:
-        raise RuntimeWarning("Could not save plot ", save_name)
-    finally:
-        logging.info("Attempting next plot.")
+        logger.info("Full dir for run to plot:", full_dir)
+        legend_text = full_dir.split("/")[-3]
+        logger.info("Plotting: ", legend_text)
+        result = get_stacked_list(
+            path_to_directory=full_dir,
+            num_cv=5,
+            json_name=name,
+        )
+        mean, std = get_max_average(result, val_single)
+        logger.info(full_dir, " - Mean : ", mean, " Std: ", std)
+        plot_range_band_multi_run(
+            result,
+            fixed_y_lim=y_lims,
+            key_val=val_single,
+            file_name=f"{legend_text}_{val_single}",
+            save_dir="./plots",
+            alpha=0.4,
+            legend_text=legend_text,
+            fig=fig,
+            axis=axis
+        )
+        
+    save_publication_graphic(fig_object=fig, file_name=save_name)
 
 
 def plot_range_band_multi_run(
@@ -109,6 +100,7 @@ def plot_range_band_multi_run(
         axis.plot(avg_val, "-", label=legend_text)
     else:
         axis.plot(avg_val, "-", label=legend_text)
+
     plot_range_fill(max_val, min_val, alpha, axis)
 
     axis.set_ylim(*fixed_y_lim)
