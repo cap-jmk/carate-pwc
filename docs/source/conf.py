@@ -18,7 +18,13 @@ copyright = f"2021-{year}, Julian M. Kleber"
 author = "Julian M. Kleber"
 release = "0.4.0"
 
-extensions = ["sphinx.ext.todo", "sphinx.ext.viewcode", "sphinx.ext.autodoc"]
+extensions = [
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+]
 
 
 autosummary_generate = True
@@ -27,7 +33,9 @@ napoleon_use_param = True
 napoleon_use_ivar = True
 
 
-master_doc = "index"
+main_doc = "index"
+
+source_suffix = [".rst", ".ipynb", ".md"]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -46,7 +54,7 @@ pygments_style = "default"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -54,3 +62,5 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
 htmlhelp_basename = "caratedoc"
+
+

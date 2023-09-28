@@ -12,18 +12,10 @@ carate.plotting.base\_plots module
    :undoc-members:
    :show-inheritance:
 
-carate.plotting.plot\_classification module
--------------------------------------------
+carate.plotting.multi\_run module
+---------------------------------
 
-.. automodule:: carate.plotting.plot_classification
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-carate.plotting.plot\_regression module
----------------------------------------
-
-.. automodule:: carate.plotting.plot_regression
+.. automodule:: carate.plotting.multi_run
    :members:
    :undoc-members:
    :show-inheritance:

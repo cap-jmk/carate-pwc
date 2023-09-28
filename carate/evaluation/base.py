@@ -28,12 +28,6 @@ from carate.default_interface import DefaultObject
 from carate.models.base_model import Model
 
 
-logging.basicConfig(
-    filename="carate.log",
-    encoding="utf-8",
-    level=logging.DEBUG,
-    format="%(asctime)s %(message)s",
-)
 
 
 class Evaluation(DefaultObject):

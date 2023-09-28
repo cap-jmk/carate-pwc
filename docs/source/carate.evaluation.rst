@@ -20,6 +20,14 @@ carate.evaluation.classification module
    :undoc-members:
    :show-inheritance:
 
+carate.evaluation.classification\_whole\_dataset module
+-------------------------------------------------------
+
+.. automodule:: carate.evaluation.classification_whole_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 carate.evaluation.regression module
 -----------------------------------
 

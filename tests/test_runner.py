@@ -16,4 +16,3 @@ def test_runner():
         str(runner.Evaluation)
         == "Evaluation for cgc_regression with the Default evaluation"
     )
-    

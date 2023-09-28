@@ -30,7 +30,6 @@ logging.basicConfig(
 
 
 def test_classification_override():
-
     check_dir_paths()
     config_filepath = "tests/config/classification_test_config_override.py"
     runner = RunInitializer.from_file(config_filepath=config_filepath)

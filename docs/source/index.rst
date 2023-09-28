@@ -7,8 +7,14 @@ Welcome to carate's documentation!
 ==================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :hidden:
+   :maxdepth: 3
+   :caption: CARATE
+
+   installation
+   minimalconfiguration
+   analysis
+   publication 
 
 
 
