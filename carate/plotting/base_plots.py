@@ -21,11 +21,51 @@ from carate.statistics.analysis import (
 
 logger = logging.getLogger(__name__)
 
+
+def plot_trajectory_single_algorithm(
+    path_to_directory: str,
+    parameter: str,
+    save_dir: str = "./plots",
+    data_name: Optional[str] = None,
+) -> None:
+    """The plot_classification_algorithm function takes in a path to a
+    directory containing the results of a classification algorithm and plots
+    the accuracy of that algorithm on both training and testing data.
+
+    :param path_to_directory: str: Used to specify the directory where
+        the results are stored.
+    :return: None.  :doc-author: Julian M. Kleber
+    """
+
+    path_to_directory = attach_slash(path_to_directory) + "data/"
+    legend_text = path_to_directory.split("/")[-3]
+
+    if data_name is None:
+        data_name = f"{legend_text}.json"
+
+    result = get_stacked_list(
+        path_to_directory=path_to_directory,
+        num_cv=5,
+        json_name=data_name,
+    )
+
+    plot_range_band_single(
+        result,
+        file_name=f"{legend_text}_{parameter}",
+        save_dir=save_dir,
+        key_val=parameter,
+        alpha=0.4,
+        legend_text=legend_text,
+    )
+
+
 def plot_range_band_multi(
     result: List[Dict[str, float]],
     key_vals: List[str],
     file_name: str,
     alpha: float = 0.5,
+    y_lim: Tuple[float] = (0.0, 1.01), 
+    set_ylim_dynamically:bool=False,
     save_dir: Optional[str] = None,
     title_text: Optional[str] = None,
 ) -> None:
@@ -63,13 +103,27 @@ def plot_range_band_multi(
         max_val, min_val, avg_val = get_min_max_avg_cv_run(
             result=result, key_val=key_vals[i]
         )
-        logging.info(f"Max values are: {max_val}")
-        logging.info(f"Min values are: {min_val}")
-        logging.info(f"Avg values are: {avg_val}")
+        if set_ylim_dynamically:
+            if i == 0: 
+                y_min = np.min(min_val)
+                y_max = np.max(max_val)
+            else: 
+                new_y_min = np.min(min_val)
+                new_y_max = np.max(max_val)
+                if y_min > new_y_min: 
+                    y_min = new_y_min
+                if y_max < new_y_max: 
+                    y_max = new_y_max
 
         axis.plot(avg_val, label=key_vals[i])
         plot_range_fill(max_val, min_val, alpha, axis)
 
+    if set_ylim_dynamically:
+        y_min = y_min - 0.03*y_min
+        y_max = y_max + 0.03*y_max
+        axis.set_ylim(y_min, y_max)
+    else: 
+        axis.set_ylim(*y_lim)
     axis.set_ylabel("Value")
     axis.legend()
     axis.set_title(title_text)
@@ -82,6 +136,7 @@ def plot_range_band_single(
     file_name: str,
     alpha: float = 0.5,
     fixed_y_lim=(0.0, 1.01),
+    set_ylim_dynamically:bool=False,
     save_dir: Optional[str] = None,
     legend_text: Optional[str] = None,
 ) -> None:
@@ -95,9 +150,17 @@ def plot_range_band_single(
         passed into the function.
     :param key_val: str: Used to specify which key in the dictionary to
         plot.
-    :param file_name: str: Used to save the plot as a png file.
-    :return: A plot with the average value of a list, and the minimum
-        and maximum values. :doc-author: Julian M. Kleber
+    :param file_name: str: Used to specify the file_name on where to save the plot
+    :param: alpha: float: Set the alpha level of the range band 
+    :param: fixed_y_lim: str: Setting a fixed limit on the y_axis
+    :param: set_ylim_dynamically: bool: If the y_lim should be set based on min, max values of 
+            the defined key_val
+    :param: save_dir: str: Where to save the plot 
+    :param: legend_text: Text to put on the legend
+    :return: None, but saves a plot with the average value of a list, and the minimum
+        and maximum values. 
+    :doc-author: Julian M. Kleber
+    :author: Julian M. Kleber
     """
     max_val: List[float]
     min_val: List[float]
@@ -112,7 +175,12 @@ def plot_range_band_single(
         axis.plot(avg_val, "-", label=legend_text)
     plot_range_fill(max_val, min_val, alpha, axis)
 
-    axis.set_ylim(*fixed_y_lim)
+    if set_ylim_dynamically:
+        y_min = np.min(min_val) - 0.03*np.min(min_val)
+        y_max = np.max(max_val) + 0.03*np.max(max_val)
+        axis.set_ylim(y_min, y_max) 
+    else: 
+        axis.set_ylim(*fixed_y_lim)
     axis.set_ylabel(key_val)
     if legend_text is not None:
         axis.legend()
@@ -168,7 +236,7 @@ def save_publication_graphic(
     )
     plt.tight_layout()
     plt.savefig(file_name, dpi=300)
-    logging.info("Saved plot", file_name)
+    logging.info("Saved plot" + str(file_name))
 
 
 def parse_old_file_format_for_plot(

@@ -22,47 +22,47 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+
 def plot_all_runs_in_dir(
     base_dir: str,
     save_name: str,
+    legend_texts:List[str],
     val_single: str = "Acc_test",
-    val_multi: Tuple[str] = ("Acc_train", "Acc_test"),
+    num_cv:int = 5, 
     y_lims=(0.0, 1.01),
 ) -> None:
+    """
+    Function to plot hyperparameter tunins of a single dataset and algorithm inside 
+    a directory
+
+    :author: Julian M. Kleber
+    """
 
     run_dirs = os.listdir(base_dir)
     fig, axis = plt.subplots()
-    for run_dir in run_dirs:
-        full_dir = attach_slash(base_dir) + attach_slash(run_dir) + attach_slash("data")
-  
-            # encapsulate into function
-
-        name = os.listdir(full_dir + attach_slash("CV_0"))[0]
-
-        logger.info("Full dir for run to plot:", full_dir)
-        legend_text = full_dir.split("/")[-3]
-        logger.info("Plotting: ", legend_text)
-        result = get_stacked_list(
-            path_to_directory=full_dir,
-            num_cv=5,
-            json_name=name,
-        )
-        mean, std = get_max_average(result, val_single)
-        logger.info(full_dir, " - Mean : ", mean, " Std: ", std)
+    for i in range(len(run_dirs)):
+        
+        result = prepare_plot_multi(base_dir=base_dir, run_dir=run_dirs[i], val_single=val_single, num_cv=num_cv)
         plot_range_band_multi_run(
             result,
             fixed_y_lim=y_lims,
             key_val=val_single,
-            file_name=f"{legend_text}_{val_single}",
+            file_name=f"{legend_texts[i]}_{val_single}",
             save_dir="./plots",
             alpha=0.4,
-            legend_text=legend_text,
+            legend_text=legend_texts[i],
             fig=fig,
             axis=axis
         )
         
     save_publication_graphic(fig_object=fig, file_name=save_name)
 
+
+
+def ploat_range_band_multi_val()->None: 
+
+
+    pass
 
 def plot_range_band_multi_run(
     result: List[Dict[str, List[float]]],
@@ -109,3 +109,23 @@ def plot_range_band_multi_run(
         axis.legend()
 
     axis.set_xlabel("Training step")
+
+
+def prepare_plot_multi(base_dir:str, run_dir:str, val_single:str, num_cv:int=5):
+
+    
+    
+    full_dir = attach_slash(base_dir) + attach_slash(run_dir) + attach_slash("data")
+
+    name = os.listdir(full_dir + attach_slash("CV_0"))[0]
+
+    logger.info("Full dir for run to plot:", full_dir)
+    legend_text = full_dir.split("/")[-3]
+    logger.info("Plotting: ", legend_text)
+    result = get_stacked_list(
+            path_to_directory=full_dir,
+            num_cv=num_cv,
+            json_name=name,
+    )
+
+    return result
