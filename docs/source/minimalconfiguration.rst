@@ -32,3 +32,42 @@ For an exmaple of a regression see the configuration file of ALCHEMY
 
 .. literalinclude:: ALCHEMY.py 
     :language: Python
+
+=========================================
+Configuration with JSON
+=========================================
+
+It might come in handy to use JSON for starting a run. See below for an example json
+
+.. code-block:: json
+
+    {
+        "dataset_name" : "PROTEINS",
+        "num_classes" : 2,
+        "num_features" : 3,
+        "model" : "cgc_classification",
+        "evaluation" : "classification",
+        "optimizer" : "adams",  # defaults to adams optimizer
+        "net_dimension" : 364,
+        "learning_rate" : 0.0005,
+        "dataset_save_path" : "./data",
+        "test_ratio" : 20,
+        "batch_size" : 64,
+        "shuffle" : True,
+        "num_epoch" : 10,
+        "num_cv" : 1,
+        "result_save_dir" : "./PROTEINS_20",
+        "data_set" : "StandardTUD",
+        "model_save_freq" : 30, 
+        "device": "cpu",
+        "override": True, 
+    }
+
+=========================================
+Starting a run from a Jupyter Notebook
+=========================================
+
+I recommend to use the JSON mode from a Jupyter notebook. For example you can run 
+
+.. literalinclude:: JSON_start.py 
+    :language: Python
