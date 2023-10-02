@@ -71,3 +71,13 @@ I recommend to use the JSON mode from a Jupyter notebook. For example you can ru
 
 .. literalinclude:: JSON_start.py 
     :language: Python
+
+
+=========================================
+Starting a run from a config file
+=========================================
+
+I recommend to use the JSON mode from a Jupyter notebook. For example you can run 
+
+.. literalinclude:: MCF_without_cli.py 
+    :language: Python

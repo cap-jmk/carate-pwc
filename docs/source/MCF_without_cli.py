@@ -15,6 +15,9 @@ num_cv = 5
 result_save_dir = "./MCF-7"
 data_loader = "StandardTUD"
 model_save_freq = 30
+override = True
+heads = 3 
+device = "cpu"
 
 if __name__ == "__main__":
 
