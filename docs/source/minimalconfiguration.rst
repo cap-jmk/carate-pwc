@@ -77,7 +77,7 @@ I recommend to use the JSON mode from a Jupyter notebook. For example you can ru
 Starting a run from a config file
 =========================================
 
-I recommend to use the JSON mode from a Jupyter notebook. For example you can run 
+You can also start a run from a config file 
 
 .. literalinclude:: MCF_without_cli.py 
     :language: Python
