@@ -33,7 +33,7 @@ dependencies = [
 "Bug Tracker" = "https://www.codeberg.org/sail.black/carate.git/issues"
 [tool.setuptools]
 
-packages = ["carate", "carate.optimizer", "carate.dataset", "carate.loader","carate.cli", "carate.evaluation", "carate.cli", "carate.logging", "carate.config_adapter", "carate.statistics", "carate.models", "carate.runner", "carate.plotting", "carate.utils"]
+packages = ["carate", "carate.optimizer", "carate.loader","carate.cli", "carate.evaluation", "carate.cli", "carate.logging", "carate.config_adapter", "carate.statistics", "carate.models", "carate.runner", "carate.plotting", "carate.utils"]
 
 [project.scripts]
 carate = "carate.main:carate"
