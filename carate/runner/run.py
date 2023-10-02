@@ -36,7 +36,6 @@ class Run(DefaultObject):
         num_classes: int,
         result_save_dir: str,
         model_save_freq: int,
-        config_filepath:str,
         resume: bool,
         normalize: bool,
         data_set: DatasetObject,
@@ -96,7 +95,6 @@ class Run(DefaultObject):
 
         # Results
         self.dataset_save_path = dataset_save_path
-        self.config_filepath = config_filepath
         self.logger = logger
 
     def run(self) -> None:
@@ -178,7 +176,6 @@ class RunInitializer:
             device=config.device,
             num_classes=config.num_classes,
             num_features=config.num_features,
-            config_filepath = config.file_path, 
             Evaluation=config.Evaluation,
             model_net=model_net,
             optimizer=optimizer,

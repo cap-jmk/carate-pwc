@@ -79,7 +79,6 @@ class Config:
 
     def __init__(
         self,
-        file_path:str,
         dataset_name: str,
         num_features: int,
         num_classes: int,
@@ -108,8 +107,7 @@ class Config:
         custom_size: Optional[int] = None,
     ):
 
-        #save path
-        self.file_path = file_path
+
         # modelling
 
         self.model = model
@@ -167,11 +165,11 @@ class ConfigInitializer:
         """
 
         json_object = convert_py_to_json(file_name)
-        config_object = ConfigInitializer.from_json(file_name=file_name, json_object = json_object)
+        config_object = ConfigInitializer.from_json(json_object = json_object)
         return config_object
 
     @classmethod
-    def from_json(cls, file_name:str, json_object: Dict[Any, Any]) -> Config:
+    def from_json(cls, json_object: Dict[Any, Any]) -> Config:
         """
         The from_json function is a class method that takes in a json object and returns an instance of the Config class.
         The function is used to load the configuration from a file, which can be done by calling:
@@ -229,7 +227,7 @@ class ConfigInitializer:
             log_save_dir = json_object["log_save_dir"]
         
         metrics_logger = MetricsLogger(log_save_dir)
-        metrics_logger.logger.info("Initializing configuration for the config file "+ file_name)
+        metrics_logger.logger.info("Initializing configuration for the config file ")
         metrics_logger.logger.info("The configuration is: " + str(json_object))
         data_set = DATA_SET_MAP[json_object["data_set"]](
             dataset_save_path=json_object["dataset_save_path"],
@@ -255,7 +253,6 @@ class ConfigInitializer:
         json_object["override"] = convert_str_to_bool(json_object["override"])
 
         return Config(
-            file_path = file_name,
             model=MODEL_MAP[json_object["model"]],
             optimizer=json_object["optimizer"],
             device=device,
