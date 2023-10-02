@@ -1,11 +1,11 @@
+sphinx-rtd-theme
+amarium
+numpy
+Click
 torch==1.13.1
+matplotlib
 torch-sparse-carate
 torch-scatter-carate
 torch-geometric
 rdkit-pypi
 networkx[default]
-matplotlib
-Click
-amarium
-black
-sphinx-rtd-theme
