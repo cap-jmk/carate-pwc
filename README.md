@@ -1,3 +1,8 @@
+
+Unmaintatined version - for referencing in PWC - no valid License
+
+For the maintained version see my [codeberg](https://codeberg.org/sail.black/carate.git)
+
 # 1. CARATE
 
 [![Downloads](https://static.pepy.tech/personalized-badge/carate?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/carate)
