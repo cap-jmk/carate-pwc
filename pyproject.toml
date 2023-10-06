@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "carate"
-version = "0.3.21"
+version = "0.3.24"
 authors = [
   { name="Julian M. Kleber", email="julian.m.kleber@gmail.com" },
 ]
@@ -26,6 +26,7 @@ dependencies = [
     "matplotlib",  
     "Click", 
     "amarium", 
+    "black"
     ]
 
 [project.urls]
@@ -33,4 +34,7 @@ dependencies = [
 "Bug Tracker" = "https://www.codeberg.org/sail.black/carate.git/issues"
 [tool.setuptools]
 
-packages = ["carate", "carate.optimizer", "carate.dataset", "carate.loader","carate.cli", "carate.evaluation", "carate.cli", "carate.logging", "carate.config_adapter", "carate.statistics", "carate.models", "carate.runner", "carate.plotting", "carate.utils"]
+packages = ["carate", "carate.optimizer", "carate.loader","carate.cli", "carate.evaluation", "carate.cli", "carate.logging", "carate.config_adapter", "carate.statistics", "carate.models", "carate.runner", "carate.plotting", "carate.utils"]
+
+[project.scripts]
+carate = "carate.main:carate"
